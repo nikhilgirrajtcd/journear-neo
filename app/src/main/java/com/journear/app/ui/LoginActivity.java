@@ -1,4 +1,4 @@
-package com.journear.app;
+package com.journear.app.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.journear.app.R;
 import com.journear.app.core.PersistentStore;
 import com.journear.app.core.ServerFunctions;
 

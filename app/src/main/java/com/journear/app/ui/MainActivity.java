@@ -1,4 +1,4 @@
-package com.journear.app;
+package com.journear.app.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,12 +21,12 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
-import com.journear.app.core.entities.RecyclerViewAdapter;
+import com.journear.app.ui.adapters.RecyclerViewAdapter;
 import com.journear.app.core.entities.StringWrapper;
 import com.journear.app.core.entities.UserSkimmed;
-import com.journear.app.ui.CreateJourneyActivity;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 

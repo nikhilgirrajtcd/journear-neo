@@ -3,9 +3,8 @@ package com.journear.app;
 import android.content.Context;
 import android.content.ContextWrapper;
 
-import com.journear.app.core.ServerFunctions;
-import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.utils.JnGeocoder;
+import com.journear.app.ui.MainActivity;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

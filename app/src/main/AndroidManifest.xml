@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,9 +29,9 @@
             </intent-filter>
         </activity>
         <activity android:label="@string/app_name" android:name=".ui.CreateJourneyActivity"/>
-        <activity android:name=".UserRegisterActivity"/>
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".StartActivity"/>
+        <activity android:name=".ui.UserRegisterActivity"/>
+        <activity android:name=".ui.LoginActivity"/>
+        <activity android:name=".ui.StartActivity"/>
 
     </application>
 

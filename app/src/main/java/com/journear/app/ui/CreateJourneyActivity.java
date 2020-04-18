@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.journear.app.MainActivity;
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.utils.JnGeocoder;

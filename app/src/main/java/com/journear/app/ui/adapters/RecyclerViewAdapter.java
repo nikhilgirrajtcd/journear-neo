@@ -1,4 +1,4 @@
-package com.journear.app.core.entities;
+package com.journear.app.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.journear.app.R;
+import com.journear.app.core.entities.NearbyDevice;
 
 import java.util.List;
 
