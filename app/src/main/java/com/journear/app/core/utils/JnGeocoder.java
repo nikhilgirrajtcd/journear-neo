@@ -30,23 +30,19 @@ public class JnGeocoder {
         return _GeoCodeItemsByRegion;
     }
 
-    public static JnGeocodeItem getJnGeocodeItemById(String region, String id) {
-        if(StringUtils.isEmpty(region))
-        {
-            if(StringUtils.isEmpty(lastAccessedRegion))
-            {
-                return null;
-            }
-            else {
-                region = lastAccessedRegion;
-            }
-        }
-        if(StringUtils.isEmpty(id))
+    public static JnGeocodeItem getJnGeocodeItemById(String id) {
+        return getJnGeocodeItemById(id, lastAccessedRegion);
+    }
+
+    public static JnGeocodeItem getJnGeocodeItemById(String id, String region) {
+        if (StringUtils.isEmpty(region))
             return null;
 
-        for(JnGeocodeItem item : getGeoCodeItemsByRegion().get(region))
-        {
-            if(item.id.equals(id))
+        if (StringUtils.isEmpty(id))
+            return null;
+
+        for (JnGeocodeItem item : getGeoCodeItemsByRegion().get(region)) {
+            if (item.id.equals(id))
                 return SerializerHelper.copyObject(item); // returning copy to restrict tampering with original data
         }
 
@@ -55,8 +51,7 @@ public class JnGeocoder {
 
     public static ArrayList<JnGeocodeItem> GetGeocodingListForRegion(String region, Context context) {
         lastAccessedRegion = region;
-        if(!getGeoCodeItemsByRegion().containsKey(region))
-        {
+        if (!getGeoCodeItemsByRegion().containsKey(region)) {
             getGeoCodeItemsByRegion().put(region, readGeocodingDataCsv(region, context));
         }
         return getGeoCodeItemsByRegion().get(region);

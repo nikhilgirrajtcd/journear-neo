@@ -38,8 +38,8 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
             NearbyDevices devices = devicesList.get(position);
             holder.userName.setText(devices.getUser().getUserName());
-            holder.source.setText(devices.getSource());
-            holder.destination.setText(devices.getDestination());
+            holder.source.setText(devices.getSource2().placeString);
+            holder.destination.setText(devices.getDestination2().placeString);
             holder.travelTime.setText(devices.getTravelTime().toString());
     }
 // one for just testing deviceslist.size()

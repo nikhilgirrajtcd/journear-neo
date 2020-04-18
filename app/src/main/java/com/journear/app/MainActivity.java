@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import android.os.Parcel;
 import android.util.Log;
 import android.view.View;
 
@@ -21,10 +22,12 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.PersistentStore;
 import com.journear.app.core.entities.NearbyDevices;
 import com.journear.app.core.entities.RecyclerViewAdapter;
 import com.journear.app.core.entities.StringWrapper;
+import com.journear.app.core.entities.UserSkimmed;
 import com.journear.app.core.interfaces.Persistable;
 import com.journear.app.ui.CreateJourneyActivity;
 
@@ -38,6 +41,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -163,16 +168,13 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
         devicesList.add(ndOwnJourneyPlan);
 
         // TODO Nikhil Sujit
         // devicesList = some source for the data.
 
         for (NearbyDevices devices : devicesList) {
-
             Log.d(TAG, "onCreate: " + devices.getSource());
-
         }
 
         recyclerViewAdapter = new RecyclerViewAdapter(this, devicesList);
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkUserLogon() {
-        Persistable currentUser = PersistentStore.getInstance(MainActivity.this).getItem("currentUser", StringWrapper.class);
+        Object currentUser = LocalFunctions.getCurrentLoggedInUser(MainActivity.this);
         if (currentUser == null) {
             Intent intentToLetUserLogon = new Intent(MainActivity.this, StartActivity.class);
             startActivity(intentToLetUserLogon);
@@ -193,14 +195,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void decorateUiForUser() {
-        StringWrapper currentUser = (StringWrapper) PersistentStore.getInstance(MainActivity.this).getItem("currentUser", StringWrapper.class);
+        StringWrapper currentUser = LocalFunctions.getCurrentLoggedInUser(MainActivity.this);
         // Todo: Fetch the user details from server over here and user that to set the environment
-//        TextView tv =findViewById(R.id.nav_view).findViewById(R.id.textView);
-//        tv.setText(currentUser.toString());
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
-        TextView navUsername = (TextView) headerView.findViewById(R.id.userNameTextView);
+        TextView navUsername = headerView.findViewById(R.id.userNameTextView);
         navUsername.setText(currentUser.toString());
     }
 
@@ -239,10 +238,22 @@ public class MainActivity extends AppCompatActivity {
                 String fullDomain, Map<String, String> record, WifiP2pDevice device) {
             Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
             NearbyDevices nd = new NearbyDevices();
-//            nd.setSource(record.get("source"));
-//            nd.setDestination(record.get("destination"));
-            nd.setTravelTime(record.get("travelTime"));
-//            nd.setUser_rating(record.get("rating"));
+            String[] all = StringUtils.split(record.get("a"), '|');
+
+            // sequence = u, s, d, t
+            UserSkimmed u = new UserSkimmed();
+            u.setUserName(all[0]);
+            nd.setUser(u);
+            nd.setSource2(all[1]);
+            nd.setDestination2(all[2]);
+            nd.setTravelTime(all[3]);
+
+            //            nd.setSource2(record.get("s"));
+//            nd.setDestination2(record.get("d"));
+            nd.setTravelTime(record.get("t"));
+//            UserSkimmed u = new UserSkimmed();
+//            u.setUserName(record.get("u"));
+//            nd.setUser(u);
 
             discoveredDnsRecords.put(device.deviceAddress, nd);
         }
@@ -268,103 +279,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void startRegistration() {
-        WifiP2pManager.ActionListener addLocalServiceActionListener = new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                // Command successful! Code isn't necessarily needed here,
-                // Unless you want to update the UI or add logging statements.
-                shortToast("Success - Add local service!");
-            }
-
-            @Override
-            public void onFailure(int code) {
-                shortToast("Failed - Add local service! Code - " + code);
-                // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-            }
-        };
-
-        WifiP2pDnsSdServiceInfo serviceInfo = getWifiP2pDnsSdServiceInfo();
-
-        // Add the local service, sending the service info, network channel,
-        // and listener that will be used to indicate success or failure of
-        // the request.
-        shortToast("Adding Local Service");
-        getManager().addLocalService(getChannel(), serviceInfo, addLocalServiceActionListener);
-    }
 
     private WifiP2pDnsSdServiceInfo getWifiP2pDnsSdServiceInfo() {
         Map<String, String> record = new HashMap<String, String>();
-        record.put(TXTRECORD_PROP_AVAILABLE, "visible");
 
-        // TODO - Create a shorted format to send this info
-        // 1. Add ID of source and destination instead of name.
-        // 2. Use smaller names for the keys below - maybe instead of the word 'destination', use 'd' xD
-        // 3.
-//        record.put("destination", ndOwnJourneyPlan.getDestination());
-//        record.put("source", ndOwnJourneyPlan.getSource());
-        record.put("travelTime", ndOwnJourneyPlan.getTravelTime().toString());
-//        record.put("rating", ndOwnJourneyPlan.getUser_rating());
+        String all = StringUtils.joinWith("|", ndOwnJourneyPlan.getUser().userName, ndOwnJourneyPlan.getSource2().id,
+                ndOwnJourneyPlan.getDestination2().id, ndOwnJourneyPlan.getTravelTime().toString());
 
+        record.put("a", all);
+        record.put("u", ndOwnJourneyPlan.getUser().userName);
+        record.put("s", ndOwnJourneyPlan.getSource2().id);
+        record.put("d", ndOwnJourneyPlan.getDestination2().id);
+        record.put("t", ndOwnJourneyPlan.getTravelTime().toString());
 
         return WifiP2pDnsSdServiceInfo.newInstance(
                 SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
-    }
-
-    private void discoverService() {
-        getManager().setDnsSdResponseListeners(getChannel(), dnsSdResponseServiceListener, dnsSdResponseRecordListener);
-    }
-
-    private void startBroadCastAndDiscovery() {
-        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-        getManager().addServiceRequest(getChannel(),
-                serviceRequest,
-                new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        // Success!
-                        shortToast("Success - addServiceRequest");
-                    }
-
-                    @Override
-                    public void onFailure(int code) {
-                        shortToast("Failure - addServiceRequest. Code - " + code);
-
-                        // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-                    }
-                });
-
-        getManager().discoverServices(getChannel(), new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                // Success!
-                shortToast("Success - discoverServices");
-            }
-
-            @Override
-            public void onFailure(int code) {
-                shortToast("Failure - discoverServices. Code - " + code);
-
-                // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-                if (code == WifiP2pManager.P2P_UNSUPPORTED) {
-                    Log.d(TAG, "P2P isn't supported on this device.");
-                }
-            }
-        });
-
-        getManager().discoverPeers(getChannel(), new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                shortToast("Peer discovery success.");
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                shortToast("Peer discovery failure.");
-            }
-        });
     }
 
     private void discoverDevices() {
