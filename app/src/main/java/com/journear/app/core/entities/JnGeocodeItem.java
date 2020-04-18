@@ -1,21 +1,19 @@
 package com.journear.app.core.entities;
 
-import android.location.Geocoder;
+import java.io.Serializable;
 
-public class JnGeocodeItem {
+public class JnGeocodeItem implements Serializable, Cloneable {
+    private static final long serialVersionUID = 1L;
+
     public String id;
     public double latitude = 0.0;
     public double longitude = 0.0;
-    public String name;
-    public String street;
-    public String city;
-    public String country;
+    // consolidated String for the name, as anything else is not needed in the whole workflow
+    public String placeString;
 
     @Override
-    public String toString()
-    {
-        return name + ", " + street + "\n" + city + ", " + country;
+    public String toString() {
+        return placeString;
     }
-
 
 }

@@ -17,19 +17,20 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.journear.app.JourneyViewActivity;
+import com.journear.app.MainActivity;
 import com.journear.app.R;
-import com.journear.app.core.JnGeocoder;
-import com.journear.app.core.PersistentStore;
+import com.journear.app.core.LocalFunctions;
+import com.journear.app.core.utils.JnGeocoder;
 import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevices;
 import com.journear.app.core.entities.UserSkimmed;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 public class CreateJourneyActivity extends AppCompatActivity {
 
@@ -55,19 +56,19 @@ public class CreateJourneyActivity extends AppCompatActivity {
         setTimeInTextView(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
 
         timeTextView.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-                                           TimePickerDialog tp1 = new TimePickerDialog(CreateJourneyActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                                               @Override
-                                               public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                                   setTimeInTextView(hourOfDay, minute);
-                                               }
-                                           },
-                                                   hourOfJourney, minuteOfJourney, true);
-                                           tp1.show();
-                                       }
-                                   });
+                TimePickerDialog tp1 = new TimePickerDialog(CreateJourneyActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        setTimeInTextView(hourOfDay, minute);
+                    }
+                },
+                        hourOfJourney, minuteOfJourney, true);
+                tp1.show();
+            }
+        });
 
         configureAutoCompleteTextViewForSearch(sourceTextView, "ie");
         configureAutoCompleteTextViewForSearch(destinationTextView, "ie");
@@ -76,51 +77,21 @@ public class CreateJourneyActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                String source = sourceTextView.getText().toString();
-                String destination = destinationTextView.getText().toString();
-                Log.i("SELECTION", ""+source);
-                Log.i("SELECTION", ""+destination);
+
+
                 createJourney(v);
 
-                if(mapTextValueToJnGeoCodeItem.containsKey(source) && mapTextValueToJnGeoCodeItem.containsKey(destination))
-                {
-                    JnGeocodeItem s = mapTextValueToJnGeoCodeItem.get(source);
-                    JnGeocodeItem d = mapTextValueToJnGeoCodeItem.get(destination);
-                    Log.i("SELECTION", "Source: " + s.latitude + ", " + s.longitude);
-                    Log.i("SELECTION", "Destination: " + d.latitude + ", " + d.longitude);
-                    Log.i("SELECTION", "Safe to Proceed");
-                }
 
             }
 
             private void createJourney(View v) {
-                NearbyDevices nd = new NearbyDevices();
-                List<NearbyDevices> devicesList;
+                NearbyDevices nd = getCurrentInput();
+                Snackbar.make(v, "Journey Created", Snackbar.LENGTH_SHORT).show();
 
-                String source = sourceTextView.getText().toString().trim();
-                String Destination =  destinationTextView.getText().toString().trim();
-                Time timeOfTravel = Time.valueOf(timeTextView.getText().toString() + ":00");
+                LocalFunctions.setCurrentJourney(nd, CreateJourneyActivity.this);
 
-                nd.setSource(source);
-                nd.setDestination(Destination);
-                nd.setTravelTime(timeOfTravel);
-                nd.setUser((UserSkimmed) PersistentStore.getInstance(CreateJourneyActivity.this).getItem("registeredUser", UserSkimmed.class));
-                Snackbar.make(v, "Journey Created",Snackbar.LENGTH_SHORT)
-                        .show();
-
-                devicesList = new ArrayList<>();
-
-                devicesList.add(nd);
-                PersistentStore.getInstance(CreateJourneyActivity.this).setItem("CurrentJourneyRequest",nd,true);
-
-
-                final Intent intent = new Intent(CreateJourneyActivity.this, JourneyViewActivity.class);
+                final Intent intent = new Intent(CreateJourneyActivity.this, MainActivity.class);
                 intent.putExtra("EXTRA", nd);
-
-                //                Bundle args = new Bundle();
-//                args.putSerializable("ARRAYLIST", (Serializable)devicesList);
-//
-//                intent.putExtra("BUNDLE",args);
 
 
                 new Handler().postDelayed(new Runnable() {
@@ -132,18 +103,46 @@ public class CreateJourneyActivity extends AppCompatActivity {
 
                     }
                 }, 1200);
+
             }
         });
+    }
+
+    private NearbyDevices getCurrentInput() {
+
+        final AutoCompleteTextView sourceTextView = findViewById(R.id.acTextView_source);
+        final AutoCompleteTextView destinationTextView = findViewById(R.id.acTextView_destination);
+
+        String source = sourceTextView.getText().toString();
+        String destination = destinationTextView.getText().toString();
+
+        if (mapTextValueToJnGeoCodeItem.containsKey(source) && mapTextValueToJnGeoCodeItem.containsKey(destination)) {
+            JnGeocodeItem s = mapTextValueToJnGeoCodeItem.get(source);
+            JnGeocodeItem d = mapTextValueToJnGeoCodeItem.get(destination);
+            Time timeOfTravel = Time.valueOf(timeTextView.getText().toString() + ":00");
+            UserSkimmed userSkimmed = LocalFunctions.getCurrentRegisteredUser(this);
+            NearbyDevices currentInput = new NearbyDevices(s, d, timeOfTravel, userSkimmed);
+
+            Log.i("SELECTION", "Source: " + s.latitude + ", " + s.longitude);
+            Log.i("SELECTION", "" + source);
+            Log.i("SELECTION", "Destination: " + d.latitude + ", " + d.longitude);
+            Log.i("SELECTION", "" + destination);
+            Log.i("SELECTION", "Safe to Proceed");
+
+            return currentInput;
+        }
+        return null;
     }
 
     private void setTimeInTextView(int hour, int minute) {
         hourOfJourney = hour;
         minuteOfJourney = minute;
-        timeTextView.setText(hour + ":" + minute);
+        String timeToDisplay = StringUtils.leftPad("" + hour, 2, '0') + ":" + StringUtils.leftPad(minute + "", 2, '0');
+        timeTextView.setText(timeToDisplay);
     }
 
-    private void configureAutoCompleteTextViewForSearch(AutoCompleteTextView actv, String region){
-        ArrayList<JnGeocodeItem> geocodeItems =  JnGeocoder.GetGeocodingListForRegion(region, this);
+    private void configureAutoCompleteTextViewForSearch(AutoCompleteTextView actv, String region) {
+        ArrayList<JnGeocodeItem> geocodeItems = JnGeocoder.GetGeocodingListForRegion(region, this);
         // initialize the list for autocomplete for geocoding
         final ArrayAdapter<JnGeocodeItem> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, geocodeItems);
