@@ -12,12 +12,14 @@ public class PersistentStore {
     }
 
     // Todo: Akshay
-    public Persistable getItem(String key) {
+    public Persistable getItem(String key, Persistable type) {
         throw new UnsupportedOperationException("implementation pending");
     }
 
     // Todo: Akshay - AndroidX Jetpack
-    public void setItem(String key, Persistable item, boolean force) throws DuplicateItemException {
+    public void setItem(String key, Persistable item, boolean replace) throws DuplicateItemException {
+        // jsonString = serializeObject(item);
+        // fieldName = key
         throw new UnsupportedOperationException("implementation pending");
     }
 }
