@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
             //            nd.setSource2(record.get("s"));
 //            nd.setDestination2(record.get("d"));
-            nd.setTravelTime(record.get("t"));
+//            nd.setTravelTime(record.get("t"));
 //            UserSkimmed u = new UserSkimmed();
 //            u.setUserName(record.get("u"));
 //            nd.setUser(u);
@@ -287,10 +287,10 @@ public class MainActivity extends AppCompatActivity {
                 ndOwnJourneyPlan.getDestination2().id, ndOwnJourneyPlan.getTravelTime().toString());
 
         record.put("a", all);
-        record.put("u", ndOwnJourneyPlan.getUser().userName);
-        record.put("s", ndOwnJourneyPlan.getSource2().id);
-        record.put("d", ndOwnJourneyPlan.getDestination2().id);
-        record.put("t", ndOwnJourneyPlan.getTravelTime().toString());
+//        record.put("u", ndOwnJourneyPlan.getUser().userName);
+//        record.put("s", ndOwnJourneyPlan.getSource2().id);
+//        record.put("d", ndOwnJourneyPlan.getDestination2().id);
+//        record.put("t", ndOwnJourneyPlan.getTravelTime().toString());
 
         return WifiP2pDnsSdServiceInfo.newInstance(
                 SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
@@ -318,7 +318,6 @@ public class MainActivity extends AppCompatActivity {
                                                     public void onSuccess() {
                                                         shortToast("Success - discoverServices");
                                                     }
-
                                                     @Override
                                                     public void onFailure(int reason) {
                                                         shortToast("F6");
