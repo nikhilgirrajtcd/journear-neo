@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-<<<<<<< HEAD
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,11 +21,6 @@
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-=======
-    <application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:theme="@style/AppTheme">
-        <activity android:name=".ui.CreateJourneyActivity"></activity>
-        <activity android:name=".MainActivity" android:label="@string/app_name" android:theme="@style/AppTheme.NoActionBar">
->>>>>>> 6470665a47c3e12c28c715a791c37fd62324c4fb
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,15 +28,9 @@
             </intent-filter>
         </activity>
         <activity android:label="@string/app_name" android:name=".ui.CreateJourneyActivity"/>
-<<<<<<< HEAD
         <activity android:name=".ui.UserRegisterActivity"/>
         <activity android:name=".ui.LoginActivity"/>
         <activity android:name=".ui.StartActivity"/>
 
-=======
-        <activity android:name=".UserRegisterActivity"/>
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".StartActivity"/>
->>>>>>> 6470665a47c3e12c28c715a791c37fd62324c4fb
     </application>
 </manifest>
