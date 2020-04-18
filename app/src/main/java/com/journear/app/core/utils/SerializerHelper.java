@@ -55,4 +55,9 @@ public class SerializerHelper {
         return null;
     }
 
+    public static <T> T copyObject(T source)
+    {
+        return (T) getFstConfiguration().asObject(getFstConfiguration().asByteArray(source));
+    }
+
 }

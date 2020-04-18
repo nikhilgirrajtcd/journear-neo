@@ -16,12 +16,50 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JnGeocoder {
 
+    static String lastAccessedRegion = null;
+    static Map<String, ArrayList<JnGeocodeItem>> _GeoCodeItemsByRegion;
+
+    public static Map<String, ArrayList<JnGeocodeItem>> getGeoCodeItemsByRegion() {
+        if (_GeoCodeItemsByRegion == null)
+            _GeoCodeItemsByRegion = new HashMap<>();
+        return _GeoCodeItemsByRegion;
+    }
+
+    public static JnGeocodeItem getJnGeocodeItemById(String region, String id) {
+        if(StringUtils.isEmpty(region))
+        {
+            if(StringUtils.isEmpty(lastAccessedRegion))
+            {
+                return null;
+            }
+            else {
+                region = lastAccessedRegion;
+            }
+        }
+        if(StringUtils.isEmpty(id))
+            return null;
+
+        for(JnGeocodeItem item : getGeoCodeItemsByRegion().get(region))
+        {
+            if(item.id.equals(id))
+                return SerializerHelper.copyObject(item); // returning copy to restrict tampering with original data
+        }
+
+        return null;
+    }
 
     public static ArrayList<JnGeocodeItem> GetGeocodingListForRegion(String region, Context context) {
-        return readGeocodingDataCsv(region, context);
+        lastAccessedRegion = region;
+        if(!getGeoCodeItemsByRegion().containsKey(region))
+        {
+            getGeoCodeItemsByRegion().put(region, readGeocodingDataCsv(region, context));
+        }
+        return getGeoCodeItemsByRegion().get(region);
     }
 
     private static ArrayList<JnGeocodeItem> readGeocodingDataCsv(final String region, Context context) {

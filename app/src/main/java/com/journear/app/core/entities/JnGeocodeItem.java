@@ -2,7 +2,7 @@ package com.journear.app.core.entities;
 
 import java.io.Serializable;
 
-public class JnGeocodeItem implements Serializable {
+public class JnGeocodeItem implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     public String id;
@@ -15,4 +15,5 @@ public class JnGeocodeItem implements Serializable {
     public String toString() {
         return placeString;
     }
+
 }
