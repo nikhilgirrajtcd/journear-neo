@@ -37,7 +37,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
             NearbyDevices devices = devicesList.get(position);
-            holder.userName.setText(Build.MANUFACTURER);
+            holder.userName.setText(devices.getUser().getUserName());
             holder.source.setText(devices.getSource());
             holder.destination.setText(devices.getDestination());
             holder.travelTime.setText(devices.getTravelTime().toString());

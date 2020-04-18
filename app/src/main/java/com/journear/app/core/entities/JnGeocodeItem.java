@@ -1,11 +1,10 @@
 package com.journear.app.core.entities;
 
-import android.location.Geocoder;
-import android.util.Log;
+import java.io.Serializable;
 
-import org.apache.commons.lang3.StringUtils;
+public class JnGeocodeItem implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-public class JnGeocodeItem {
     public String id;
     public double latitude = 0.0;
     public double longitude = 0.0;
@@ -16,6 +15,4 @@ public class JnGeocodeItem {
     public String toString() {
         return placeString;
     }
-
-
 }

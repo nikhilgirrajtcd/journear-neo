@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 //            startRegistration();
 //            discoverService();
 //            startBroadCastAndDiscovery();
-            secondAttempt();
+            discoverDevices();
             showList();
         }
     }
@@ -296,6 +296,11 @@ public class MainActivity extends AppCompatActivity {
     private WifiP2pDnsSdServiceInfo getWifiP2pDnsSdServiceInfo() {
         Map<String, String> record = new HashMap<String, String>();
         record.put(TXTRECORD_PROP_AVAILABLE, "visible");
+
+        // TODO - Create a shorted format to send this info
+        // 1. Add ID of source and destination instead of name.
+        // 2. Use smaller names for the keys below - maybe instead of the word 'destination', use 'd' xD
+        // 3.
 //        record.put("destination", ndOwnJourneyPlan.getDestination());
 //        record.put("source", ndOwnJourneyPlan.getSource());
         record.put("travelTime", ndOwnJourneyPlan.getTravelTime().toString());
@@ -362,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void secondAttempt() {
+    private void discoverDevices() {
         getManager().clearLocalServices(getChannel(), new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
