@@ -1,7 +1,6 @@
 package com.journear.app.core.entities;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,8 @@ import java.util.List;
 public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder> {
 
    private Context context;
-   private List<NearbyDevices> devicesList;
-    public RecyclerViewAdapter(Context context, List<NearbyDevices> devicesList) {
+   private List<NearbyDevice> devicesList;
+    public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList) {
         this.devicesList = devicesList;
         this.context = context;
     }
@@ -36,7 +35,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
-            NearbyDevices devices = devicesList.get(position);
+            NearbyDevice devices = devicesList.get(position);
             holder.userName.setText(devices.getUser().getUserName());
             holder.source.setText(devices.getSource2().placeString);
             holder.destination.setText(devices.getDestination2().placeString);

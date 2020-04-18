@@ -12,7 +12,6 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.os.Parcel;
 import android.util.Log;
 import android.view.View;
 
@@ -23,12 +22,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.journear.app.core.LocalFunctions;
-import com.journear.app.core.PersistentStore;
-import com.journear.app.core.entities.NearbyDevices;
+import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.RecyclerViewAdapter;
 import com.journear.app.core.entities.StringWrapper;
 import com.journear.app.core.entities.UserSkimmed;
-import com.journear.app.core.interfaces.Persistable;
 import com.journear.app.ui.CreateJourneyActivity;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -55,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
-    private List<NearbyDevices> devicesList = new ArrayList<>();
+    private List<NearbyDevice> devicesList = new ArrayList<>();
 
-    private NearbyDevices ndOwnJourneyPlan;
+    private NearbyDevice ndOwnJourneyPlan;
     public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -173,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO Nikhil Sujit
         // devicesList = some source for the data.
 
-        for (NearbyDevices devices : devicesList) {
+        for (NearbyDevice devices : devicesList) {
             Log.d(TAG, "onCreate: " + devices.getSource());
         }
 
@@ -224,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    final HashMap<String, NearbyDevices> discoveredDnsRecords = new HashMap<>();
+    final HashMap<String, NearbyDevice> discoveredDnsRecords = new HashMap<>();
 
     WifiP2pManager.DnsSdTxtRecordListener dnsSdResponseRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
         @Override
@@ -237,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDnsSdTxtRecordAvailable(
                 String fullDomain, Map<String, String> record, WifiP2pDevice device) {
             Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-            NearbyDevices nd = new NearbyDevices();
+            NearbyDevice nd = new NearbyDevice();
             String[] all = StringUtils.split(record.get("a"), '|');
 
             // sequence = u, s, d, t
@@ -270,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
             // Nikhil - Set deviceName as deviceAddress because we don't have much info available so far!
 
             if (discoveredDnsRecords.containsKey(resourceType.deviceAddress)) {
-                NearbyDevices nd = discoveredDnsRecords.get(resourceType.deviceAddress);
+                NearbyDevice nd = discoveredDnsRecords.get(resourceType.deviceAddress);
 
                 devicesList.add(nd);
                 recyclerViewAdapter.notifyItemInserted(devicesList.size());
