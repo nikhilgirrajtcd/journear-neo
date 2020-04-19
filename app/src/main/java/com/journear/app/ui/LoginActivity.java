@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.journear.app.R;
+import com.journear.app.core.IsValid;
 import com.journear.app.core.PersistentStore;
 import com.journear.app.core.ServerFunctions;
 
@@ -21,7 +22,29 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
     EditText email, password;
     Button login;
+    final String logTag = "LoginActivity";
 
+    Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.i(logTag, "Server communication while trying to log in.");
+        }
+    };
+
+    Response.Listener responseListener = new Response.Listener<JSONObject>() {
+        @Override
+        public void onResponse(JSONObject response) {
+            try {
+                Log.d(logTag, "Received server response.");
+                //Process os success response
+                if (response.get("Message").toString().equals("Success")) {
+                    afterLoginSuccess();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,44 +54,35 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.edit_password);
         login = findViewById(R.id.btn_login);
 
-        login.setOnClickListener(new View.OnClickListener(){
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                validateAndLogin();
 
-                Response.Listener responseListener = new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            Log.i("Tag1", "Pakoda");
-                            //Process os success response
-                            if (response.get("Message").toString().equals("Success")) {
-                                afterLoginSuccess();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-
-                Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.i("tag2", "LODA");
-                    }
-                };
-
-
-                ServerFunctions.getInstance(LoginActivity.this).authenticate(email.getText().toString(), password.getText().toString(),
-                        responseListener, responseErrorListener);
-
-            }});
+            }
+        });
 
 
     }
 
+    private void validateAndLogin() {
+        String emailString = email.getText().toString();
+        String passwordString = password.getText().toString();
+
+        if(validateInputs(emailString, passwordString))
+            ServerFunctions.getInstance(LoginActivity.this).authenticate(emailString, passwordString,
+                responseListener, responseErrorListener);
+    }
+
+    private boolean validateInputs(String email, String password) {
+        return IsValid.email(email) & IsValid.password(password);
+    }
+
     private void afterLoginSuccess() {
+        // TODO : Move PersistenceStore call to LocalFunctions
         PersistentStore.getInstance(LoginActivity.this).setItem("currentUser", email.getText().toString(), true);
+
 
         Intent loginSuccessIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(loginSuccessIntent);
