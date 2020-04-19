@@ -34,14 +34,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        root.findViewById(R.id.navButtonCreate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent createJourneyIntent = new Intent(getActivity(), CreateJourneyActivity.class);
-                startActivity(createJourneyIntent);
-//                NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.nav_createJourney);
-            }
-        });
+//        root.findViewById(R.id.navButtonCreate).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent createJourneyIntent = new Intent(getActivity(), CreateJourneyActivity.class);
+//                startActivity(createJourneyIntent);
+////                NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.nav_createJourney);
+//            }
+//        });
 
         return root;
     }
