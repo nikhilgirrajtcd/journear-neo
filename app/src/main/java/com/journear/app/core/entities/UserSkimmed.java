@@ -4,6 +4,8 @@ import com.journear.app.core.interfaces.Persistable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 public class UserSkimmed implements Persistable {
     public String userName;
 
