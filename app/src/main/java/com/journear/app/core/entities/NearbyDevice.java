@@ -8,6 +8,7 @@ import com.journear.app.core.interfaces.Persistable;
 import com.journear.app.core.utils.JnGeocoder;
 
 import java.sql.Time;
+import java.util.Objects;
 
 public class NearbyDevice implements Parcelable, Persistable {
     private int id;
@@ -150,6 +151,31 @@ public class NearbyDevice implements Parcelable, Persistable {
         dest.writeString(source2.id);
         dest.writeString(destination2.id);
         dest.writeString(travelTime.toString());
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this)
+            return true;
+
+        if (!(obj instanceof NearbyDevice))
+            return false;
+
+        NearbyDevice nd = (NearbyDevice) obj;
+        boolean userEq = false;
+        if(this.user == null && nd.user == null)
+            userEq = true;
+        else
+            userEq = this.user.isSameAs(nd.user);
+
+        return userEq && Objects.equals(this.source2, nd.source2)
+                && Objects.equals(this.destination2, nd.destination2)
+                && Objects.equals(this.travelTime, nd.travelTime);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(user, source2, destination2, travelTime);
     }
 }
