@@ -24,30 +24,37 @@ public class LoginActivityUnitTest {
         Assert.assertFalse("Password cannot be less than 8 characters", IsValid.password("abc"));
     }
 
+    @Test
     public final void password_Invalid1() {
         Assert.assertFalse("password must contain a number, English letter and special character", IsValid.password("abcfksadfjdksl"));
     }
 
+    @Test
     public final void password_Invalid2() {
         Assert.assertFalse("password cannot be less than 5 characters", IsValid.password("abc212dd"));
     }
 
+    @Test
     public final void password_Invalid3() {
         Assert.assertFalse("Password invalid character", IsValid.password("abcDSFD:2"));
     }
 
+    @Test
     public final void password_Valid1() {
         Assert.assertTrue("Correct Password", IsValid.password("BadB@ys2"));
     }
 
+    @Test
     public final void password_Valid2() {
         Assert.assertTrue("Correct Password", IsValid.password("Abcdefg8"));
     }
 
+    @Test
     public final void password_Valid3() {
         Assert.assertTrue("Correct Password", IsValid.password("Abcdefg!"));
     }
 
+    @Test
     public final void password_Valid4() {
         Assert.assertTrue("Correct Password", IsValid.password("abcdef!1"));
     }
