@@ -4,6 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +19,10 @@ public class IsValid {
     // below regex comes from here - https://stackoverflow.com/a/21456918/1750620
 //            "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
 
+    // 1) Begins with 0
+    // 2) Then contains 8 and any number between 0-9
+    // 3) Then contains 8 digits
+    public static final String VALID_MOBILE_REGEX = "[0][7-9][0-9]{8}";
 
     public static boolean userName(String s) {
         if (StringUtils.isEmpty(s) || s.length() < 4 || !StringUtils.isEmpty(s.replaceAll(VALID_USERNAME_REGEX, "")))
@@ -31,13 +40,25 @@ public class IsValid {
         return EmailValidator.getInstance().isValid(s);
     }
 
-    public static boolean Mobile(String s){
-        // 1) Begins with 0
-        // 2) Then contains 8 and any number between 0-9
-        // 3) Then contains 8 digits
+    public static boolean Mobile(String s) {
 
-        Pattern p = Pattern.compile("[0][7-9][0-9]{8}");
-        Matcher m = p.matcher(s);
-        return (m.find() && m.group().equals(s));
+        if (StringUtils.isEmpty(s) || s.length() < 10 || !StringUtils.isEmpty(s.replaceAll(VALID_MOBILE_REGEX, "")))
+            return false;
+        return true;
     }
+
+    final static String DATE_FORMAT = "dd-MM-yyyy";
+
+    public static boolean DoB(String date)
+    {
+        try {
+            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
 }

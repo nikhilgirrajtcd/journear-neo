@@ -28,6 +28,11 @@ public class Registration {
     }
 
     @Test
+    public final void MobileNo_isNull(){
+        Assert.assertFalse("Field cannot be empty", IsValid.Mobile(null));
+    }
+
+    @Test
     public final void MobileNo_isInvalid1(){
         Assert.assertFalse("Invalid Mobile number", IsValid.Mobile("12a45b"));
     }
@@ -45,11 +50,6 @@ public class Registration {
     @Test
     public final void MobileNo_isValid1(){
         Assert.assertTrue("Invalid Mobile number", IsValid.Mobile("0894589231"));
-    }
-
-    @Test
-    public final void password_isNull() {
-        Assert.assertFalse("Password cannot be empty", IsValid.password(null));
     }
 
     @Test
@@ -93,5 +93,24 @@ public class Registration {
         Assert.assertTrue("Correct Password", IsValid.password("abcdef!1"));
     }
 
+    @Test
+    public final void DoB_isValid(){
+        Assert.assertTrue("Field cannot be empty", IsValid.DoB("01-01-1990"));
+    }
+
+    @Test
+    public final void DoB_isInvalid1(){
+        Assert.assertFalse("Date of Birth should be of format dd-MM-yyyy", IsValid.DoB("01011990"));
+    }
+
+    @Test
+    public final void DoB_isInvalid2(){
+        Assert.assertFalse("Date of Birth should be of format dd-MM-yyyy", IsValid.DoB("01-1990"));
+    }
+
+    @Test
+    public final void DoB_isInvalid3(){
+        Assert.assertFalse("Date of Birth should be of format dd-MM-yyyy", IsValid.DoB("1990-01-01"));
+    }
 
 }
