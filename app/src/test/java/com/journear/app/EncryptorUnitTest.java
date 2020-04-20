@@ -14,11 +14,10 @@ public class EncryptorUnitTest {
     @Test
     public final void plainShouldMatchDecrypted() {
         String plainText = "Going to Ibiza";
-        System.out.println("Plain text : " + plainText.length());
-        SecretKey secretKey = Encryptor.generateKey();
-        byte[] encrypted = Encryptor.encryptMsg(plainText, secretKey);
-        System.out.println("Encrypted bytes: " + encrypted.length);
-        String decrypted = Encryptor.decryptMsg(encrypted, secretKey);
+        System.out.println("Plain text length: " + plainText.length());
+        String encrypted = Encryptor.encryptMsg(plainText);
+        System.out.println("Encrypted length: " + encrypted.length());
+        String decrypted = Encryptor.decryptMsg(encrypted);
         Assert.assertEquals("Plain text matched decrypted text", plainText, decrypted);
     }
 
