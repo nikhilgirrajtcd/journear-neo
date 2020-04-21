@@ -165,7 +165,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        devicesList.add(ndOwnJourneyPlan);
+        if (!devicesList.contains(ndOwnJourneyPlan))
+            devicesList.add(ndOwnJourneyPlan);
 
         // TODO Nikhil Sujit
         // devicesList = some source for the data.
@@ -270,7 +271,9 @@ public class MainActivity extends AppCompatActivity {
             if (discoveredDnsRecords.containsKey(resourceType.deviceAddress)) {
                 NearbyDevice nd = discoveredDnsRecords.get(resourceType.deviceAddress);
 
-                devicesList.add(nd);
+                if (!devicesList.contains(nd))
+                    devicesList.add(nd);
+
                 recyclerViewAdapter.notifyItemInserted(devicesList.size());
             }
             Log.d(TAG, "onBonjourServiceAvailable " + instanceName);
