@@ -76,7 +76,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean validateInputs(String email, String password) {
-        return IsValid.email(email) & IsValid.password(password);
+        return true;
+//        return IsValid.email(email) & IsValid.password(password);
     }
 
     private void afterLoginSuccess() {

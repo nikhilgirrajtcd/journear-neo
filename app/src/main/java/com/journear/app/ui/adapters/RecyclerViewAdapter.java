@@ -1,11 +1,15 @@
 package com.journear.app.ui.adapters;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.journear.app.R;
 import com.journear.app.core.entities.NearbyDevice;
+import com.journear.app.ui.MainActivity;
 
+import java.io.Console;
 import java.util.List;
 
 public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -48,7 +54,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         return devicesList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView source;
         public TextView destination;
         public TextView travelTime;
@@ -66,7 +72,34 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             source = devicesList.findViewById(R.id.source);
             destination = devicesList.findViewById(R.id.destination);
             travelTime = devicesList.findViewById(R.id.travelTime);
+            findSource = devicesList.findViewById(R.id.Maps);
+            findRoute = devicesList.findViewById(R.id.editButton);
 
+            findSource.setOnClickListener(this);
+            findRoute.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position;
+            position = getAdapterPosition();
+            NearbyDevice dev = devicesList.get(position);
+            Context context = v.getContext();
+            Intent intent;
+            Toast.makeText(context,position,Toast.LENGTH_SHORT).show();
+            switch (v.getId()){
+                case R.id.editButton:
+                    Log.d("button", String.valueOf(position));
+                    Toast.makeText(context,position,Toast.LENGTH_SHORT).show();
+//                    intent = new Intent(context, MainActivity.class);
+//                    context.startActivity(intent);
+                    break;
+                case R.id.Maps:
+                    Toast.makeText(context,position,Toast.LENGTH_SHORT).show();
+//                    intent = new Intent(context, MainActivity.class);
+//                    context.startActivity(intent);
+                    break;
+            }
         }
     }
 //

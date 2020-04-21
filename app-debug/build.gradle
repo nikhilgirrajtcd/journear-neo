@@ -1,0 +1,18 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('app-debug.aar'))
+
+dependencies {
+
+    implementation 'org.mapsforge:vtm:0.13.0'
+    implementation 'org.mapsforge:vtm-android:0.13.0'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-armeabi-v7a'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-arm64-v8a'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-x86'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-x86_64'
+    implementation 'org.mapsforge:vtm-jts:0.13.0'
+    implementation 'org.mapsforge:vtm-themes:0.13.0'
+    implementation 'com.caverock:androidsvg:1.4'
+
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.slf4j:slf4j-android:1.7.30'
+}

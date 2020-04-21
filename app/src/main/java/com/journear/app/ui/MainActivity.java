@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: " + devices.getSource());
         }
 
+
         recyclerViewAdapter = new RecyclerViewAdapter(this, devicesList);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.notifyDataSetChanged();
