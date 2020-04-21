@@ -6,12 +6,9 @@ import android.util.Log;
 import com.journear.app.R;
 import com.journear.app.core.entities.JnGeocodeItem;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.nustaq.serialization.FSTConfiguration;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -63,7 +60,8 @@ public class JnGeocoder {
 
         try {
             InputStream deserializeStream = context.getResources().openRawResource(R.raw.geocodes_ie_fst);
-            returnSet = (ArrayList<JnGeocodeItem>) SerializerHelper.deserialize(deserializeStream, JnGeocodeItem.class);
+            returnSet = readGeocodingDataCsv(context);
+                    //(ArrayList<JnGeocodeItem>) SerializerHelper.deserialize(deserializeStream, JnGeocodeItem.class);
             System.out.println("Deserialized: " + returnSet.size());
         } catch (Exception ex) {
             Log.wtf("JnGeoCoder", "Error in deserializing data.", ex);
@@ -73,17 +71,17 @@ public class JnGeocoder {
     }
 
     // run once
-    private static ArrayList<JnGeocodeItem> readGeocodingDataCsv(String filePath) {
+    private static ArrayList<JnGeocodeItem> readGeocodingDataCsv(Context context) {
         // At the moment the function only returns the data for region "ie", while the
         // region field is not checked
-        if (StringUtils.isEmpty(filePath)) {
-            filePath = "C:\\Work\\Projects\\ASE\\JournearGeocoder\\geocodeHelper\\data\\in\\ireland-and-northern-ireland-latest.csv";
-        }
+//        if (StringUtils.isEmpty(filePath)) {
+//            filePath = "C:\\Work\\Projects\\ASE\\JournearGeocoder\\geocodeHelper\\data\\in\\ireland-and-northern-ireland-latest.csv";
+//        }
         final ArrayList<JnGeocodeItem> returnSet = new ArrayList<>();
         String row = "";
-
+        int max = 500;
         try {
-            InputStream csvStream = new FileInputStream(filePath);
+            InputStream csvStream = context.getResources().openRawResource(R.raw.geocodes_ie);
             final BufferedReader reader = new BufferedReader(
                     new InputStreamReader(csvStream, Charset.forName("UTF-8")));
             reader.readLine(); // skip header
@@ -103,6 +101,8 @@ public class JnGeocoder {
                     System.err.println("Lat/Longitude parsing error in row - " + row);
                     System.err.println(e);
                 }
+                if(max-- == 0)
+                    break;
             }
 
             reader.close();

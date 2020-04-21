@@ -1,16 +1,11 @@
 package com.journear.app.core;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.text.DateFormat;
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class IsValid {
     public static final String VALID_USERNAME_REGEX = "$\\w+[\\w\\d]{3,}";

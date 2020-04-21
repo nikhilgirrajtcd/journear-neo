@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.journear.app.R;
-import com.journear.app.core.IsValid;
 import com.journear.app.core.PersistentStore;
 import com.journear.app.core.ServerFunctions;
 

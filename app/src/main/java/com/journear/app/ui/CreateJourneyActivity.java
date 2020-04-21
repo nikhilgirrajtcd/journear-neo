@@ -1,8 +1,5 @@
 package com.journear.app.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
-
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -16,13 +13,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
-import com.journear.app.core.utils.JnGeocoder;
 import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.UserSkimmed;
+import com.journear.app.core.utils.JnGeocoder;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,7 +1,5 @@
 package com.journear.app.core.entities;
 
-import com.journear.app.core.utils.JnGeocoder;
-
 import java.io.Serializable;
 import java.util.Objects;
 

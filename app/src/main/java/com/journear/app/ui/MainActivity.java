@@ -9,35 +9,32 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
-import com.journear.app.ui.adapters.RecyclerViewAdapter;
 import com.journear.app.core.entities.StringWrapper;
 import com.journear.app.core.entities.UserSkimmed;
-
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.Menu;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.journear.app.map.LandingActivity;
+import com.journear.app.map.MapActivity;
+import com.journear.app.ui.adapters.RecyclerViewAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -147,6 +144,16 @@ public class MainActivity extends AppCompatActivity {
 
         unregisterAllWifiP2p();
         showJourneys();
+
+        findViewById(R.id.btnMap).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                double[] dddddd = {0, 0, 0, 0, 0, 0};
+                intent.putExtra(MapActivity.incomingIntentName, dddddd);
+                startActivity(intent);
+            }
+        });
     }
 
     private void showJourneys() {
@@ -165,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (!devicesList.contains(ndOwnJourneyPlan))
+        //if (!devicesList.contains(ndOwnJourneyPlan))
             devicesList.add(ndOwnJourneyPlan);
 
         // TODO Nikhil Sujit

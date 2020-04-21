@@ -1,6 +1,5 @@
 package com.journear.app.ui.adapters;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -17,15 +16,14 @@ import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.journear.app.R;
 import com.journear.app.core.entities.NearbyDevice;
-import com.journear.app.ui.MainActivity;
 
-import java.io.Console;
 import java.util.List;
 
 public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder> {
 
-   private Context context;
-   private List<NearbyDevice> devicesList;
+    private Context context;
+    private List<NearbyDevice> devicesList;
+
     public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList) {
         this.devicesList = devicesList;
         this.context = context;
@@ -35,20 +33,21 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.nearby_devices,parent, false);
+                .inflate(R.layout.nearby_devices, parent, false);
 
-        return new ViewHolder(view,context);
+        return new ViewHolder(view, context);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
-            NearbyDevice devices = devicesList.get(position);
-            holder.userName.setText(devices.getUser().getUserName());
-            holder.source.setText(devices.getSource2().placeString);
-            holder.destination.setText(devices.getDestination2().placeString);
-            holder.travelTime.setText(devices.getTravelTime().toString());
+        NearbyDevice devices = devicesList.get(position);
+        holder.userName.setText(devices.getUser().getUserName());
+        holder.source.setText(devices.getSource2().placeString);
+        holder.destination.setText(devices.getDestination2().placeString);
+        holder.travelTime.setText(devices.getTravelTime().toString());
     }
-// one for just testing deviceslist.size()
+
+    // one for just testing deviceslist.size()
     @Override
     public int getItemCount() {
         return devicesList.size();
@@ -65,7 +64,8 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         public Button edit;
         public Button delete;
         public int id;
-        public ViewHolder(@NonNull View devicesList , Context ctx) {
+
+        public ViewHolder(@NonNull View devicesList, Context ctx) {
             super(devicesList);
             context = ctx;
             userName = devicesList.findViewById(R.id.user_name);
@@ -86,16 +86,16 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             NearbyDevice dev = devicesList.get(position);
             Context context = v.getContext();
             Intent intent;
-            Toast.makeText(context,position,Toast.LENGTH_SHORT).show();
-            switch (v.getId()){
+            Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
+            switch (v.getId()) {
                 case R.id.editButton:
                     Log.d("button", String.valueOf(position));
-                    Toast.makeText(context,position,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "A"+ position, Toast.LENGTH_SHORT).show();
 //                    intent = new Intent(context, MainActivity.class);
 //                    context.startActivity(intent);
                     break;
                 case R.id.Maps:
-                    Toast.makeText(context,position,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "B" + position, Toast.LENGTH_SHORT).show();
 //                    intent = new Intent(context, MainActivity.class);
 //                    context.startActivity(intent);
                     break;
