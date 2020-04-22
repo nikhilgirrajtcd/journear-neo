@@ -1,10 +1,15 @@
 package com.journear.app.map;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,11 +27,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.content.Context;
+
+import androidx.core.app.ActivityCompat;
 
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.PathWrapper;
+import com.graphhopper.Trip;
 import com.journear.app.R;
 import com.graphhopper.config.ProfileConfig;
 import com.graphhopper.util.Constants;
@@ -58,9 +72,12 @@ import org.oscim.tiling.source.mapfile.MapFileTileSource;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -81,9 +98,87 @@ public class MapActivity extends Activity {
     private File mapsFolder;
     private ItemizedLayer<MarkerItem> itemizedLayer;
     private PathLayer pathLayer;
-    public final static  String incomingIntentName = "SOURCE-DESTINATION-CURRENT";
+    public final static String incomingIntentName = "SOURCE-DESTINATION-CURRENT";
+    private LocationManager locationManager = null;
+    private MyLocationListener locationListener = null;
+    private GeoPoint onLoadMarker;
 
-    protected boolean showRoute(GeoPoint p1, GeoPoint p2) {
+    private class MyLocationListener implements LocationListener {
+        private static final long min_distance_forupdate = 10;
+        private static final long min_time_to_update = 2 * 60 * 1000;
+        Location location;
+
+        public Location getLocation(String provider) {
+            if (locationManager.isProviderEnabled(provider)) {
+
+                try {
+
+                    locationManager.requestLocationUpdates(provider, min_time_to_update, min_distance_forupdate, this);
+                    if (locationManager != null) {
+                        location = locationManager.getLastKnownLocation(provider);
+                        return location;
+
+                    }
+                } catch (SecurityException r) {
+
+                    Log.d("loc", r.getMessage());
+                }
+                return location;
+            }
+
+            return location;
+        }
+
+        @Override
+        public void onLocationChanged(Location loc) {
+            Toast.makeText(
+                    getBaseContext(),
+                    "Location changed: Lat: " + loc.getLatitude() + " Lng: "
+                            + loc.getLongitude(), Toast.LENGTH_SHORT).show();
+            System.out.println("Location printed");
+            System.out.println(loc.getLongitude());
+            onLoadMarker = new GeoPoint((int) (loc.getLatitude() * 1E6), (int) (loc.getLongitude() * 1E6));
+            itemizedLayer.addItem(createMarkerItem(onLoadMarker, R.drawable.gps));
+            mapView.map().updateMap(true);
+            /*------- To get city name from coordinates -------- */
+            String cityName = null;
+            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+
+            List<Address> addresses;
+            try {
+                addresses = gcd.getFromLocation(loc.getLatitude(),
+                        loc.getLongitude(), 1);
+                if (addresses.size() > 0) {
+                    System.out.println(addresses.get(0).getLocality());
+                    cityName = addresses.get(0).getLocality();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    }
+
+    public void clearRoute() {
+        mapView.map().layers().remove(pathLayer);
+        itemizedLayer.removeAllItems();
+
+
+    }
+
+    public boolean showRoute(GeoPoint p1, GeoPoint p2) {
+        Log.i(LOGTAG, "Showing route...");
         if (!isReady())
             return false;
 
@@ -93,6 +188,7 @@ public class MapActivity extends Activity {
         }
 
         if (p1 != null && p2 != null) {
+//            mapView.map().setMapPosition((p1.getLatitude() + p2.getLatitude()) / 2, (p1.getLongitude() + p2.getLongitude())/ 2, 1 << 10);
             start = p1;
             end = p2;
             shortestPathRunning = true;
@@ -366,10 +462,37 @@ public class MapActivity extends Activity {
 
         // Map position
         GeoPoint mapCenter = tileSource.getMapInfo().boundingBox.getCenterPoint();
+
         mapView.map().setMapPosition(mapCenter.getLatitude(), mapCenter.getLongitude(), 1 << 15);
+
+
 
         setContentView(mapView);
         loadGraphStorage();
+        locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new MyLocationListener();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager
+                .GPS_PROVIDER, 5000, 10, locationListener);
+        Location loc = locationListener.getLocation(LocationManager.NETWORK_PROVIDER);
+        onLoadMarker = new GeoPoint((int) (loc.getLatitude() * 1E6), (int) (loc.getLongitude() * 1E6));
+        itemizedLayer.addItem(createMarkerItem(onLoadMarker, R.drawable.gps));
+        mapView.map().updateMap(true);
+//        if(onLoadMarker != null){
+//            mapView.map().setMapPosition(onLoadMarker.getLatitude(), onLoadMarker.getLongitude(), 1 << 15);
+//        }
+
     }
 
     void loadGraphStorage() {
@@ -415,9 +538,10 @@ public class MapActivity extends Activity {
         Log.i(LOGTAG, "Showing route from intent");
         Intent intent = getIntent();
         double[] dddddd = intent.getDoubleArrayExtra(incomingIntentName);
-        GeoPoint p1, p2, p3;
+        GeoPoint p1, p2;
         p1 = new GeoPoint(dddddd[0], dddddd[1]);
         p2 = new GeoPoint(dddddd[2], dddddd[3]);
+
         showRoute(p1, p2);
     }
 
@@ -479,6 +603,10 @@ public class MapActivity extends Activity {
                             + time + " " + resp.getDebugInfo());
                     logUser("the route is " + (int) (resp.getDistance() / 100) / 10f
                             + "km long, time:" + resp.getTime() / 60000f + "min, debug:" + time);
+
+//                    double  zoomFactor = 1 <<  (int)(resp.getDistance() * 0.15);
+                    mapView.map().setMapPosition((toLat + fromLat) / 2, (toLon + fromLon)/ 2, 1 << 10);
+
 
                     pathLayer = createPathLayer(resp);
                     mapView.map().layers().add(pathLayer);
@@ -546,6 +674,7 @@ public class MapActivity extends Activity {
         public boolean onGesture(Gesture g, MotionEvent e) {
             if (g instanceof Gesture.LongPress) {
                 GeoPoint p = mMap.viewport().fromScreenPoint(e.getX(), e.getY());
+                locationListener = new MyLocationListener();
                 return onLongPress(p);
             }
             return false;

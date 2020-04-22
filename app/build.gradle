@@ -74,4 +74,7 @@ dependencies {
     implementation 'commons-io:commons-io:2.6'
     implementation "de.ruedigermoeller:fst:2.56"
     implementation "commons-validator:commons-validator:1.6"
+    implementation 'com.google.android.material:material:1.0.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:design:28.0.0'
 }

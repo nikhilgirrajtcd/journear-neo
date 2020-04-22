@@ -8,6 +8,7 @@
       <string name="nav_header_desc">Navigation header</string>
     <string name="title_activity_main">JourNear</string>
     <string name="title_activity_landing">LandingActivity</string>
+    <string name = "register_password_hint">Enter Password</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
