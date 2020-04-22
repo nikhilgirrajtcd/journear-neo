@@ -1,6 +1,7 @@
 package com.journear.app.core.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class JnGeocodeItem implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
@@ -16,4 +17,21 @@ public class JnGeocodeItem implements Serializable, Cloneable {
         return placeString;
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+
+        if (!(obj instanceof JnGeocodeItem))
+            return false;
+
+        JnGeocodeItem j = (JnGeocodeItem) obj;
+        return Objects.equals(this.id, j.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 }

@@ -8,8 +8,9 @@ import com.journear.app.core.interfaces.Persistable;
 import com.journear.app.core.utils.JnGeocoder;
 
 import java.sql.Time;
+import java.util.Objects;
 
-public class NearbyDevices implements Parcelable, Persistable {
+public class NearbyDevice implements Parcelable, Persistable {
     private int id;
 
     @Deprecated
@@ -21,7 +22,7 @@ public class NearbyDevices implements Parcelable, Persistable {
     private JnGeocodeItem source2;
     private JnGeocodeItem destination2;
 
-    public NearbyDevices(JnGeocodeItem s, JnGeocodeItem d, Time timeOfTravel, UserSkimmed userSkimmed) {
+    public NearbyDevice(JnGeocodeItem s, JnGeocodeItem d, Time timeOfTravel, UserSkimmed userSkimmed) {
         this.source2 = s;
         this.destination2 = d;
         this.travelTime = timeOfTravel;
@@ -64,35 +65,11 @@ public class NearbyDevices implements Parcelable, Persistable {
         this.user = user;
     }
 
-    public NearbyDevices() {
+    public NearbyDevice() {
 
     }
 
-    public NearbyDevices(String source, String destination, Time travelTime, String user_rating) {
-        this.source = source;
-        this.destination = destination;
-        this.travelTime = travelTime;
-        this.user_rating = user_rating;
-    }
-
-    public NearbyDevices(String source, String destination, Time travelTime) {
-        this.source = source;
-        this.destination = destination;
-        this.travelTime = travelTime;
-
-    }
-
-    public NearbyDevices(int id, String source, String destination, Time travelTime, String user_rating) {
-        this.id = id;
-        this.source = source;
-        this.destination = destination;
-        this.travelTime = travelTime;
-        this.user_rating = user_rating;
-
-    }
-
-
-    protected NearbyDevices(Parcel in) {
+    protected NearbyDevice(Parcel in) {
         user = new UserSkimmed();
         user.setUserName(in.readString());
         source2 = JnGeocoder.getJnGeocodeItemById(in.readString());
@@ -100,15 +77,15 @@ public class NearbyDevices implements Parcelable, Persistable {
         travelTime = Time.valueOf(in.readString());
     }
 
-    public static final Creator<NearbyDevices> CREATOR = new Creator<NearbyDevices>() {
+    public static final Creator<NearbyDevice> CREATOR = new Creator<NearbyDevice>() {
         @Override
-        public NearbyDevices createFromParcel(Parcel in) {
-            return new NearbyDevices(in);
+        public NearbyDevice createFromParcel(Parcel in) {
+            return new NearbyDevice(in);
         }
 
         @Override
-        public NearbyDevices[] newArray(int size) {
-            return new NearbyDevices[size];
+        public NearbyDevice[] newArray(int size) {
+            return new NearbyDevice[size];
         }
     };
 
@@ -174,6 +151,31 @@ public class NearbyDevices implements Parcelable, Persistable {
         dest.writeString(source2.id);
         dest.writeString(destination2.id);
         dest.writeString(travelTime.toString());
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this)
+            return true;
+
+        if (!(obj instanceof NearbyDevice))
+            return false;
+
+        NearbyDevice nd = (NearbyDevice) obj;
+        boolean userEq = false;
+        if(this.user == null && nd.user == null)
+            userEq = true;
+        else
+            userEq = this.user.isSameAs(nd.user);
+
+        return userEq && Objects.equals(this.source2, nd.source2)
+                && Objects.equals(this.destination2, nd.destination2)
+                && Objects.equals(this.travelTime, nd.travelTime);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(user, source2, destination2, travelTime);
     }
 }

@@ -12,7 +12,6 @@ import com.journear.app.core.utils.AppConstants;
 
 import org.json.JSONObject;
 
-
 import java.util.HashMap;
 
 public class ServerFunctions {
@@ -34,8 +33,6 @@ public class ServerFunctions {
 
         return singleton;
     }
-
-
 
     public void authenticate(String username, String password, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 
@@ -64,6 +61,5 @@ public class ServerFunctions {
                 listener, errorListener);
 
         volleyQueue.add(request_json);
-
     }
 }

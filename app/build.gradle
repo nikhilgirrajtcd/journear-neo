@@ -1,26 +1,62 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+
     defaultConfig {
-        applicationId "com.journear.app"
+        applicationId "com.journear.android"
         minSdkVersion 22
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+    /*buildTypes {
+        all {
+            minifyEnabled true
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }*/
+
+    lintOptions {
+        /* CGIARProvider refers to java.awt
+         * HeightTile refers to javax.imageio and java.awt
+         * OSMElement refers to javax.xml.stream
+         */
+        disable 'InvalidPackage'
     }
 }
 
+/** only necessary if you need to use latest SNAPSHOT
+ configurations.all {// check for updates every build
+ resolutionStrategy.cacheChangingModulesFor 0, 'seconds'}**/
+
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation(group: 'com.graphhopper', name: 'graphhopper-core', version: '1.0-SNAPSHOT') {
+        exclude group: 'com.google.protobuf', module: 'protobuf-java'
+        exclude group: 'org.openstreetmap.osmosis', module: 'osmosis-osm-binary'
+        exclude group: 'org.apache.xmlgraphics', module: 'xmlgraphics-commons'
+    }
+
+    implementation 'org.mapsforge:vtm:0.13.0'
+    implementation 'org.mapsforge:vtm-android:0.13.0'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-armeabi-v7a'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-arm64-v8a'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-x86'
+    implementation 'org.mapsforge:vtm-android:0.13.0:natives-x86_64'
+    implementation 'org.mapsforge:vtm-jts:0.13.0'
+    implementation 'org.mapsforge:vtm-themes:0.13.0'
+    implementation 'com.caverock:androidsvg:1.4'
+
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.slf4j:slf4j-android:1.7.30'
+
+
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
@@ -34,8 +70,8 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.android.volley:volley:1.1.1'
-    implementation 'org.apache.commons:commons-text:1.8'
+    implementation 'org.apache.commons:commons-text:1.6'
     implementation 'commons-io:commons-io:2.6'
-    implementation group: 'com.google.guava', name: 'guava', version: '23.5-android'
     implementation "de.ruedigermoeller:fst:2.56"
+    implementation "commons-validator:commons-validator:1.6"
 }

@@ -1,4 +1,4 @@
-package com.journear.app;
+package com.journear.app.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,38 +9,32 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import android.os.Parcel;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import com.google.android.material.navigation.NavigationView;
-import com.journear.app.core.LocalFunctions;
-import com.journear.app.core.PersistentStore;
-import com.journear.app.core.entities.NearbyDevices;
-import com.journear.app.core.entities.RecyclerViewAdapter;
-import com.journear.app.core.entities.StringWrapper;
-import com.journear.app.core.entities.UserSkimmed;
-import com.journear.app.core.interfaces.Persistable;
-import com.journear.app.ui.CreateJourneyActivity;
-
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.Menu;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.journear.app.R;
+import com.journear.app.core.LocalFunctions;
+import com.journear.app.core.entities.NearbyDevice;
+import com.journear.app.core.entities.StringWrapper;
+import com.journear.app.core.entities.UserSkimmed;
+import com.journear.app.map.LandingActivity;
+import com.journear.app.map.MapActivity;
+import com.journear.app.ui.adapters.RecyclerViewAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
-    private List<NearbyDevices> devicesList = new ArrayList<>();
+    private List<NearbyDevice> devicesList = new ArrayList<>();
 
-    private NearbyDevices ndOwnJourneyPlan;
+    private NearbyDevice ndOwnJourneyPlan;
     public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -168,14 +162,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        devicesList.add(ndOwnJourneyPlan);
+        //if (!devicesList.contains(ndOwnJourneyPlan))
+            devicesList.add(ndOwnJourneyPlan);
 
         // TODO Nikhil Sujit
         // devicesList = some source for the data.
 
-        for (NearbyDevices devices : devicesList) {
+        for (NearbyDevice devices : devicesList) {
             Log.d(TAG, "onCreate: " + devices.getSource());
         }
+
 
         recyclerViewAdapter = new RecyclerViewAdapter(this, devicesList);
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -224,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    final HashMap<String, NearbyDevices> discoveredDnsRecords = new HashMap<>();
+    final HashMap<String, NearbyDevice> discoveredDnsRecords = new HashMap<>();
 
     WifiP2pManager.DnsSdTxtRecordListener dnsSdResponseRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
         @Override
@@ -237,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDnsSdTxtRecordAvailable(
                 String fullDomain, Map<String, String> record, WifiP2pDevice device) {
             Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-            NearbyDevices nd = new NearbyDevices();
+            NearbyDevice nd = new NearbyDevice();
             String[] all = StringUtils.split(record.get("a"), '|');
 
             // sequence = u, s, d, t
@@ -250,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
             //            nd.setSource2(record.get("s"));
 //            nd.setDestination2(record.get("d"));
-            nd.setTravelTime(record.get("t"));
+//            nd.setTravelTime(record.get("t"));
 //            UserSkimmed u = new UserSkimmed();
 //            u.setUserName(record.get("u"));
 //            nd.setUser(u);
@@ -270,9 +266,11 @@ public class MainActivity extends AppCompatActivity {
             // Nikhil - Set deviceName as deviceAddress because we don't have much info available so far!
 
             if (discoveredDnsRecords.containsKey(resourceType.deviceAddress)) {
-                NearbyDevices nd = discoveredDnsRecords.get(resourceType.deviceAddress);
+                NearbyDevice nd = discoveredDnsRecords.get(resourceType.deviceAddress);
 
-                devicesList.add(nd);
+                if (!devicesList.contains(nd))
+                    devicesList.add(nd);
+
                 recyclerViewAdapter.notifyItemInserted(devicesList.size());
             }
             Log.d(TAG, "onBonjourServiceAvailable " + instanceName);
@@ -287,10 +285,10 @@ public class MainActivity extends AppCompatActivity {
                 ndOwnJourneyPlan.getDestination2().id, ndOwnJourneyPlan.getTravelTime().toString());
 
         record.put("a", all);
-        record.put("u", ndOwnJourneyPlan.getUser().userName);
-        record.put("s", ndOwnJourneyPlan.getSource2().id);
-        record.put("d", ndOwnJourneyPlan.getDestination2().id);
-        record.put("t", ndOwnJourneyPlan.getTravelTime().toString());
+//        record.put("u", ndOwnJourneyPlan.getUser().userName);
+//        record.put("s", ndOwnJourneyPlan.getSource2().id);
+//        record.put("d", ndOwnJourneyPlan.getDestination2().id);
+//        record.put("t", ndOwnJourneyPlan.getTravelTime().toString());
 
         return WifiP2pDnsSdServiceInfo.newInstance(
                 SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
@@ -318,7 +316,6 @@ public class MainActivity extends AppCompatActivity {
                                                     public void onSuccess() {
                                                         shortToast("Success - discoverServices");
                                                     }
-
                                                     @Override
                                                     public void onFailure(int reason) {
                                                         shortToast("F6");

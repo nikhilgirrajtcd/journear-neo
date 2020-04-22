@@ -52,20 +52,20 @@
 
             />
 
-
         <EditText
             android:id="@+id/editPhone"
             android:hint="Phone"
             android:inputType="phone"
+            android:digits="0123456789+"
             android:text=""
+            android:maxLength="15"
             android:textColor="@color/colorPrimary"
             android:textColorHint="@color/colorPrimary"
             android:textSize="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-
             />
+
 
         <EditText
             android:id="@+id/editDob"

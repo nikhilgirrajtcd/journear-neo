@@ -1,8 +1,5 @@
 package com.journear.app.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
-
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -16,14 +13,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.google.android.material.snackbar.Snackbar;
-import com.journear.app.MainActivity;
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
-import com.journear.app.core.utils.JnGeocoder;
 import com.journear.app.core.entities.JnGeocodeItem;
-import com.journear.app.core.entities.NearbyDevices;
+import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.UserSkimmed;
+import com.journear.app.core.utils.JnGeocoder;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -85,7 +84,7 @@ public class CreateJourneyActivity extends AppCompatActivity {
             }
 
             private void createJourney(View v) {
-                NearbyDevices nd = getCurrentInput();
+                NearbyDevice nd = getCurrentInput();
                 Snackbar.make(v, "Journey Created", Snackbar.LENGTH_SHORT).show();
 
                 LocalFunctions.setCurrentJourney(nd, CreateJourneyActivity.this);
@@ -108,7 +107,7 @@ public class CreateJourneyActivity extends AppCompatActivity {
         });
     }
 
-    private NearbyDevices getCurrentInput() {
+    private NearbyDevice getCurrentInput() {
 
         final AutoCompleteTextView sourceTextView = findViewById(R.id.acTextView_source);
         final AutoCompleteTextView destinationTextView = findViewById(R.id.acTextView_destination);
@@ -121,7 +120,7 @@ public class CreateJourneyActivity extends AppCompatActivity {
             JnGeocodeItem d = mapTextValueToJnGeoCodeItem.get(destination);
             Time timeOfTravel = Time.valueOf(timeTextView.getText().toString() + ":00");
             UserSkimmed userSkimmed = LocalFunctions.getCurrentRegisteredUser(this);
-            NearbyDevices currentInput = new NearbyDevices(s, d, timeOfTravel, userSkimmed);
+            NearbyDevice currentInput = new NearbyDevice(s, d, timeOfTravel, userSkimmed);
 
             Log.i("SELECTION", "Source: " + s.latitude + ", " + s.longitude);
             Log.i("SELECTION", "" + source);
