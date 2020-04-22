@@ -100,8 +100,8 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="openMapBtn">Open Map</string>
-
-
+    <string name="askPermissionBtn">Ask Permissions</string>
+    <string name="landingPageTextBtn">Storage and Location Permission->For Maps;;</string>
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
