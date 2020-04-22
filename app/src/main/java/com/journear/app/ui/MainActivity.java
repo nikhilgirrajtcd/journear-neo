@@ -1,14 +1,17 @@
 package com.journear.app.ui;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -32,6 +35,7 @@ import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.StringWrapper;
 import com.journear.app.core.entities.UserSkimmed;
+import com.journear.app.core.services.JourNearCommunicationsService;
 import com.journear.app.map.LandingActivity;
 import com.journear.app.map.MapActivity;
 import com.journear.app.ui.adapters.RecyclerViewAdapter;
@@ -56,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(action.equals(WifiP2pManager.WIFI_P2P_STATE_ENABLED))
-            {
+            if (action.equals(WifiP2pManager.WIFI_P2P_STATE_ENABLED)) {
                 shortToast("Should do it now!");
             }
         }
@@ -74,24 +77,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int MY_HANDLE = 0x400 + 2;
 
     private static final int PERMISSIONS_REQUEST_CODE = 1001;
-
-    // Such a Karen function
-    public WifiP2pManager getManager() {
-        if (_manager == null)
-            _manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        return _manager;
-    }
-
-    // such an advertisement of digital tv
-    public WifiP2pManager.Channel getChannel() {
-        if (_channel == null){
-            _channel = getManager().initialize(this, getMainLooper(), null);
-        }
-        return _channel;
-    }
-
-    private WifiP2pManager _manager;
-    private WifiP2pManager.Channel _channel;
 
     static final int SERVER_PORT = 4545;
 
@@ -141,44 +126,65 @@ public class MainActivity extends AppCompatActivity {
                 showJourneys();
             }
         });
-
-        unregisterAllWifiP2p();
         showJourneys();
+
+        bindService();
     }
 
+    protected void bindService() {
+        Intent intent1 = new Intent(MainActivity.this, JourNearCommunicationsService.class);
+        bindService(intent1, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    JourNearCommunicationsService.ServiceActivityBinder binder = null;
+    JourNearCommunicationsService communicationsService = null;
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            binder = (JourNearCommunicationsService.ServiceActivityBinder) service;
+            communicationsService = binder.getService();
+
+            if (ndOwnJourneyPlan != null) {
+                communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
+
+                // service bind complete
+                devicesList.addAll(communicationsService.getBufferedResponses());
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            // TODO: Do something here.
+        }
+    };
+
+
+    /**
+     * Initialize the list on UI. Add the ndOwnJourneyPlan if not null
+     */
     private void showJourneys() {
-        if (ndOwnJourneyPlan != null) {
-//            startRegistration();
-//            discoverService();
-//            startBroadCastAndDiscovery();
-            discoverDevices();
-            showList();
-        }
-    }
-
-    private void showList() {
-
         recyclerView = findViewById(R.id.recyclerview);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        //if (!devicesList.contains(ndOwnJourneyPlan))
-            devicesList.add(ndOwnJourneyPlan);
-
-        // TODO Nikhil Sujit
-        // devicesList = some source for the data.
-
-        for (NearbyDevice devices : devicesList) {
-            Log.d(TAG, "onCreate: " + devices.getSource());
-        }
-
-
         recyclerViewAdapter = new RecyclerViewAdapter(this, devicesList);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.notifyDataSetChanged();
 
+
+        // If the list does not already contain the current ride, Add it.
+        if (ndOwnJourneyPlan != null && !devicesList.contains(ndOwnJourneyPlan)) {
+            if (devicesList.add(ndOwnJourneyPlan)) {
+                int position = devicesList.indexOf(ndOwnJourneyPlan);
+                recyclerViewAdapter.notifyItemInserted(position);
+            }
+        }
     }
 
+    /**
+     * Checks if a user is logged in. Sets the left drawer UI.
+     * @return true if the a user is logged in, false otherwise.
+     */
     private boolean checkUserLogon() {
         Object currentUser = LocalFunctions.getCurrentLoggedInUser(MainActivity.this);
         if (currentUser == null) {
@@ -190,6 +196,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Sets username, avatar and email on the left drawer.
+     */
     private void decorateUiForUser() {
         StringWrapper currentUser = LocalFunctions.getCurrentLoggedInUser(MainActivity.this);
         // Todo: Fetch the user details from server over here and user that to set the environment
@@ -219,147 +228,46 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(serviceConnection);
+    }
 
-    final HashMap<String, NearbyDevice> discoveredDnsRecords = new HashMap<>();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindService();
+    }
 
-    WifiP2pManager.DnsSdTxtRecordListener dnsSdResponseRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
-        @Override
-        /* Callback includes:
-         * fullDomain: full domain name: e.g "printer._ipp._tcp.local."
-         * record: TXT record dta as a map of key/value pairs.
-         * device: The device running the advertised service.
-         */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbindService(serviceConnection);
+    }
 
-        public void onDnsSdTxtRecordAvailable(
-                String fullDomain, Map<String, String> record, WifiP2pDevice device) {
-            Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-            NearbyDevice nd = new NearbyDevice();
-            String[] all = StringUtils.split(record.get("a"), '|');
+    public static final String intentDeviceFound = "DeviceFound";
+    public static final String intentJoiningRequest = "NewJoiningRequest";
 
-            // sequence = u, s, d, t
-            UserSkimmed u = new UserSkimmed();
-            u.setUserName(all[0]);
-            nd.setUser(u);
-            nd.setSource2(all[1]);
-            nd.setDestination2(all[2]);
-            nd.setTravelTime(all[3]);
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.hasExtra(intentDeviceFound)) {
+            NearbyDevice nd = intent.getParcelableExtra(intentDeviceFound);
+            if (!devicesList.contains(nd))
+                devicesList.add(nd);
 
-            //            nd.setSource2(record.get("s"));
-//            nd.setDestination2(record.get("d"));
-//            nd.setTravelTime(record.get("t"));
-//            UserSkimmed u = new UserSkimmed();
-//            u.setUserName(record.get("u"));
-//            nd.setUser(u);
-
-            discoveredDnsRecords.put(device.deviceAddress, nd);
+            recyclerViewAdapter.notifyItemInserted(devicesList.size());
+            // add device
         }
-    };
 
-    WifiP2pManager.DnsSdServiceResponseListener dnsSdResponseServiceListener = new WifiP2pManager.DnsSdServiceResponseListener() {
-        @Override
-        public void onDnsSdServiceAvailable(String instanceName, String registrationType,
-                                            WifiP2pDevice resourceType) {
-            shortToast("DNS Service Available");
-            // Update the device name with the human-friendly version from
-            // the DnsTxtRecord, assuming one arrived.
+        if (intent.hasExtra(intentJoiningRequest)) {
 
-            // Nikhil - Set deviceName as deviceAddress because we don't have much info available so far!
-
-            if (discoveredDnsRecords.containsKey(resourceType.deviceAddress)) {
-                NearbyDevice nd = discoveredDnsRecords.get(resourceType.deviceAddress);
-
-                if (!devicesList.contains(nd))
-                    devicesList.add(nd);
-
-                recyclerViewAdapter.notifyItemInserted(devicesList.size());
-            }
-            Log.d(TAG, "onBonjourServiceAvailable " + instanceName);
         }
-    };
-
-
-    private WifiP2pDnsSdServiceInfo getWifiP2pDnsSdServiceInfo() {
-        Map<String, String> record = new HashMap<String, String>();
-
-        String all = StringUtils.joinWith("|", ndOwnJourneyPlan.getUser().userName, ndOwnJourneyPlan.getSource2().id,
-                ndOwnJourneyPlan.getDestination2().id, ndOwnJourneyPlan.getTravelTime().toString());
-
-        record.put("a", all);
-//        record.put("u", ndOwnJourneyPlan.getUser().userName);
-//        record.put("s", ndOwnJourneyPlan.getSource2().id);
-//        record.put("d", ndOwnJourneyPlan.getDestination2().id);
-//        record.put("t", ndOwnJourneyPlan.getTravelTime().toString());
-
-        return WifiP2pDnsSdServiceInfo.newInstance(
-                SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
     }
 
-    private void discoverDevices() {
-        getManager().clearLocalServices(getChannel(), new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                getManager().addLocalService(getChannel(), getWifiP2pDnsSdServiceInfo(), new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        getManager().setDnsSdResponseListeners(getChannel(), dnsSdResponseServiceListener, dnsSdResponseRecordListener);
-                        getManager().clearServiceRequests(getChannel(), new WifiP2pManager.ActionListener() {
-                            @Override
-                            public void onSuccess() {
-                                getManager().addServiceRequest(getChannel(), WifiP2pDnsSdServiceRequest.newInstance(), new WifiP2pManager.ActionListener() {
-                                    @Override
-                                    public void onSuccess() {
-                                        getManager().discoverPeers(getChannel(), new WifiP2pManager.ActionListener() {
-                                            @Override
-                                            public void onSuccess() {
-                                                getManager().discoverServices(getChannel(), new WifiP2pManager.ActionListener() {
-                                                    @Override
-                                                    public void onSuccess() {
-                                                        shortToast("Success - discoverServices");
-                                                    }
-                                                    @Override
-                                                    public void onFailure(int reason) {
-                                                        shortToast("F6");
-                                                    }
-                                                });
-                                            }
+    private void selectRideToJoin() {
 
-                                            @Override
-                                            public void onFailure(int reason) {
-                                                shortToast("F5");
-                                            }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onFailure(int reason) {
-                                        shortToast("F4");
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure(int reason) {
-                                shortToast("F3");
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(int reason) {
-                        shortToast("F2");
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                shortToast("F1");
-            }
-        });
     }
 
-    private void unregisterAllWifiP2p() {
-        getManager().clearLocalServices(getChannel(), null);
-        getManager().clearServiceRequests(getChannel(), null);
-    }
 }

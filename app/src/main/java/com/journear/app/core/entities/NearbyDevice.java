@@ -9,6 +9,7 @@ import com.journear.app.core.utils.JnGeocoder;
 
 import java.sql.Time;
 import java.util.Objects;
+import java.util.Random;
 
 public class NearbyDevice implements Parcelable, Persistable {
     private int id;
@@ -177,5 +178,31 @@ public class NearbyDevice implements Parcelable, Persistable {
     public int hashCode()
     {
         return Objects.hash(user, source2, destination2, travelTime);
+    }
+
+
+    public static Time CurrentTime()
+    {
+        return new Time(System.currentTimeMillis());
+    }
+
+    public static NearbyDevice getDummy() {
+        JnGeocodeItem source = new JnGeocodeItem();
+        source.id = "350258";
+        source.longitude = -6.3241865;
+        source.latitude = 54.2184922;
+        source.placeString = "Sheephill";
+
+        JnGeocodeItem destination = new JnGeocodeItem();
+        destination.id = "351437";
+        destination.longitude = -6.0245976;
+        destination.latitude = 54.5086153;
+        destination.placeString = "Saintfield Road";
+
+        UserSkimmed user = new UserSkimmed();
+        user.userName = "dummy" + (new Random()).nextInt();
+        user.setGender("M");
+
+        return new NearbyDevice(source, destination, CurrentTime(), user);
     }
 }
