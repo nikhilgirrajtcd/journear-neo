@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ndOwnJourneyPlan = intent.getParcelableExtra("EXTRA");
 
+        // Ask for permissions if user has revoked the permission manually after giving the permission for the first time
+        LocalFunctions.requestPermissions(MainActivity.this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -96,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
         if (!loggedIn)
             finish();
         // if needs be check the value of loggedIn and stop further execution from here
+
+//        LocalFunctions.checkLocationPermission(MainActivity.this);
+//        LocalFunctions.checkStoragePermission(MainActivity.this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -24,12 +24,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name="com.journear.app.ui.LandingActivity" />
         <service
             android:name="com.journear.app.core.services.JourNearCommunicationsService"
             android:enabled="true"
             android:exported="true"></service>
-
-        <activity android:name=".map.LandingActivity" />
         <activity
             android:name=".map.MapActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

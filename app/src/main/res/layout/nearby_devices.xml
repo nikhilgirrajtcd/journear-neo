@@ -13,6 +13,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="15dp">
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/editJourney"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@android:drawable/ic_menu_edit"></Button>
+
+            </TableRow>
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
@@ -20,6 +36,7 @@
 
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
 
             <TextView
                 android:id="@+id/source"
@@ -56,11 +73,11 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/editButton"
+                    android:id="@+id/currentTOSource"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@android:drawable/ic_menu_edit" />
+                    android:background="@android:drawable/ic_menu_compass" />
 
                 <Button
                     android:id="@+id/Maps"

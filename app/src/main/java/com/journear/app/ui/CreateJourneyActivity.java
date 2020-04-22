@@ -27,9 +27,11 @@ import com.journear.app.core.utils.JnGeocoder;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.SimpleTimeZone;
 
 public class CreateJourneyActivity extends AppCompatActivity {
 
@@ -38,18 +40,35 @@ public class CreateJourneyActivity extends AppCompatActivity {
     private TextView timeTextView;
     private int minuteOfJourney;
     private int hourOfJourney;
+    private NearbyDevice editDevice;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
+        String className = getIntent().getStringExtra("Class");
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.popup_ride);
 
-        final AutoCompleteTextView sourceTextView = findViewById(R.id.acTextView_source);
-        final AutoCompleteTextView destinationTextView = findViewById(R.id.acTextView_destination);
-        final Calendar cal = Calendar.getInstance();
+        if(className != null ) {
+
+            editDevice = intent.getParcelableExtra("EditIntent");
+            setInputValues(editDevice);
+        }
+
+
+        AutoCompleteTextView sourceTextView = findViewById(R.id.acTextView_source);
+        AutoCompleteTextView destinationTextView = findViewById(R.id.acTextView_destination);
+        Calendar cal = Calendar.getInstance();
+        if(className != null ) {
+
+            editDevice = intent.getParcelableExtra("EditIntent");
+            setInputValues(editDevice);
+        }
+
 
         timeTextView = findViewById(R.id.btn_setTime);
         setTimeInTextView(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
@@ -91,7 +110,6 @@ public class CreateJourneyActivity extends AppCompatActivity {
 
                 final Intent intent = new Intent(CreateJourneyActivity.this, MainActivity.class);
                 intent.putExtra("EXTRA", nd);
-
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -154,5 +172,17 @@ public class CreateJourneyActivity extends AppCompatActivity {
                 mapTextValueToJnGeoCodeItem.put(view1.getText().toString(), adapter.getItem(position));
             }
         });
+    }
+
+    private void setInputValues(NearbyDevice nd){
+
+        ((AutoCompleteTextView)findViewById(R.id.acTextView_source)).setText(nd.getSource2().placeString);
+        mapTextValueToJnGeoCodeItem.put(nd.getSource2().placeString, nd.getSource2());
+        ((AutoCompleteTextView)findViewById(R.id.acTextView_destination)).setText(nd.getDestination2().placeString);
+        mapTextValueToJnGeoCodeItem.put(nd.getDestination2().placeString, nd.getDestination2());
+
+        ((TextView)findViewById(R.id.btn_setTime)).setText(nd.getTravelTime().toString());
+
+        //TODO set time
     }
 }
