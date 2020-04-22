@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.i(logTag, "Server communication while trying to log in.");
+            Log.e(logTag, "Server communication error while trying to log in.", error);
         }
     };
 
