@@ -1,3 +1,6 @@
+/**
+ * Contains the map functionality code
+ */
 package com.journear.app.map;
 
 import android.app.Activity;
@@ -83,6 +86,13 @@ public class MapActivity extends Activity {
     private PathLayer pathLayer;
     public final static  String incomingIntentName = "SOURCE-DESTINATION-CURRENT";
 
+
+    /**
+     * Display the route between the specified Co - Ordinates
+     * @param p1 Co - Ordinates of point P1
+     * @param p2 Co - Ordinates of point P2
+     * @return returns true and call functions to draw the marker pins on the map layer and the calcPath method
+     */
     protected boolean showRoute(GeoPoint p1, GeoPoint p2) {
         if (!isReady())
             return false;
@@ -106,6 +116,11 @@ public class MapActivity extends Activity {
         return true;
     }
 
+    /***
+     * Drops the location pins on long press
+     * @param p Co - Ordinates of point P
+     * @return false if the map is not ready else true
+     */
     protected boolean onLongPress(GeoPoint p) {
         if (!isReady())
             return false;
@@ -135,6 +150,10 @@ public class MapActivity extends Activity {
         return true;
     }
 
+    /***
+     * Function called on creation of the object
+     * @param savedInstanceState Bundle object
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -151,6 +170,7 @@ public class MapActivity extends Activity {
                 logUser("GraphHopper is not usable without an external storage!");
                 return;
             }
+            // Path to the maps folder
             mapsFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                     "/graphhopper/maps/");
         } else
@@ -166,8 +186,8 @@ public class MapActivity extends Activity {
 //        p2 = new GeoPoint(dddddd[2], dddddd[3]);
 //        p3 = new GeoPoint(dddddd[4], dddddd[5]);
 
+        // Map files of Ireland initialized by default
         initFiles("ireland-and-northern-ireland-latest");
-
     }
 
     @Override
@@ -209,6 +229,10 @@ public class MapActivity extends Activity {
         return false;
     }
 
+    /***
+     * Initialise the map files
+     * @param area Name of the folder containing the map and graph files
+     */
     private void initFiles(String area) {
         prepareInProgress = true;
         currentArea = area;
@@ -266,6 +290,7 @@ public class MapActivity extends Activity {
 //        }.execute();
 //    }
 
+    // To Do  - Nikhil is it required?
     private void chooseArea(Button button, final Spinner spinner,
                             List<String> nameList, final MySpinnerListener myListener) {
         final Map<String, String> nameToFullName = new TreeMap<>();
@@ -296,6 +321,9 @@ public class MapActivity extends Activity {
         });
     }
 
+    /***
+     * Downloads the files if they are not present, else gives the path to the area folder
+     */
     void downloadingFiles() {
         final File areaFolder = new File(mapsFolder, currentArea + "-gh");
         if (downloadURL == null || areaFolder.exists()) {
@@ -310,6 +338,9 @@ public class MapActivity extends Activity {
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.show();
 
+        /***
+         * AsyncTask that handles the map functionality
+         */
         new GHAsyncTask<Void, Integer, Object>() {
             protected Object saveDoInBackground(Void... _ignore)
                     throws Exception {
@@ -346,6 +377,10 @@ public class MapActivity extends Activity {
         }.execute();
     }
 
+    /**
+     * Function that load the map file and call the loadGraphStorage function for the graphs to be loaded
+     * @param areaFolder The folder containing the area files
+     */
     void loadMap(File areaFolder) {
         logUser("loading map");
 
@@ -372,8 +407,15 @@ public class MapActivity extends Activity {
         loadGraphStorage();
     }
 
+    /**
+     * Loads the graph of the map specified
+     * The profile has to be specified
+     */
     void loadGraphStorage() {
         logUser("loading graph (" + Constants.VERSION + ") ... ");
+        /***
+         * AsyncTask handling the graph functionality
+         */
         new GHAsyncTask<Void, Void, Path>() {
             protected Path saveDoInBackground(Void... v) throws Exception {
                 GraphHopper tmpHopp = new GraphHopper().forMobile();
@@ -411,6 +453,9 @@ public class MapActivity extends Activity {
         }.execute();
     }
 
+    /***
+     * Shows the route between the given Co - Ordinates on the the map
+     */
     private void showRoute() {
         Log.i(LOGTAG, "Showing route from intent");
         Intent intent = getIntent();
@@ -425,6 +470,11 @@ public class MapActivity extends Activity {
         prepareInProgress = false;
     }
 
+    /***
+     * Creates the route layer to be displayed on the map
+     * @param response the best possible route obtained
+     * @return the pathLayer created
+     */
     private PathLayer createPathLayer(PathWrapper response) {
         Style style = Style.builder()
                 .fixed(true)
@@ -441,6 +491,12 @@ public class MapActivity extends Activity {
         return pathLayer;
     }
 
+    /***
+     *
+     * @param p Co - Ordinates
+     * @param resource resource parameter
+     * @return the markerItem to be created
+     */
     @SuppressWarnings("deprecation")
     private MarkerItem createMarkerItem(GeoPoint p, int resource) {
         Drawable drawable = getResources().getDrawable(resource);
@@ -451,6 +507,13 @@ public class MapActivity extends Activity {
         return markerItem;
     }
 
+    /***
+     * Calculates the path from the Source to the Destination
+     * @param fromLat Source Latitude
+     * @param fromLon Source Longitude
+     * @param toLat Destination Latitude
+     * @param toLon Destination Longitude
+     */
     public void calcPath(final double fromLat, final double fromLon,
                          final double toLat, final double toLon) {
 

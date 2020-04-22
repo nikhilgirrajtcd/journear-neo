@@ -1,3 +1,7 @@
+/**
+ * Abstract class that extends AsyncTask class. Used to call the Map
+ */
+
 package com.journear.app.map;
 
 import android.os.AsyncTask;

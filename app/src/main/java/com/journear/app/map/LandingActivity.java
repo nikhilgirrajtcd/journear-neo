@@ -1,3 +1,6 @@
+/***
+ * 
+ */
 package com.journear.app.map;
 
 import android.content.Intent;
