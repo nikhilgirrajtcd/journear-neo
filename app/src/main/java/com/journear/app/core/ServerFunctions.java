@@ -50,7 +50,7 @@ public class ServerFunctions {
     public void registerUser(User user, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         HashMap<String,String> params = new HashMap<>();
 
-        params.put("name", user.getUserName());
+        params.put("name", user.getName());
         params.put("email", user.getEmail());
         params.put("password", user.getPassword());
         params.put("phone", user.getPhone());

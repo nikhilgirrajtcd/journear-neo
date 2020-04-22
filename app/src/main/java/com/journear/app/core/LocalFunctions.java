@@ -21,13 +21,23 @@ import com.journear.app.map.MapActivity;
 
 public class LocalFunctions {
 
+    @Deprecated
     public static User getCurrentRegisteredUser(Context context) {
 
         return (User) PersistentStore.getInstance(context).getItem("registeredUser", User.class);
     }
 
+    @Deprecated
     public static StringWrapper getCurrentLoggedInUser(Context context) {
         return (StringWrapper) PersistentStore.getInstance(context).getItem("currentUser", StringWrapper.class);
+    }
+
+    public static User getCurrentUser(Context context) {
+        return (User) PersistentStore.getInstance(context).getItem("currentUser", User.class);
+    }
+
+    public static void setCurrentUser(Context context, User user) {
+        PersistentStore.getInstance(context).setItem("currentUser", user, true);
     }
 
     public static void setCurrentJourney(NearbyDevice nd, Context context) {
@@ -98,7 +108,7 @@ public class LocalFunctions {
 
     public static boolean isLocationPermissionGiven(Activity activity) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED) {
             return false;
         } else
             return true;

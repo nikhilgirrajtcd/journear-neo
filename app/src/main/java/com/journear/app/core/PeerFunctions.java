@@ -4,7 +4,6 @@ import com.journear.app.core.entities.NearbyDevice;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 
 public class PeerFunctions {
@@ -20,7 +19,7 @@ public class PeerFunctions {
             return getBroadcastString(NearbyDevice.getDummy());
         }
         return StringUtils.joinWith("|",
-                ndOwnJourneyPlan.getUser() == null ? "Dummy" : ndOwnJourneyPlan.getUser().userName,
+                ndOwnJourneyPlan.getUser() == null ? "Dummy" : ndOwnJourneyPlan.getUser().name,
                 ndOwnJourneyPlan.getSource2() == null ? -1 : ndOwnJourneyPlan.getSource2().id,
                 ndOwnJourneyPlan.getDestination2() == null ? -1 : ndOwnJourneyPlan.getDestination2().id,
                 ndOwnJourneyPlan.getTravelTime().toString());

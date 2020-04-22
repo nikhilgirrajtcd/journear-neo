@@ -13,8 +13,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
-import com.journear.app.core.PersistentStore;
 import com.journear.app.core.ServerFunctions;
+import com.journear.app.core.entities.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +38,18 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(logTag, "Received server response.");
                 //Process os success response
                 if (response.get("Message").toString().equals("Success")) {
-                    afterLoginSuccess();
+                    onLoginSuccess();
+                    if(response.has("user"))
+                    {
+                        JSONObject userJsonObj = response.getJSONObject("user");
+                        User user = new User();
+                        user.setDobValue(userJsonObj.get("dob").toString());
+                        user.setGender(userJsonObj.get("gender").toString());
+                        user.setUserID(userJsonObj.get("id").toString());
+                        user.setEmail(userJsonObj.get("username").toString());
+                        user.name = userJsonObj.get("name").toString();
+                        LocalFunctions.setCurrentUser(LoginActivity.this, user);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -57,9 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 validateAndLogin();
-
             }
         });
 
@@ -80,10 +89,10 @@ public class LoginActivity extends AppCompatActivity {
 //        return IsValid.email(email) & IsValid.password(password);
     }
 
-    private void afterLoginSuccess() {
-        // TODO : Move PersistenceStore call to LocalFunctions
-        PersistentStore.getInstance(LoginActivity.this).setItem("currentUser", email.getText().toString(), true);
-
+    /**
+     * Move to another activity or save the response of the Login call to server.
+     */
+    private void onLoginSuccess() {
         Intent loginSuccessIntent;
         if(LocalFunctions.requestPermissions(LoginActivity.this))
             loginSuccessIntent = new Intent(LoginActivity.this, MainActivity.class);

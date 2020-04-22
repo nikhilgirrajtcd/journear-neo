@@ -7,12 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +25,7 @@ import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevice;
-import com.journear.app.core.utils.JnGeocoder;
 import com.journear.app.ui.CreateJourneyActivity;
-import com.journear.app.ui.MainActivity;
 
 import org.oscim.core.GeoPoint;
 
@@ -63,7 +59,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
         NearbyDevice devices = devicesList.get(position);
-        holder.userName.setText(devices.getUser().getUserName());
+        holder.userName.setText(devices.getUser().getName());
         holder.source.setText(devices.getSource2().placeString);
         holder.destination.setText(devices.getDestination2().placeString);
         holder.travelTime.setText(devices.getTravelTime().toString());
@@ -116,7 +112,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             switch (v.getId()) {
                 case R.id.currentTOSource:
                     //Taran add functionality
-                    findLocation(dev , v);
+                    findLocation(dev, v);
                     break;
 
                 case R.id.editJourney:
@@ -129,7 +125,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     JnGeocodeItem source = devicesList.get(position).getSource2();
                     JnGeocodeItem destination = devicesList.get(position).getDestination2();
                     LocalFunctions.launchMapActivityWithRoute(v.getContext(), source.latitude, source.longitude,
-                    destination.latitude, destination.longitude);
+                            destination.latitude, destination.longitude);
 
 //                    intent = new Intent(context, MainActivity.class);
 //                    context.startActivity(intent);
@@ -142,12 +138,12 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 
         final Intent intent = new Intent(context, CreateJourneyActivity.class);
         intent.putExtra("EditIntent", device);
-        intent.putExtra("Class","RecyclerView");
-       view.getContext().startActivity(intent);
+        intent.putExtra("Class", "RecyclerView");
+        view.getContext().startActivity(intent);
 
     }
 
-    public void findLocation(final NearbyDevice device,View v){
+    public void findLocation(final NearbyDevice device, View v) {
         myLocationListner = new MyLocationListener();
         locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
@@ -167,9 +163,9 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         myLocationListner = new MyLocationListener(locationManager);
         Location loc = myLocationListner.getLocation(LocationManager.NETWORK_PROVIDER);
         JnGeocodeItem source = device.getSource2();
-
-        LocalFunctions.launchMapActivityWithRoute(v.getContext(),loc.getLatitude(),loc.getLongitude() ,source.latitude, source.longitude
-               );
+        LocalFunctions.launchMapActivityWithRoute(v.getContext(),
+                loc.getLatitude(), loc.getLongitude(),
+                source.latitude, source.longitude);
 
     }
 //

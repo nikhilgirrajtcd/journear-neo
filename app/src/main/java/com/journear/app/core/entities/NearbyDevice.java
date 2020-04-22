@@ -72,7 +72,7 @@ public class NearbyDevice implements Parcelable, Persistable {
 
     protected NearbyDevice(Parcel in) {
         user = new UserSkimmed();
-        user.setUserName(in.readString());
+        user.setName(in.readString());
         source2 = JnGeocoder.getJnGeocodeItemById(in.readString());
         destination2 = JnGeocoder.getJnGeocodeItemById(in.readString());
         travelTime = Time.valueOf(in.readString());
@@ -148,7 +148,7 @@ public class NearbyDevice implements Parcelable, Persistable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(user.userName);
+        dest.writeString(user.name);
         dest.writeString(source2.id);
         dest.writeString(destination2.id);
         dest.writeString(travelTime.toString());
@@ -200,7 +200,7 @@ public class NearbyDevice implements Parcelable, Persistable {
         destination.placeString = "Saintfield Road";
 
         UserSkimmed user = new UserSkimmed();
-        user.userName = "dummy" + (new Random()).nextInt();
+        user.name = "dummy" + (new Random()).nextInt();
         user.setGender("M");
 
         return new NearbyDevice(source, destination, CurrentTime(), user);

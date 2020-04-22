@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.journear.app.R;
-import com.journear.app.core.PersistentStore;
 import com.journear.app.core.ServerFunctions;
 import com.journear.app.core.entities.User;
 
@@ -88,7 +87,7 @@ public class UserRegisterActivity extends AppCompatActivity {
 
                 final User registeringUser = new User();
 
-                registeringUser.setUserName( username.getText().toString());
+                registeringUser.setName( username.getText().toString());
                 registeringUser.setPassword( password.getText().toString());
                 registeringUser.setEmail(email.getText().toString());
                 registeringUser.setPhoneValue(phone.getText().toString());
@@ -97,7 +96,7 @@ public class UserRegisterActivity extends AppCompatActivity {
                 RadioButton checkedBtn = findViewById(gender.getCheckedRadioButtonId());
                 registeringUser.setGender(checkedBtn.getText().toString());
 
-                if (registeringUser.getUserName().length() > 1) {
+                if (registeringUser.getName().length() > 1) {
                     Response.Listener responseListener = new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -105,14 +104,11 @@ public class UserRegisterActivity extends AppCompatActivity {
                             try {
                                 //Process os success response
                                 if (response.get("Message").toString().equals("Success") ) {
-                                    PersistentStore.getInstance(UserRegisterActivity.this).setItem("registeredUser", registeringUser, true);
                                     Toast.makeText(UserRegisterActivity.this, "User registered!", Toast.LENGTH_SHORT).show();
-
                                     Intent registerSuccessIntent = new Intent(UserRegisterActivity.this, LoginActivity.class);
                                     startActivity(registerSuccessIntent);
                                     finish();
                                 }
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -124,11 +120,7 @@ public class UserRegisterActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(UserRegisterActivity.this, "Enter the values!", Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
-
-
     }
 }

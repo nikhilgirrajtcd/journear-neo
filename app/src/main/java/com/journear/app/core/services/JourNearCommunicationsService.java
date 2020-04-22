@@ -35,8 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -326,7 +324,7 @@ public class JourNearCommunicationsService extends Service {
             String[] all = StringUtils.split(record.get("a"), '|');
 
             UserSkimmed u = new UserSkimmed();
-            u.setUserName(all[0]);
+            u.setName(all[0]);
             nd.setUser(u);
             nd.setSource2(all[1]);
             nd.setDestination2(all[2]);

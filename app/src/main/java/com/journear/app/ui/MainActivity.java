@@ -6,10 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -33,19 +30,12 @@ import com.google.android.material.navigation.NavigationView;
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
-import com.journear.app.core.entities.StringWrapper;
-import com.journear.app.core.entities.UserSkimmed;
+import com.journear.app.core.entities.User;
 import com.journear.app.core.services.JourNearCommunicationsService;
-import com.journear.app.map.LandingActivity;
-import com.journear.app.map.MapActivity;
 import com.journear.app.ui.adapters.RecyclerViewAdapter;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -206,12 +196,14 @@ public class MainActivity extends AppCompatActivity {
      * Sets username, avatar and email on the left drawer.
      */
     private void decorateUiForUser() {
-        StringWrapper currentUser = LocalFunctions.getCurrentLoggedInUser(MainActivity.this);
+        User currentUser = LocalFunctions.getCurrentUser(MainActivity.this);
         // Todo: Fetch the user details from server over here and user that to set the environment
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = headerView.findViewById(R.id.userNameTextView);
-        navUsername.setText(currentUser.toString());
+        navUsername.setText(currentUser.getEmail());
+        TextView navName = headerView.findViewById(R.id.side_nav_bar_Name);
+        navName.setText(currentUser.getName());
     }
 
     @Override

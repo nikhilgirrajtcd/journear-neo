@@ -466,7 +466,6 @@ public class MapActivity extends Activity {
         mapView.map().setMapPosition(mapCenter.getLatitude(), mapCenter.getLongitude(), 1 << 15);
 
 
-
         setContentView(mapView);
         loadGraphStorage();
         locationManager = (LocationManager)
@@ -486,13 +485,12 @@ public class MapActivity extends Activity {
         locationManager.requestLocationUpdates(LocationManager
                 .GPS_PROVIDER, 5000, 10, locationListener);
         Location loc = locationListener.getLocation(LocationManager.NETWORK_PROVIDER);
-        onLoadMarker = new GeoPoint((int) (loc.getLatitude() * 1E6), (int) (loc.getLongitude() * 1E6));
-        itemizedLayer.addItem(createMarkerItem(onLoadMarker, R.drawable.gps));
-        mapView.map().updateMap(true);
-//        if(onLoadMarker != null){
-//            mapView.map().setMapPosition(onLoadMarker.getLatitude(), onLoadMarker.getLongitude(), 1 << 15);
-//        }
 
+        if (loc != null) {
+            onLoadMarker = new GeoPoint((int) (loc.getLatitude() * 1E6), (int) (loc.getLongitude() * 1E6));
+            itemizedLayer.addItem(createMarkerItem(onLoadMarker, R.drawable.gps));
+            mapView.map().updateMap(true);
+        }
     }
 
     void loadGraphStorage() {
@@ -505,7 +503,7 @@ public class MapActivity extends Activity {
                 carProfileConfig.setWeighting("fastest");
                 carProfileConfig.setVehicle("car");
                 ProfileConfig footProfileConfig = new ProfileConfig("foot");
- //               footProfileConfig.setVehicle("foot");
+                //               footProfileConfig.setVehicle("foot");
                 footProfileConfig.setWeighting("fastest");
 
                 //                carProfileConfig.setTurnCosts(true);
@@ -605,7 +603,7 @@ public class MapActivity extends Activity {
                             + "km long, time:" + resp.getTime() / 60000f + "min, debug:" + time);
 
 //                    double  zoomFactor = 1 <<  (int)(resp.getDistance() * 0.15);
-                    mapView.map().setMapPosition((toLat + fromLat) / 2, (toLon + fromLon)/ 2, 1 << 10);
+                    mapView.map().setMapPosition((toLat + fromLat) / 2, (toLon + fromLon) / 2, 1 << 10);
 
 
                     pathLayer = createPathLayer(resp);

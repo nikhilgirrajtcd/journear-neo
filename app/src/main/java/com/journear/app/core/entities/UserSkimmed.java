@@ -5,16 +5,16 @@ import com.journear.app.core.interfaces.Persistable;
 import org.apache.commons.lang3.StringUtils;
 
 public class UserSkimmed implements Persistable {
-    public String userName;
+    public String name;
 
     public String gender;
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getGender() {
@@ -27,8 +27,8 @@ public class UserSkimmed implements Persistable {
 
     public boolean isSameAs(UserSkimmed user)
     {
-        if(user == null || StringUtils.isEmpty(user.userName) || StringUtils.isEmpty(this.userName))
+        if(user == null || StringUtils.isEmpty(user.name) || StringUtils.isEmpty(this.name))
             return false;
-        return this.userName.equals(user.userName);
+        return this.name.equals(user.name);
     }
 }
