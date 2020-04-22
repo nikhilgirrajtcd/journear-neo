@@ -32,8 +32,6 @@ import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.StringWrapper;
 import com.journear.app.core.entities.UserSkimmed;
-import com.journear.app.map.LandingActivity;
-import com.journear.app.map.MapActivity;
 import com.journear.app.ui.adapters.RecyclerViewAdapter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -102,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         ndOwnJourneyPlan = intent.getParcelableExtra("EXTRA");
-
+        // Ask for permissions if user has revoked the permission manually after giving the permission for the first time
+        LocalFunctions.requestPermissions(MainActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -111,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
         if (!loggedIn)
             finish();
         // if needs be check the value of loggedIn and stop further execution from here
+
+//        LocalFunctions.checkLocationPermission(MainActivity.this);
+//        LocalFunctions.checkStoragePermission(MainActivity.this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -362,4 +364,5 @@ public class MainActivity extends AppCompatActivity {
         getManager().clearLocalServices(getChannel(), null);
         getManager().clearServiceRequests(getChannel(), null);
     }
+
 }

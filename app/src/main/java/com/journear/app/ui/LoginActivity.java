@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.journear.app.R;
+import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.PersistentStore;
 import com.journear.app.core.ServerFunctions;
 
@@ -83,8 +84,11 @@ public class LoginActivity extends AppCompatActivity {
         // TODO : Move PersistenceStore call to LocalFunctions
         PersistentStore.getInstance(LoginActivity.this).setItem("currentUser", email.getText().toString(), true);
 
-
-        Intent loginSuccessIntent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent loginSuccessIntent;
+        if(LocalFunctions.requestPermissions(LoginActivity.this))
+            loginSuccessIntent = new Intent(LoginActivity.this, MainActivity.class);
+        else
+            loginSuccessIntent = new Intent(LoginActivity.this, LandingActivity.class);
         startActivity(loginSuccessIntent);
         finish();
     }

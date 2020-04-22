@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.journear.app.map.LandingActivity" />
+        <activity android:name="com.journear.app.ui.LandingActivity" />
         <activity
             android:name="com.journear.app.map.MapActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
