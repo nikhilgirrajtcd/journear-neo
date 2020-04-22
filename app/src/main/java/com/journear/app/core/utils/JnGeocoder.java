@@ -21,7 +21,7 @@ public class JnGeocoder {
     static String lastAccessedRegion = null;
     static Map<String, ArrayList<JnGeocodeItem>> _GeoCodeItemsByRegion;
 
-    public static Map<String, ArrayList<JnGeocodeItem>> getGeoCodeItemsByRegion() {
+    private static Map<String, ArrayList<JnGeocodeItem>> getGeoCodeItemsByRegion() {
         if (_GeoCodeItemsByRegion == null)
             _GeoCodeItemsByRegion = new HashMap<>();
         return _GeoCodeItemsByRegion;
