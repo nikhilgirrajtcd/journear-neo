@@ -1,5 +1,5 @@
 /***
- * 
+ *
  */
 package com.journear.app.map;
 
