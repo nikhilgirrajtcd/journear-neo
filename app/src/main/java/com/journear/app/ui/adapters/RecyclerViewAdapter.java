@@ -63,7 +63,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         public TextView userName;
         public TextView user_rating;
         public Button findSource;
-        public Button findRoute;
+        public Button findCurrentToSource;
         public Button edit;
         public Button delete;
         public int id;
@@ -76,10 +76,11 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             destination = devicesList.findViewById(R.id.destination);
             travelTime = devicesList.findViewById(R.id.travelTime);
             findSource = devicesList.findViewById(R.id.Maps);
-            findRoute = devicesList.findViewById(R.id.editButton);
+            findCurrentToSource = devicesList.findViewById(R.id.currentTOSource);
 
             findSource.setOnClickListener(this);
-            findRoute.setOnClickListener(this);
+            findCurrentToSource.setOnClickListener(this);
+
         }
 
         @Override
@@ -91,12 +92,15 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             Intent intent;
             Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
             switch (v.getId()) {
-                case R.id.editButton:
-                    Log.d("button", String.valueOf(position));
-                    Toast.makeText(context, "A"+ position, Toast.LENGTH_SHORT).show();
-//                    intent = new Intent(context, MainActivity.class);
-//                    context.startActivity(intent);
-                    break;
+                case R.id.currentTOSource:
+                    //Taran add functionality
+
+//                case R.id.editButton:
+//                    Log.d("button", String.valueOf(position));
+//                    Toast.makeText(context, "A"+ position, Toast.LENGTH_SHORT).show();
+////                    intent = new Intent(context, MainActivity.class);
+////                    context.startActivity(intent);
+//                    break;
                 case R.id.Maps:
                     Toast.makeText(context, "B" + position, Toast.LENGTH_SHORT).show();
 
