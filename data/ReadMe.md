@@ -10,7 +10,7 @@ Links to map files archives -
 
 ### Extract the archive `graphhopper-ie` in the `Downloads` directory of the phone to make the maps work.
 
-### The behaviour of the maps without these errors is not known right now. It could be an error or just fail silently. Will update this later.
+### The behaviour of the maps without these files is not known right now. It could be an error or just fail silently. Will update this later.
 
 Resulting path -
 > /Download(s)/graphhopper/maps/ireland-and-northern-ireland-latest-gh
