@@ -84,7 +84,7 @@ public class LocalFunctions {
 //            } else {
             // No explanation needed; request the permission
             ActivityCompat.requestPermissions(thisActivity,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     AppConstants.MY_PERMISSIONS_ALL);
 
             // MY_PERMISSIONS_REQUEST_INTERNET is an
@@ -98,7 +98,7 @@ public class LocalFunctions {
 
     public static boolean isLocationPermissionGiven(Activity activity) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return false;
         } else
             return true;

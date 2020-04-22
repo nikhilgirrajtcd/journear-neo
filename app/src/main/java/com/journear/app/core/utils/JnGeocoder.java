@@ -58,8 +58,8 @@ public class JnGeocoder {
         // At the moment the function only returns the data for region "ie", while the region field is not checked
         ArrayList<JnGeocodeItem> returnSet = new ArrayList<>();
 
+//        InputStream deserializeStream = context.getResources().openRawResource(R.raw.geocodes_ie_fst);
         try {
-            InputStream deserializeStream = context.getResources().openRawResource(R.raw.geocodes_ie_fst);
             returnSet = readGeocodingDataCsv(context);
                     //(ArrayList<JnGeocodeItem>) SerializerHelper.deserialize(deserializeStream, JnGeocodeItem.class);
             System.out.println("Deserialized: " + returnSet.size());
