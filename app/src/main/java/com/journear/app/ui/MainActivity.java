@@ -144,16 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
         unregisterAllWifiP2p();
         showJourneys();
-
-        findViewById(R.id.btnMap).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-                double[] dddddd = {0, 0, 0, 0, 0, 0};
-                intent.putExtra(MapActivity.incomingIntentName, dddddd);
-                startActivity(intent);
-            }
-        });
     }
 
     private void showJourneys() {

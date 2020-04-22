@@ -15,7 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.journear.app.R;
+import com.journear.app.core.LocalFunctions;
+import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevice;
+import com.journear.app.core.utils.JnGeocoder;
 
 import java.util.List;
 
@@ -96,6 +99,12 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     break;
                 case R.id.Maps:
                     Toast.makeText(context, "B" + position, Toast.LENGTH_SHORT).show();
+
+                    JnGeocodeItem source = devicesList.get(position).getSource2();
+                    JnGeocodeItem destination = devicesList.get(position).getDestination2();
+                    LocalFunctions.launchMapActivityWithRoute(v.getContext(), source.latitude, source.longitude,
+                    destination.latitude, destination.longitude);
+
 //                    intent = new Intent(context, MainActivity.class);
 //                    context.startActivity(intent);
                     break;

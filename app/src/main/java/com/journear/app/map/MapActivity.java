@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.EventLogTags;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,14 +67,11 @@ import java.util.TreeMap;
 
 public class MapActivity extends Activity {
     private static final int NEW_MENU_ID = Menu.FIRST + 1;
+    private static final String LOGTAG = "Journear Map";
     private MapView mapView;
     private GraphHopper hopper;
     private GeoPoint start;
     private GeoPoint end;
-    private Spinner localSpinner;
-    private Button localButton;
-    private Spinner remoteSpinner;
-    private Button remoteButton;
     private volatile boolean prepareInProgress = false;
     private volatile boolean shortestPathRunning = false;
     private String currentArea = "berlin";
@@ -84,6 +82,30 @@ public class MapActivity extends Activity {
     private ItemizedLayer<MarkerItem> itemizedLayer;
     private PathLayer pathLayer;
     public final static  String incomingIntentName = "SOURCE-DESTINATION-CURRENT";
+
+    protected boolean showRoute(GeoPoint p1, GeoPoint p2) {
+        if (!isReady())
+            return false;
+
+        if (shortestPathRunning) {
+            logUser("Calculation still in progress");
+            return false;
+        }
+
+        if (p1 != null && p2 != null) {
+            start = p1;
+            end = p2;
+            shortestPathRunning = true;
+            itemizedLayer.addItem(createMarkerItem(p1, R.drawable.marker_icon_green));
+            itemizedLayer.addItem(createMarkerItem(p2, R.drawable.marker_icon_red));
+            mapView.map().updateMap(true);
+
+            calcPath(start.getLatitude(), start.getLongitude(), end.getLatitude(),
+                    end.getLongitude());
+        }
+        return true;
+    }
+
     protected boolean onLongPress(GeoPoint p) {
         if (!isReady())
             return false;
@@ -137,11 +159,15 @@ public class MapActivity extends Activity {
         if (!mapsFolder.exists())
             mapsFolder.mkdirs();
 
-        Intent intent = getIntent();
-        double[] dddddd = intent.getDoubleArrayExtra(incomingIntentName);
-
+//        Intent intent = getIntent();
+//        double[] dddddd = intent.getDoubleArrayExtra(incomingIntentName);
+//        GeoPoint p1, p2, p3;
+//        p1 = new GeoPoint(dddddd[0], dddddd[1]);
+//        p2 = new GeoPoint(dddddd[2], dddddd[3]);
+//        p3 = new GeoPoint(dddddd[4], dddddd[5]);
 
         initFiles("ireland-and-northern-ireland-latest");
+
     }
 
     @Override
@@ -189,80 +215,56 @@ public class MapActivity extends Activity {
         downloadingFiles();
     }
 
-    private void chooseAreaFromLocal() {
-        List<String> nameList = new ArrayList<>();
-        String[] files = mapsFolder.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                return filename != null
-                        && (filename.endsWith(".ghz") || filename
-                        .endsWith("-gh"));
-            }
-        });
-        Collections.addAll(nameList, files);
-
-        if (nameList.isEmpty())
-            return;
-
-        chooseArea(localButton, localSpinner, nameList,
-                new MySpinnerListener() {
-                    @Override
-                    public void onSelect(String selectedArea, String selectedFile) {
-                        initFiles(selectedArea);
-                    }
-                });
-    }
-
-    private void chooseAreaFromRemote() {
-        new GHAsyncTask<Void, Void, List<String>>() {
-            protected List<String> saveDoInBackground(Void... params)
-                    throws Exception {
-                String[] lines = new AndroidDownloader().downloadAsString(fileListURL, false).split("\n");
-                List<String> res = new ArrayList<>();
-                for (String str : lines) {
-                    int index = str.indexOf("href=\"");
-                    if (index >= 0) {
-                        index += 6;
-                        int lastIndex = str.indexOf(".ghz", index);
-                        if (lastIndex >= 0)
-                            res.add(prefixURL + str.substring(index, lastIndex)
-                                    + ".ghz");
-                    }
-                }
-
-                return res;
-            }
-
-            @Override
-            protected void onPostExecute(List<String> nameList) {
-                if (hasError()) {
-                    getError().printStackTrace();
-                    logUser("Are you connected to the internet? Problem while fetching remote area list: "
-                            + getErrorMessage());
-                    return;
-                } else if (nameList == null || nameList.isEmpty()) {
-                    logUser("No maps created for your version!? " + fileListURL);
-                    return;
-                }
-
-                MySpinnerListener spinnerListener = new MySpinnerListener() {
-                    @Override
-                    public void onSelect(String selectedArea, String selectedFile) {
-                        if (selectedFile == null
-                                || new File(mapsFolder, selectedArea + ".ghz").exists()
-                                || new File(mapsFolder, selectedArea + "-gh").exists()) {
-                            downloadURL = null;
-                        } else {
-                            downloadURL = selectedFile;
-                        }
-                        initFiles(selectedArea);
-                    }
-                };
-                chooseArea(remoteButton, remoteSpinner, nameList,
-                        spinnerListener);
-            }
-        }.execute();
-    }
+//    private void chooseAreaFromRemote() {
+//        new GHAsyncTask<Void, Void, List<String>>() {
+//            protected List<String> saveDoInBackground(Void... params)
+//                    throws Exception {
+//                String[] lines = new AndroidDownloader().downloadAsString(fileListURL, false).split("\n");
+//                List<String> res = new ArrayList<>();
+//                for (String str : lines) {
+//                    int index = str.indexOf("href=\"");
+//                    if (index >= 0) {
+//                        index += 6;
+//                        int lastIndex = str.indexOf(".ghz", index);
+//                        if (lastIndex >= 0)
+//                            res.add(prefixURL + str.substring(index, lastIndex)
+//                                    + ".ghz");
+//                    }
+//                }
+//
+//                return res;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(List<String> nameList) {
+//                if (hasError()) {
+//                    getError().printStackTrace();
+//                    logUser("Are you connected to the internet? Problem while fetching remote area list: "
+//                            + getErrorMessage());
+//                    return;
+//                } else if (nameList == null || nameList.isEmpty()) {
+//                    logUser("No maps created for your version!? " + fileListURL);
+//                    return;
+//                }
+//
+//                MySpinnerListener spinnerListener = new MySpinnerListener() {
+//                    @Override
+//                    public void onSelect(String selectedArea, String selectedFile) {
+//                        if (selectedFile == null
+//                                || new File(mapsFolder, selectedArea + ".ghz").exists()
+//                                || new File(mapsFolder, selectedArea + "-gh").exists()) {
+//                            downloadURL = null;
+//                        } else {
+//                            downloadURL = selectedFile;
+//                        }
+//                        initFiles(selectedArea);
+//                    }
+//                };
+//                chooseArea(remoteButton, remoteSpinner, nameList,
+//                        spinnerListener);
+//            }
+//        }.execute();
+//    }
 
     private void chooseArea(Button button, final Spinner spinner,
                             List<String> nameList, final MySpinnerListener myListener) {
@@ -400,12 +402,23 @@ public class MapActivity extends Activity {
                     logUser("An error happened while creating graph:"
                             + getErrorMessage());
                 } else {
+                    showRoute();
                     logUser("Finished loading graph. Long press to define where to start and end the route.");
                 }
 
                 finishPrepare();
             }
         }.execute();
+    }
+
+    private void showRoute() {
+        Log.i(LOGTAG, "Showing route from intent");
+        Intent intent = getIntent();
+        double[] dddddd = intent.getDoubleArrayExtra(incomingIntentName);
+        GeoPoint p1, p2, p3;
+        p1 = new GeoPoint(dddddd[0], dddddd[1]);
+        p2 = new GeoPoint(dddddd[2], dddddd[3]);
+        showRoute(p1, p2);
     }
 
     private void finishPrepare() {
