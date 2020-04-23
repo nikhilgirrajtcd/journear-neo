@@ -86,13 +86,13 @@
                     android:layout_marginEnd="15dp"
                     android:background="@android:drawable/ic_menu_directions" />
                 <Button
-                    android:id="@+id/Chat"
+                    android:id="@+id/Join"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@android:drawable/ic_btn_speak_now" />
+                    android:background="@drawable/plus_one" />
                 <Button
-                    android:id="@+id/Join"
+                    android:id="@+id/Start"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="15dp"
