@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private List<NearbyDevice> devicesList = new ArrayList<>();
+    private CheckBox filterPreference;
 
     private NearbyDevice ndOwnJourneyPlan;
     public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -122,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
 
     JourNearCommunicationsService.ServiceActivityBinder binder = null;
     JourNearCommunicationsService communicationsService = null;
+
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -129,47 +133,12 @@ public class MainActivity extends AppCompatActivity {
             binder = (JourNearCommunicationsService.ServiceActivityBinder) service;
             communicationsService = binder.getService();
 
-            if (ndOwnJourneyPlan != null) {
-                communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
-                 ArrayList<NearbyDevice> initList = communicationsService.getBufferedResponses();
+            addListnerForPreference();
 
-//                 for(NearbyDevice device : initList){
-//
-//                     if(ndOwnJourneyPlan.isGenderCompatible(device) ){
-//                         devicesList.add(device);
-//                     }
-//                 }
-//                 if(devicesList.size() == 0){
-//                     AlertDialog.Builder builderPreference = new AlertDialog.Builder(MainActivity.this);
-//                     builderPreference.setMessage("No Journey Found for your Preference, However Other journies are available");
-//                     builderPreference.setCancelable(true);
-//
-//                     builderPreference.setPositiveButton(
-//                             "Show",
-//                             new DialogInterface.OnClickListener() {
-//                                 public void onClick(DialogInterface dialog, int id) {
-//                                     devicesList.addAll(communicationsService.getBufferedResponses());
-//                                     dialog.cancel();
-//                                 }
-//                             });
-//
-//                     builderPreference.setNegativeButton(
-//                             "Cancel",
-//                             new DialogInterface.OnClickListener() {
-//                                 public void onClick(DialogInterface dialog, int id) {
-//                                     dialog.cancel();
-//                                 }
-//                             });
-//
-//                     AlertDialog alert11 = builderPreference.create();
-//                     alert11.show();
+            recyclerViewAdapter.notifyDataSetChanged();
 
-//                 }
-                // service bind complete
-                devicesList.addAll(communicationsService.getBufferedResponses());
-                recyclerViewAdapter.notifyDataSetChanged();
-            }
         }
+
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -177,6 +146,38 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+    //Toggle Journey for Preferences
+    public void addListnerForPreference(){
+
+        filterPreference = (CheckBox) findViewById(R.id.journeyPreferenceCheckbox);
+        filterPreference.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if(((CheckBox) v).isChecked()){
+                    if (ndOwnJourneyPlan != null) {
+                        communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
+                        ArrayList<NearbyDevice> initList = communicationsService.getBufferedResponses();
+
+                        for(NearbyDevice device : initList){
+
+                            if(ndOwnJourneyPlan.isCompatible(device) ){
+                                devicesList.add(device);
+                            }
+                        }
+                    }
+                }
+                else{
+                    if(ndOwnJourneyPlan != null){
+                    // service bind complete
+                    devicesList.addAll(communicationsService.getBufferedResponses());
+
+                    }
+                }
+            }
+        });
+    }
 
     /**
      * Initialize the list on UI. Add the ndOwnJourneyPlan if not null
