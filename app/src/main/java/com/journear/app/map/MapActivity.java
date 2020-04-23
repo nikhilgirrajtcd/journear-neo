@@ -488,7 +488,7 @@ public class MapActivity extends Activity {
 
         if (loc != null) {
             onLoadMarker = new GeoPoint((int) (loc.getLatitude() * 1E6), (int) (loc.getLongitude() * 1E6));
-            itemizedLayer.addItem(createMarkerItem(onLoadMarker, R.drawable.gps));
+            itemizedLayer.addItem(createMarkerItem(onLoadMarker, R.drawable.black_gps_marker));
             mapView.map().updateMap(true);
         }
     }
@@ -498,20 +498,14 @@ public class MapActivity extends Activity {
         new GHAsyncTask<Void, Void, Path>() {
             protected Path saveDoInBackground(Void... v) throws Exception {
                 GraphHopper tmpHopp = new GraphHopper().forMobile();
-//                GraphHopperConfig ghconfig = new GraphHopperConfig();
+
                 ProfileConfig carProfileConfig = new ProfileConfig("car");
                 carProfileConfig.setWeighting("fastest");
                 carProfileConfig.setVehicle("car");
                 ProfileConfig footProfileConfig = new ProfileConfig("foot");
-                //               footProfileConfig.setVehicle("foot");
                 footProfileConfig.setWeighting("fastest");
-
-                //                carProfileConfig.setTurnCosts(true);
-//                ArrayList<ProfileConfig> pconfigs = new ArrayList<ProfileConfig>();
-//                pconfigs.add(carProfileConfig);
-//                ghconfig.setProfiles(pconfigs);
-//                tmpHopp.init(ghconfig);
                 tmpHopp.setProfiles(carProfileConfig, footProfileConfig);
+
                 tmpHopp.load(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh");
                 log("found graph " + tmpHopp.getGraphHopperStorage().toString() + ", nodes:" + tmpHopp.getGraphHopperStorage().getNodes());
                 hopper = tmpHopp;
@@ -523,11 +517,11 @@ public class MapActivity extends Activity {
                     logUser("An error happened while creating graph:"
                             + getErrorMessage());
                 } else {
-                    showRoute();
                     logUser("Finished loading graph. Long press to define where to start and end the route.");
                 }
 
                 finishPrepare();
+                showRoute();
             }
         }.execute();
     }
