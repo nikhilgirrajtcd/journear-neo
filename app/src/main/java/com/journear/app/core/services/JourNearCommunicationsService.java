@@ -39,10 +39,10 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.journear.app.ui.MainActivity.SERVICE_INSTANCE;
-import static com.journear.app.ui.MainActivity.SERVICE_REG_TYPE;
 
 public class JourNearCommunicationsService extends Service {
+    public static final String SERVICE_INSTANCE = "_journearNeo2";
+    public static final String SERVICE_REG_TYPE = "_presence._tcp";
 
     private static final String TAG_FOREGROUND_SERVICE = "FOREGROUND_SERVICE";
     public static final String ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE";

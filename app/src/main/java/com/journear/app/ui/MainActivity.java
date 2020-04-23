@@ -58,20 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivityTag";
 
-    // TXT RECORD properties
-    public static final String TXTRECORD_PROP_AVAILABLE = "available";
-    public static final String SERVICE_INSTANCE = "_journearNeo2";
-    public static final String SERVICE_REG_TYPE = "_presence._tcp";
-
-    public static final int MESSAGE_READ = 0x400 + 1;
-    public static final int MY_HANDLE = 0x400 + 2;
-
-    private static final int PERMISSIONS_REQUEST_CODE = 1001;
-
-    static final int SERVER_PORT = 4545;
-
-    private final IntentFilter intentFilter = new IntentFilter();
-//    private BroadcastReceiver receiver = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
