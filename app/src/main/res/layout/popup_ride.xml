@@ -60,10 +60,71 @@
                 android:textAppearance="?android:attr/textAppearanceMediumInverse"
                 />
 
+            <TextView
+                android:id="@+id/preference"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Choose Journey Preferences"
+                android:hint="My hint"
+                android:textColor="?attr/editTextColor"
+                android:layout_below="@+id/btn_setTime"
+                android:background="?attr/editTextBackground"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                />
+
+
+            <Switch
+                android:id="@+id/genderPreference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/preference"
+                android:text="Same Gender"
+                android:textOff="No"
+                android:textOn="Yes"/>
+
+            <TextView
+                android:id="@+id/modeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mode of Journey"
+                android:hint="My hint"
+                android:textColor="?attr/editTextColor"
+                android:layout_below="@+id/genderPreference"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                />
+
+            <RadioGroup
+                android:id="@+id/editModeJourney"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/modeTextView"
+                android:orientation="horizontal"
+                >
+
+                <RadioButton
+                    android:id="@+id/modeWalk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Walk" />
+
+                <RadioButton
+                    android:id="@+id/modeTaxi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Taxi" />
+
+                <RadioButton
+                    android:id="@+id/modeAny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Any" />
+            </RadioGroup>
 
             <Button
                 android:id="@+id/btn_CreateJourney"
-                android:layout_below="@+id/btn_setTime"
+                android:layout_below="@id/editModeJourney"
                 android:layout_marginEnd="5dp"
                 android:textSize="14sp"
                 android:textStyle="bold"

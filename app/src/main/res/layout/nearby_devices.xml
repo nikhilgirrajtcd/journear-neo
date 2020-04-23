@@ -64,10 +64,35 @@
                 android:textSize="18sp"
                 android:textStyle="italic" />
 
+            <TextView
+                android:id="@+id/preferencesTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/travelTime"
+                android:layout_marginTop="5dp"
+                android:text="Journey Preferences"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/preferenceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/preferencesTextView"
+                android:textSize="15sp"
+                />
+            <TextView
+                android:id="@+id/genderPreferenceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/preferencesTextView"
+                android:textSize="15sp"
+                />
+
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/travelTime"
+                android:layout_alignBottom="@+id/preferenceTextView"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal">

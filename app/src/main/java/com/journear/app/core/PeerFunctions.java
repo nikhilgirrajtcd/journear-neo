@@ -22,6 +22,7 @@ public class PeerFunctions {
                 ndOwnJourneyPlan.getUser() == null ? "Dummy" : ndOwnJourneyPlan.getUser().name,
                 ndOwnJourneyPlan.getSource2() == null ? -1 : ndOwnJourneyPlan.getSource2().id,
                 ndOwnJourneyPlan.getDestination2() == null ? -1 : ndOwnJourneyPlan.getDestination2().id,
+//                ndOwnJourneyPlan.getUser().getGender()
                 ndOwnJourneyPlan.getTravelTime().toString());
     }
 }

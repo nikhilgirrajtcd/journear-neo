@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -40,7 +43,10 @@ public class CreateJourneyActivity extends AppCompatActivity {
     private TextView timeTextView;
     private int minuteOfJourney;
     private int hourOfJourney;
+    private boolean genderPreference;
+    private RadioGroup journeyMode;
     private NearbyDevice editDevice;
+
 
 
 
@@ -62,6 +68,8 @@ public class CreateJourneyActivity extends AppCompatActivity {
 
         AutoCompleteTextView sourceTextView = findViewById(R.id.acTextView_source);
         AutoCompleteTextView destinationTextView = findViewById(R.id.acTextView_destination);
+
+
         Calendar cal = Calendar.getInstance();
         if(className != null ) {
 
@@ -132,13 +140,20 @@ public class CreateJourneyActivity extends AppCompatActivity {
 
         String source = sourceTextView.getText().toString();
         String destination = destinationTextView.getText().toString();
+        final Switch genderPrefSwitch = findViewById(R.id.genderPreference);
+
+        boolean genderPreferenceSwitch = genderPrefSwitch.isChecked();
+        RadioGroup editModeJourney = findViewById(R.id.editModeJourney);
+        RadioButton checkedBtn = findViewById(editModeJourney.getCheckedRadioButtonId());
+        String journeyMode =  checkedBtn.getText().toString();
+
 
         if (mapTextValueToJnGeoCodeItem.containsKey(source) && mapTextValueToJnGeoCodeItem.containsKey(destination)) {
             JnGeocodeItem s = mapTextValueToJnGeoCodeItem.get(source);
             JnGeocodeItem d = mapTextValueToJnGeoCodeItem.get(destination);
             Time timeOfTravel = Time.valueOf(timeTextView.getText().toString() + ":00");
             UserSkimmed userSkimmed = LocalFunctions.getCurrentUser(this);
-            NearbyDevice currentInput = new NearbyDevice(s, d, timeOfTravel, userSkimmed);
+            NearbyDevice currentInput = new NearbyDevice(s, d, timeOfTravel, userSkimmed, genderPreferenceSwitch,journeyMode);
 
             Log.i("SELECTION", "Source: " + s.latitude + ", " + s.longitude);
             Log.i("SELECTION", "" + source);

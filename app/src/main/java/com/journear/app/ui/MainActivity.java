@@ -3,6 +3,7 @@ package com.journear.app.ui;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -129,7 +131,40 @@ public class MainActivity extends AppCompatActivity {
 
             if (ndOwnJourneyPlan != null) {
                 communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
+                 ArrayList<NearbyDevice> initList = communicationsService.getBufferedResponses();
 
+//                 for(NearbyDevice device : initList){
+//
+//                     if(ndOwnJourneyPlan.isGenderCompatible(device) ){
+//                         devicesList.add(device);
+//                     }
+//                 }
+//                 if(devicesList.size() == 0){
+//                     AlertDialog.Builder builderPreference = new AlertDialog.Builder(MainActivity.this);
+//                     builderPreference.setMessage("No Journey Found for your Preference, However Other journies are available");
+//                     builderPreference.setCancelable(true);
+//
+//                     builderPreference.setPositiveButton(
+//                             "Show",
+//                             new DialogInterface.OnClickListener() {
+//                                 public void onClick(DialogInterface dialog, int id) {
+//                                     devicesList.addAll(communicationsService.getBufferedResponses());
+//                                     dialog.cancel();
+//                                 }
+//                             });
+//
+//                     builderPreference.setNegativeButton(
+//                             "Cancel",
+//                             new DialogInterface.OnClickListener() {
+//                                 public void onClick(DialogInterface dialog, int id) {
+//                                     dialog.cancel();
+//                                 }
+//                             });
+//
+//                     AlertDialog alert11 = builderPreference.create();
+//                     alert11.show();
+
+//                 }
                 // service bind complete
                 devicesList.addAll(communicationsService.getBufferedResponses());
                 recyclerViewAdapter.notifyDataSetChanged();
@@ -156,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
         // If the list does not already contain the current ride, Add it.
         if (ndOwnJourneyPlan != null && !devicesList.contains(ndOwnJourneyPlan)) {
+
             if (devicesList.add(ndOwnJourneyPlan)) {
                 int position = devicesList.indexOf(ndOwnJourneyPlan);
                 recyclerViewAdapter.notifyItemInserted(position);

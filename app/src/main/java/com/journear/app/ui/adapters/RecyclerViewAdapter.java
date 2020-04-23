@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +41,6 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     private LayoutInflater inflater;
     private MyLocationListener myLocationListner;
     LocationManager locationManager;
-    GeoPoint onLoadMarker;
 
     public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList) {
         this.devicesList = devicesList;
@@ -63,6 +63,16 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         holder.source.setText(devices.getSource2().placeString);
         holder.destination.setText(devices.getDestination2().placeString);
         holder.travelTime.setText(devices.getTravelTime().toString());
+        holder.modeJourney.setText(devices.getModeOfJourney());
+
+        if(devices.getPreferSameGender()){
+            holder.genderPreferenceTextView.setText(devices.getUser().getGender());
+        }
+        else{
+            holder.genderPreferenceTextView.setText(R.string.NoPreference);
+        }
+
+
     }
 
     // one for just testing deviceslist.size()
@@ -76,9 +86,13 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         public TextView destination;
         public TextView travelTime;
         public TextView userName;
+        public TextView modeJourney;
+        public TextView genderPreferenceTextView;
         public TextView user_rating;
+        public Switch genderPreference;
         public Button findSource;
         public Button findCurrentToSource;
+
         public Button editJourney;
         public Button delete;
         public int id;
@@ -90,6 +104,10 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             source = devicesList.findViewById(R.id.source);
             destination = devicesList.findViewById(R.id.destination);
             travelTime = devicesList.findViewById(R.id.travelTime);
+            modeJourney = devicesList.findViewById(R.id.preferenceTextView);
+            genderPreference = devicesList.findViewById(R.id.genderPreference);
+            genderPreferenceTextView = devicesList.findViewById(R.id.genderPreferenceTextView);
+
             findSource = devicesList.findViewById(R.id.Maps);
             findCurrentToSource = devicesList.findViewById(R.id.currentTOSource);
             editJourney = devicesList.findViewById(R.id.editJourney);
