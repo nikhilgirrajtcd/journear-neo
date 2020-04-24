@@ -159,7 +159,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                             JnMessageSet.RequestToJoinAndShareContact, new CommunicationListener() {
                                 @Override
                                 public void onResponse(JnMessage message) {
-                                    if(message.getMessageFlag() == JnMessageSet.Accept)
+                                    if(message.getMessageFlag() == JnMessageSet.RequestedToJoin)
                                     {
 //                                        devicesList.get(position)
                                     }
