@@ -530,6 +530,7 @@ public class MapActivity extends Activity {
         Log.i(LOGTAG, "Showing route from intent");
         Intent intent = getIntent();
         double[] dddddd = intent.getDoubleArrayExtra(incomingIntentName);
+         intent.getBooleanExtra("Start", false);
         GeoPoint p1, p2;
         p1 = new GeoPoint(dddddd[0], dddddd[1]);
         p2 = new GeoPoint(dddddd[2], dddddd[3]);

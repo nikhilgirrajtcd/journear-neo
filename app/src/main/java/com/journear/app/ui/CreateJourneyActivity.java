@@ -117,6 +117,7 @@ public class CreateJourneyActivity extends AppCompatActivity {
                 LocalFunctions.setCurrentJourney(nd, CreateJourneyActivity.this);
 
                 final Intent intent = new Intent(CreateJourneyActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("EXTRA", nd);
 
                 new Handler().postDelayed(new Runnable() {

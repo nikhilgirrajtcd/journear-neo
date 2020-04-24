@@ -26,6 +26,7 @@ import com.journear.app.map.MyLocationListener;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 
@@ -34,6 +35,7 @@ import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.ui.CreateJourneyActivity;
+import com.journear.app.ui.tools.ToolsFragment;
 
 import java.util.List;
 
@@ -161,21 +163,24 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     break;
                 case R.id.Join:
                     ServiceLocator.getCommunicationHub().sendMessage(devicesList.get(position),
-                            JnMessageSet.RequestToJoinAndShareContact, new CommunicationListener() {
-                                @Override
-                                public void onResponse(JnMessage message) {
-                                    if(message.getMessageFlag() == JnMessageSet.RequestedToJoin)
-                                    {
-//                                        devicesList.get(position)
-                                    }
-                                    Log.i(LOGTAG, "Response received: " + message.toReconstructableString());
-                                }
+                            JnMessageSet.RequestToJoinAndShareContact,  new ToolsFragment()
 
-                                @Override
-                                public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
-                                    Log.i(LOGTAG, "Expired message: " + expiredMessage.toReconstructableString());
-                                }
-                            });
+//                            new CommunicationListener() {
+//                                @Override
+//                                public void onResponse(JnMessage message) {
+//                                    if(message.getMessageFlag() == JnMessageSet.RequestedToJoin)
+//                                    {
+////                                        devicesList.get(position)
+//                                    }
+//                                    Log.i(LOGTAG, "Response received: " + message.toReconstructableString());
+//                                }
+//
+//                                @Override
+//                                public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
+//                                    Log.i(LOGTAG, "Expired message: " + expiredMessage.toReconstructableString());
+//                                }
+//                            }
+                            );
                     break;
             }
         }

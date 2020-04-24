@@ -1,32 +1,24 @@
 package com.journear.app.ui;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -34,9 +26,8 @@ import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.User;
-import com.journear.app.core.services.CommunicationHub;
 import com.journear.app.core.services.JourNearCommunicationsService;
-import com.journear.app.ui.adapters.RecyclerViewAdapter;
+import com.journear.app.ui.home.HomeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,29 +36,17 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private RecyclerView recyclerView;
-    private RecyclerViewAdapter recyclerViewAdapter;
-    private List<NearbyDevice> devicesList = new ArrayList<>();
-    private CheckBox filterPreference;
 
-    private NearbyDevice ndOwnJourneyPlan;
-    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(WifiP2pManager.WIFI_P2P_STATE_ENABLED)) {
-                shortToast("Should do it now!");
-            }
-        }
-    };
 
     public static final String TAG = "MainActivityTag";
+    private NearbyDevice ndOwnJourneyPlan;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         ndOwnJourneyPlan = intent.getParcelableExtra("EXTRA");
+
 
         // Ask for permissions if user has revoked the permission manually after giving the permission for the first time
         LocalFunctions.requestPermissions(MainActivity.this);
@@ -104,16 +83,9 @@ public class MainActivity extends AppCompatActivity {
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-        findViewById(R.id.nav_host_fragment).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showJourneys();
-            }
-        });
-        showJourneys();
 
         bindService();
     }
@@ -132,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
             binder = (JourNearCommunicationsService.ServiceActivityBinder) service;
             communicationsService = binder.getService();
 
-            addListnerForPreference();
-
-            recyclerViewAdapter.notifyDataSetChanged();
-
+            HomeFragment hf = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_home);
+            communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
+            for (NearbyDevice obj : communicationsService.getBufferedResponses()) {
+                hf.onPeerDiscovered(obj);
+            }
         }
-
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -146,66 +118,13 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    //Toggle Journey for Preferences
-    public void addListnerForPreference(){
-
-        filterPreference = (CheckBox) findViewById(R.id.journeyPreferenceCheckbox);
-        filterPreference.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if(((CheckBox) v).isChecked()){
-                    if (ndOwnJourneyPlan != null) {
-                        communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
-                        ArrayList<NearbyDevice> initList = communicationsService.getBufferedResponses();
-
-                        for(NearbyDevice device : initList){
-
-                            if(ndOwnJourneyPlan.isCompatible(device) ){
-                                devicesList.add(device);
-                                getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                            }
-                        }
-                    }
-                }
-                else{
-                    if(ndOwnJourneyPlan != null){
-                    // service bind complete
-                    devicesList.addAll(communicationsService.getBufferedResponses());
-
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Initialize the list on UI. Add the ndOwnJourneyPlan if not null
-     */
-    private void showJourneys() {
-        recyclerView = findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new RecyclerViewAdapter(this, devicesList);
-        recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerViewAdapter.notifyDataSetChanged();
-
-
-        // If the list does not already contain the current ride, Add it.
-        if (ndOwnJourneyPlan != null && !devicesList.contains(ndOwnJourneyPlan)) {
-
-            if (devicesList.add(ndOwnJourneyPlan)) {
-                int position = devicesList.indexOf(ndOwnJourneyPlan);
-                recyclerViewAdapter.notifyItemInserted(position);
-            }
-        }
-    }
-
     /**
      * Checks if a user is logged in. Sets the left drawer UI.
+     *
      * @return true if the a user is logged in, false otherwise.
      */
     private boolean checkUserLogon() {
-        Object currentUser = LocalFunctions.getCurrentLoggedInUser(MainActivity.this);
+        Object currentUser = LocalFunctions.getCurrentUser();
         if (currentUser == null) {
             Intent intentToLetUserLogon = new Intent(MainActivity.this, StartActivity.class);
             startActivity(intentToLetUserLogon);
@@ -243,12 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-
-    private void shortToast(String s) {
-        Log.i("ShortToast", s);
-        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -275,20 +188,47 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         if (intent.hasExtra(intentDeviceFound)) {
             NearbyDevice nd = intent.getParcelableExtra(intentDeviceFound);
-            if (!devicesList.contains(nd))
-                devicesList.add(nd);
 
-            recyclerViewAdapter.notifyItemInserted(devicesList.size());
+            if (homeFragment != null)
+                homeFragment.onPeerDiscovered(nd);
             // add device
         }
+    }
 
-        if (intent.hasExtra(intentJoiningRequest)) {
+    public void setHomeFragment(HomeFragment hf) {
+        this.homeFragment = hf;
+    }
 
+    HomeFragment homeFragment = null;
+    public List<NearbyDevice> devicesList = new ArrayList<>();
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        NavHostFragment nhf = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        for (Fragment frag : nhf.getChildFragmentManager().getFragments()) {
+            if (frag.getClass().equals(HomeFragment.class)) {
+                homeFragment = (HomeFragment) frag;
+            }
+        }
+
+        if (homeFragment != null) {
+            addDiscoveredNearbyDevice(ndOwnJourneyPlan);
+            homeFragment.onPeerDiscovered(null);
         }
     }
 
-    private void selectRideToJoin() {
+    void addDiscoveredNearbyDevice(NearbyDevice obj) {
+        if(obj == null)
+            return;
 
+        if (obj.getOwner().isSameAs(LocalFunctions.getCurrentUser())) {// this whole if block is probably not needed since it should be handled in the MainActivity
+            ndOwnJourneyPlan = obj;
+        }
+        // add NearbyDevice obj to the devicesList if the filtering is disabled or the preference matches
+        if (!devicesList.contains(obj) && (!homeFragment.filterEnabled || ndOwnJourneyPlan.isCompatible(obj))) {
+            devicesList.add(obj);
+            homeFragment.onPeerDiscovered(null);
+        }
     }
-
 }
