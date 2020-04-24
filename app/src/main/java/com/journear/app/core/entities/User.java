@@ -21,12 +21,6 @@ public class User extends UserSkimmed implements Persistable {
         this.password = password;
     }
 
-    public String userID;
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
     public String getEmail() {
         return email;
     }

@@ -14,6 +14,7 @@ public class ServiceLocator {
     PersistentStore persistentStore;
     JnGeocoder jnGeocoder;
     ServerFunctions serverFunctions;
+    private CommunicationHub comHub;
 
     private ServiceLocator(Context context) {
         this.context = context;
@@ -29,7 +30,7 @@ public class ServiceLocator {
         return _i.persistentStore;
     }
 
-    public Context getApplicationContext() {
+    public static Context getApplicationContext() {
         return _i.context;
     }
 
@@ -37,5 +38,11 @@ public class ServiceLocator {
         if (_i.serverFunctions == null)
             _i.serverFunctions = ServerFunctions.getInstance(_i.context);
         return _i.serverFunctions;
+    }
+
+    public static CommunicationHub getCommunicationHub() {
+        if(_i.comHub == null)
+            _i.comHub = new CommunicationHub();
+        return _i.comHub;
     }
 }

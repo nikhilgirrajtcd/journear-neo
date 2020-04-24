@@ -1,15 +1,19 @@
 package com.journear.app.core.services;
 import org.apache.commons.lang3.StringUtils;
 
-public class JourNearMessage {
+public class JnMessage {
 
-    private JourNearMessageSet messageFlag;
+    private JnMessageSet messageFlag;
     private String messageId;
 
     /**
      * Phone number if available
      */
     private String phoneNumber = "";
+
+    public String getSubject() {
+        return subject;
+    }
 
     /**
      * This field would contain the ID of the ride that this conversation is about.
@@ -21,16 +25,20 @@ public class JourNearMessage {
      */
     private String sender;
 
-    public static JourNearMessage createFromReconstructableString(String reconstructableString) {
+    public static JnMessage createFromReconstructableString(String reconstructableString) {
         if(StringUtils.countMatches(reconstructableString, "|") == 4)
         {
             String[] parts = StringUtils.split(reconstructableString, '|');
-            return new JourNearMessage(parts[0], JourNearMessageSet.valueOf(parts[1]), parts[2], parts[3], parts[4]);
+            return new JnMessage(parts[0], JnMessageSet.valueOf(parts[1]), parts[2], parts[3], parts[4]);
         }
-        throw new IllegalArgumentException("Cannot create JourNearMessage from String: " + reconstructableString);
+        throw new IllegalArgumentException("Cannot create JnMessage from String: " + reconstructableString);
     }
 
-    public JourNearMessage(String messageId, JourNearMessageSet messageFlag, String phoneNumber, String subject, String sender)
+    public JnMessageSet getMessageFlag() {
+        return messageFlag;
+    }
+
+    public JnMessage(String messageId, JnMessageSet messageFlag, String phoneNumber, String subject, String sender)
     {
         this.messageId = messageId;
         this.messageFlag = messageFlag;
@@ -38,7 +46,7 @@ public class JourNearMessage {
         this.subject = subject;
         this.sender = sender;
     }
-
+    // {C1=null:37:1|RequestedToJoinWithContact|||37}
     public String toReconstructableString() {
         return StringUtils.joinWith("|", messageId, messageFlag.name(), phoneNumber, subject, sender);
     }

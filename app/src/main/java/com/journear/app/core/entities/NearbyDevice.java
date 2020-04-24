@@ -1,29 +1,29 @@
 package com.journear.app.core.entities;
 
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.DateUtils;
 
-import androidx.annotation.RequiresApi;
-
+import com.google.gson.Gson;
+import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.interfaces.Persistable;
+import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.core.utils.JnGeocoder;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ConcurrentNavigableMap;
 
 public class NearbyDevice implements Parcelable, Persistable {
-    private int id;
-
-    @Deprecated
-    private String source;
-
-    @Deprecated
-    private String destination;
+    private String travelPlanId;
 
     public String getModeOfJourney() {
         return modeOfJourney;
@@ -34,31 +34,31 @@ public class NearbyDevice implements Parcelable, Persistable {
     }
 
     private String modeOfJourney;
-
-
     private JnGeocodeItem source2;
     private JnGeocodeItem destination2;
+
+    public NearbyDevice() {
+
+    }
 
     public NearbyDevice(JnGeocodeItem s, JnGeocodeItem d, Time timeOfTravel, UserSkimmed userSkimmed) {
         this.source2 = s;
         this.destination2 = d;
         this.travelTime = timeOfTravel;
-        this.user = userSkimmed;
-
+        this.owner = userSkimmed;
+        getTravelPlanId(); // this will generate the id if there isn't already one
     }
 
-    public NearbyDevice(JnGeocodeItem s, JnGeocodeItem d, Time timeOfTravel, UserSkimmed userSkimmed,boolean preferSameGender, String modeOfJourney) {
+    public NearbyDevice(JnGeocodeItem s, JnGeocodeItem d, Time timeOfTravel, UserSkimmed userSkimmed, boolean preferSameGender, String modeOfJourney) {
         this.source2 = s;
         this.destination2 = d;
         this.travelTime = timeOfTravel;
-        this.user = userSkimmed;
+        this.owner = userSkimmed;
         this.preferSameGender = preferSameGender;
         this.modeOfJourney = modeOfJourney;
+        getTravelPlanId(); // this will generate the id if there isn't already one
 
     }
-
-
-
 
     public JnGeocodeItem getSource2() {
         return source2;
@@ -84,38 +84,33 @@ public class NearbyDevice implements Parcelable, Persistable {
         this.destination2 = JnGeocoder.getJnGeocodeItemById(destinationId);
     }
 
-
     private Time travelTime;
     private String user_rating;
+    private UserSkimmed owner = new UserSkimmed();
+    private List<UserSkimmed> travellers = new ArrayList<>();
 
-
-
-
-    private UserSkimmed user = new UserSkimmed();
-
-    public UserSkimmed getUser() {
-        return user;
+    public UserSkimmed getOwner() {
+        return owner;
     }
 
-    public void setUser(UserSkimmed user) {
-        this.user = user;
+    public void setOwner(UserSkimmed owner) {
+        this.owner = owner;
+        getTravelPlanId(); // this will generate the id if there isn't already one
     }
 
-    public NearbyDevice() {
-
-    }
-
-//Added preferGender boolean in parceable interface fucntions
+    //Added preferGender boolean in parceable interface fucntions
     protected NearbyDevice(Parcel in) {
-        user = new UserSkimmed();
-        user.setName(in.readString());
+        travelPlanId = in.readString();
+        owner = new UserSkimmed(in);
+
+        Gson gson = new Gson();
+        travellers = Arrays.asList(gson.fromJson(in.readString(), UserSkimmed[].class));
+
         source2 = JnGeocoder.getJnGeocodeItemById(in.readString());
         destination2 = JnGeocoder.getJnGeocodeItemById(in.readString());
         travelTime = Time.valueOf(in.readString());
         preferSameGender = in.readByte() != 0;
         modeOfJourney = in.readString();
-
-
     }
 
     public static final Creator<NearbyDevice> CREATOR = new Creator<NearbyDevice>() {
@@ -130,33 +125,18 @@ public class NearbyDevice implements Parcelable, Persistable {
         }
     };
 
-
-    public int getId() {
-        return id;
+    public String getTravelPlanId() {
+        if (travelPlanId == null) {
+            // if this NearbyDevice ride belongs to the current user, then create the id and set it
+            if (this.owner.getUserId().equals(LocalFunctions.getCurrentUser().getUserId())) {
+                travelPlanId = StringUtils.leftPad(this.owner.getUserId(), 3) + CurrentTime();
+            }
+        }
+        return travelPlanId;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Deprecated
-    public String getSource() {
-        return source;
-    }
-
-    @Deprecated
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    @Deprecated
-    public String getDestination() {
-        return destination;
-    }
-
-    @Deprecated
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setTravelPlanId(String travelPlanId) {
+        this.travelPlanId = travelPlanId;
     }
 
     public Time getTravelTime() {
@@ -187,13 +167,14 @@ public class NearbyDevice implements Parcelable, Persistable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(user.name);
+        dest.writeString(travelPlanId);
+        owner.writeToParcel(dest, flags);
+        dest.writeString((new Gson()).toJson(travellers.toArray()));
         dest.writeString(source2.id);
         dest.writeString(destination2.id);
         dest.writeString(travelTime.toString());
         dest.writeByte((byte) (preferSameGender ? 1 : 0));
         dest.writeString(modeOfJourney);
-
     }
 
     @Override
@@ -205,25 +186,24 @@ public class NearbyDevice implements Parcelable, Persistable {
             return false;
 
         NearbyDevice nd = (NearbyDevice) obj;
+
         boolean userEq = false;
-        if (this.user == null && nd.user == null)
+        if (this.owner == null && nd.owner == null)
             userEq = true;
         else
-            userEq = this.user.isSameAs(nd.user);
+            userEq = this.owner.isSameAs(nd.owner);
 
         return userEq && Objects.equals(this.source2, nd.source2)
                 && Objects.equals(this.destination2, nd.destination2)
                 && Objects.equals(this.travelTime, nd.travelTime)
                 && Objects.equals(this.preferSameGender, nd.preferSameGender)
                 && StringUtils.equals(this.modeOfJourney, nd.modeOfJourney);
-
-
     }
 
     //Utkarsh : added mode of journey and PreferSameGender
     @Override
     public int hashCode() {
-        return Objects.hash(user, source2, destination2, travelTime,preferSameGender,modeOfJourney);
+        return Objects.hash(owner, source2, destination2, travelTime, preferSameGender, modeOfJourney);
     }
 
 
@@ -245,10 +225,10 @@ public class NearbyDevice implements Parcelable, Persistable {
         destination.placeString = "Saintfield Road";
 
         UserSkimmed user = new UserSkimmed();
-        user.name = "dummy" + (new Random()).nextInt();
+        user.setUserId("" + (new Random()).nextInt());
+        user.name = "dummy" + user.getUserId();
         user.setGender("M");
-
-        return new NearbyDevice(source, destination, CurrentTime(), user);
+        return new NearbyDevice(source, destination, CurrentTime(), user, false, Mode.Any.name());
     }
 
 
@@ -259,7 +239,8 @@ public class NearbyDevice implements Parcelable, Persistable {
     public void setPreferSameGender(boolean preferSameGender) {
         this.preferSameGender = preferSameGender;
     }
-    public boolean getPreferSameGender(){
+
+    public boolean getPreferSameGender() {
         return this.preferSameGender;
     }
 
@@ -270,11 +251,14 @@ public class NearbyDevice implements Parcelable, Persistable {
         return this.isGenderCompatible(otherDevice) && isModeCompatible(otherDevice);
     }
 
-    public enum Mode {ANY, WALK, TAXI}
-    private Mode mode = Mode.ANY;
+    public enum Mode {Any, Walk, Taxi}
+
+    private Mode mode = Mode.Any;
+
     public Mode getMode() {
         return mode;
     }
+
     public void setMode(Mode mode) {
         this.mode = mode;
     }
@@ -292,20 +276,19 @@ public class NearbyDevice implements Parcelable, Persistable {
     /**
      * Checks if modes match
      *
-     * @param m1 preferred mode of user 1
-     * @param m2 preferred mode of user 2
+     * @param m1 preferred mode of owner 1
+     * @param m2 preferred mode of owner 2
      * @return true if mode ok false otherwise
      */
     public boolean checkMode(Mode m1, Mode m2) {
-        return m1 == Mode.ANY || m2 == Mode.ANY || m1 == m2;
+        return m1 == Mode.Any || m2 == Mode.Any || m1 == m2;
     }
 
-    public boolean isGenderCompatible(NearbyDevice other)
-    {
-        return checkGender(this.getUser().getGender(), this.preferSameGender,  other.getUser().getGender(), other.preferSameGender);
+    public boolean isGenderCompatible(NearbyDevice other) {
+        return checkGender(this.getOwner().getGender(), this.preferSameGender, other.getOwner().getGender(), other.preferSameGender);
     }
 
-    public static boolean checkGender(String gender1, boolean preferSameGender1, String gender2, boolean preferSameGender2){
+    public static boolean checkGender(String gender1, boolean preferSameGender1, String gender2, boolean preferSameGender2) {
         return preferSameGender1 == false && preferSameGender2 == false
                 || preferSameGender1 == false && StringUtils.equalsIgnoreCase(gender2, gender1)
                 || StringUtils.equalsIgnoreCase(gender2, gender1) && preferSameGender2 == false

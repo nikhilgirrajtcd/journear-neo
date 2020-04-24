@@ -1,7 +1,7 @@
 package com.journear.app.core.services;
 
 
-public enum JourNearMessageSet {
+public enum JnMessageSet {
     Accept,
     AcceptAndShareContact,
     Decline,

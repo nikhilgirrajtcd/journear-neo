@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.journear.app.core.services.CommunicationHub;
+import com.journear.app.core.services.CommunicationListener;
+import com.journear.app.core.services.JnMessage;
+import com.journear.app.core.services.JnMessageSet;
+import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.map.MyLocationListener;
 
 import androidx.annotation.NonNull;
@@ -28,8 +34,6 @@ import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.ui.CreateJourneyActivity;
 
-import org.oscim.core.GeoPoint;
-
 import java.util.List;
 
 public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -41,6 +45,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     private LayoutInflater inflater;
     private MyLocationListener myLocationListner;
     LocationManager locationManager;
+    private String LOGTAG = "RecyclerViewActivityLog";
 
     public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList) {
         this.devicesList = devicesList;
@@ -59,16 +64,15 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
         NearbyDevice devices = devicesList.get(position);
-        holder.userName.setText(devices.getUser().getName());
+        holder.userName.setText(devices.getOwner().getName());
         holder.source.setText(devices.getSource2().placeString);
         holder.destination.setText(devices.getDestination2().placeString);
         holder.travelTime.setText(devices.getTravelTime().toString());
         holder.modeJourney.setText(devices.getModeOfJourney());
 
-        if(devices.getPreferSameGender()){
-            holder.genderPreferenceTextView.setText(devices.getUser().getGender());
-        }
-        else{
+        if (devices.getPreferSameGender()) {
+            holder.genderPreferenceTextView.setText(devices.getOwner().getGender());
+        } else {
             holder.genderPreferenceTextView.setText(R.string.NoPreference);
         }
 
@@ -76,7 +80,6 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     }
 
     // one for just testing deviceslist.size()
-    @Override
     public int getItemCount() {
         return devicesList.size();
     }
@@ -92,6 +95,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         public Switch genderPreference;
         public Button findSource;
         public Button findCurrentToSource;
+        public Button joinRideButton;
 
         public Button editJourney;
         public Button delete;
@@ -111,17 +115,19 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             findSource = devicesList.findViewById(R.id.Maps);
             findCurrentToSource = devicesList.findViewById(R.id.currentTOSource);
             editJourney = devicesList.findViewById(R.id.editJourney);
+            joinRideButton = devicesList.findViewById(R.id.Join);
 
             editJourney.setOnClickListener(this);
             findSource.setOnClickListener(this);
             findCurrentToSource.setOnClickListener(this);
+            joinRideButton.setOnClickListener(this);
 
 
         }
 
         @Override
         public void onClick(View v) {
-            int position;
+            final int position;
             position = getAdapterPosition();
             NearbyDevice dev = devicesList.get(position);
             Context context = v.getContext();
@@ -147,6 +153,24 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 
 //                    intent = new Intent(context, MainActivity.class);
 //                    context.startActivity(intent);
+                    break;
+                case R.id.Join:
+                    ServiceLocator.getCommunicationHub().sendMessage(devicesList.get(position),
+                            JnMessageSet.RequestToJoinAndShareContact, new CommunicationListener() {
+                                @Override
+                                public void onResponse(JnMessage message) {
+                                    if(message.getMessageFlag() == JnMessageSet.Accept)
+                                    {
+//                                        devicesList.get(position)
+                                    }
+                                    Log.i(LOGTAG, "Response received: " + message.toReconstructableString());
+                                }
+
+                                @Override
+                                public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
+                                    Log.i(LOGTAG, "Expired message: " + expiredMessage.toReconstructableString());
+                                }
+                            });
                     break;
             }
         }
@@ -194,14 +218,14 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 //        position = getAdapterPosition();
 //        Item item = itemList.get(position);
 //
-//        switch (v.getId()) {
+//        switch (v.getTravelPlanId()) {
 //            case R.id.editButton:
 //                //edit item
 //                editItem(item);
 //                break;
 //            case R.id.deleteButton:
 //                //delete item
-//                deleteItem(item.getId());
+//                deleteItem(item.getTravelPlanId());
 //                break;
 //        }
 //

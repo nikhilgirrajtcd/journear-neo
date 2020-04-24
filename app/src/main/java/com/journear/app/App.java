@@ -4,7 +4,9 @@ import android.app.Application;
 import android.content.Intent;
 import android.util.Log;
 
+import com.journear.app.core.services.CommunicationHub;
 import com.journear.app.core.services.JourNearCommunicationsService;
+import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.core.utils.JnGeocoder;
 
 public class App extends Application {
@@ -15,13 +17,12 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         Log.i(LOGTAG, "onCreate App Class");
-
         initialize();
-
         startCommunicationService();
     }
 
     private void initialize() {
+        ServiceLocator.initialize(App.this);
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -29,13 +30,11 @@ public class App extends Application {
             }
         };
         r.run();
-
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
-
         stopCommunicationService();
     }
 

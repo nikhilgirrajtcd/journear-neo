@@ -152,7 +152,7 @@ public class CreateJourneyActivity extends AppCompatActivity {
             JnGeocodeItem s = mapTextValueToJnGeoCodeItem.get(source);
             JnGeocodeItem d = mapTextValueToJnGeoCodeItem.get(destination);
             Time timeOfTravel = Time.valueOf(timeTextView.getText().toString() + ":00");
-            UserSkimmed userSkimmed = LocalFunctions.getCurrentUser(this);
+            UserSkimmed userSkimmed = LocalFunctions.getCurrentUser();
             NearbyDevice currentInput = new NearbyDevice(s, d, timeOfTravel, userSkimmed, genderPreferenceSwitch,journeyMode);
 
             Log.i("SELECTION", "Source: " + s.latitude + ", " + s.longitude);
