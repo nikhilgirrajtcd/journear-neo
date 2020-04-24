@@ -1,5 +1,5 @@
 ### Pair Programming 
-Semester 1: Change pairs every week
+**Semester 1: Change pairs every week**
 | Iteration | Pair | Task | Pair | Task | Pair | Task
 | ------ | ------ | ------ | ------- | ------- | ------ | ------- |
 | 1 | Akshay, Nikhil | Research on use of Android and App development technology | Sarvani, Sujit | Research on P2P and feasibility of Encryption Techniques | Utkarsh, Taranvir | Research on server-side technology and cloud server research
@@ -9,7 +9,7 @@ Semester 1: Change pairs every week
 | 5 | Utkarsh, Akshay | Finalizing thin slice of P2P Mesh | Taranvir, Nikhil | Finalizing thin slice of Map API, Make basic UI of the app | Sarvani, Sujit | Finalizing thin slice of Database Design |
 | 6 | Taranvir, Sarvani | P2P Communication Core | Nikhil, Akshay | Maps – Routing and Matching | Sujit, Utkarsh | Authentication and Security, Mock Acceptance Tests |
 
-Semester 2: Change pairs every two weeks
+**Semester 2: Change pairs every two**
  | Iteration (Contd.) | Pair | Task | Pair | Task | Pair | Task
 | ------ | ------ | ------ | ------- | ------- | ------ | ------- |
 |7|Akshay, Nikhil|Isolating the devices on P2P since it is currently visible to anyone on Wifi Direct|Sarvani, Sujit|Communication of multiple devices using P2P|Utkarsh, Taranvir|Building an offline map with tiles and navigation using Graphhopper|
