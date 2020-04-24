@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         holder.travelTime.setText(devices.getTravelTime().toString());
         holder.modeJourney.setText(devices.getModeOfJourney());
 
+
         if (devices.getPreferSameGender()) {
             holder.genderPreferenceTextView.setText(devices.getOwner().getGender());
         } else {
@@ -100,6 +102,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         public Button editJourney;
         public Button delete;
         public int id;
+        final MediaPlayer mp = new MediaPlayer();
 
         public ViewHolder(@NonNull View devicesList, Context ctx) {
             super(devicesList);
@@ -127,6 +130,8 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 
         @Override
         public void onClick(View v) {
+            MediaPlayer.create(v.getContext(),R.raw.click).start();
+
             final int position;
             position = getAdapterPosition();
             NearbyDevice dev = devicesList.get(position);

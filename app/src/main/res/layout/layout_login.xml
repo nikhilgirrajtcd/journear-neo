@@ -5,6 +5,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:cardElevation = "10dp"
+    android:id="@+id/cardview1"
     >
 
     <LinearLayout

@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
                             if(ndOwnJourneyPlan.isCompatible(device) ){
                                 devicesList.add(device);
+                                getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                             }
                         }
                     }
