@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.User;
 import com.journear.app.core.services.JourNearCommunicationsService;
+import com.journear.app.ui.adapters.RecyclerViewAdapter;
 import com.journear.app.ui.home.HomeFragment;
 
 import java.util.ArrayList;
@@ -36,6 +38,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    MenuItem menuItem;
+    TextView badgeCounter;
+    int pendingNotifications = 13;
 
 
     public static final String TAG = "MainActivityTag";
@@ -152,6 +157,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        menuItem = menu.findItem(R.id.nav_notification);
+        if (pendingNotifications == 0) {
+            menuItem.setActionView(null);
+        } else {
+            menuItem.setActionView(R.layout.notification_badge);
+            View view = menuItem.getActionView();
+            badgeCounter = view.findViewById(R.id.badge_counter);
+            badgeCounter.setText(String.valueOf(pendingNotifications));
+        }
         return true;
     }
 

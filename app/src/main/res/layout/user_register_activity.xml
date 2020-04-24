@@ -89,6 +89,16 @@
             android:text="REGISTER"
             android:textColor="@color/btnRegister" />
 
+        <Button
+            android:id="@+id/btnDownloadMap"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_register_backgroung"
+            android:text="DOWNLOAD"
+            android:textColor="@color/btnRegister" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
