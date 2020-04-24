@@ -25,6 +25,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
 
+import com.graphhopper.routing.ch.CHParameters;
 import com.journear.app.R;
 import com.journear.app.core.PeerFunctions;
 import com.journear.app.core.entities.NearbyDevice;
@@ -49,6 +50,7 @@ public class JourNearCommunicationsService extends Service {
     public static final String ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE";
     public static final String ACTION_PAUSE = "ACTION_PAUSE";
     public static final String ACTION_PLAY = "ACTION_PLAY";
+    private CommunicationHub _comHub;
 
     /**
      * BINDER BEGIN
@@ -70,6 +72,7 @@ public class JourNearCommunicationsService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.i(TAG_FOREGROUND_SERVICE, "Service bound");
         bound = true;
         return binder;
     }
@@ -78,6 +81,7 @@ public class JourNearCommunicationsService extends Service {
     public boolean onUnbind(Intent intent) {
         boolean superResult = super.onUnbind(intent);
         bound = false;
+        Log.i(TAG_FOREGROUND_SERVICE, "Service unbound");
         return true;
     }
 
@@ -296,15 +300,24 @@ public class JourNearCommunicationsService extends Service {
 
     private WifiP2pDnsSdServiceInfo getWifiP2pDnsSdServiceInfo() {
         Map<String, String> record = new HashMap<String, String>();
-        if (ndOwnJourneyPlan == null) {
-            ndOwnJourneyPlan = NearbyDevice.getDummy();
+        if (ndOwnJourneyPlan != null) {
+            String all = PeerFunctions.getBroadcastString(ndOwnJourneyPlan);
+            record.put("I", all);
+        }
+        int i = 1;
+        for (CommunicationHub.RequestTriesResponse rtr : ServiceLocator.getCommunicationHub().getPendingMessages()) {
+            if (rtr.triesLeft > 0) {
+                record.put("C" + i, rtr.message.toReconstructableString());
+                rtr.triesLeft--;
+            } else {
+            }
+            if (i++ > 3) {
+                break;
+            }
         }
 
-        String all = PeerFunctions.getBroadcastString(ndOwnJourneyPlan);
-        record.put("a", all);
-
-        return WifiP2pDnsSdServiceInfo.newInstance(
-                SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
+        Log.i(TAG_FOREGROUND_SERVICE, "Broadcasting service - " + record.toString());
+        return WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
     }
 
     final HashMap<String, NearbyDevice> discoveredDnsRecords = new HashMap<>();
@@ -319,18 +332,11 @@ public class JourNearCommunicationsService extends Service {
 
         public void onDnsSdTxtRecordAvailable(
                 String fullDomain, Map<String, String> record, WifiP2pDevice device) {
-            Log.d(TAG_FOREGROUND_SERVICE, "DnsSdTxtRecord available - " + record.toString());
-            NearbyDevice nd = new NearbyDevice();
-            String[] all = StringUtils.split(record.get("a"), '|');
-
-            UserSkimmed u = new UserSkimmed();
-            u.setName(all[0]);
-            nd.setUser(u);
-            nd.setSource2(all[1]);
-            nd.setDestination2(all[2]);
-            nd.setTravelTime(all[3]);
-
-            discoveredDnsRecords.put(device.deviceAddress, nd);
+            Log.i(TAG_FOREGROUND_SERVICE, "DnsSdTxtRecord available - " + record.toString());
+            if (record.containsKey("I")) {
+                NearbyDevice nd = PeerFunctions.parseBroadcastString(record.get("I"));
+                discoveredDnsRecords.put(device.deviceAddress, nd);
+            }
         }
     };
 
@@ -342,13 +348,12 @@ public class JourNearCommunicationsService extends Service {
 
             if (discoveredDnsRecords.containsKey(resourceType.deviceAddress)) {
                 NearbyDevice nd = discoveredDnsRecords.get(resourceType.deviceAddress);
-
                 onNewDeviceFound(nd);
             }
+
             Log.d(TAG_FOREGROUND_SERVICE, "onBonjourServiceAvailable " + instanceName);
         }
     };
-
 
     private void discoverDevices() {
         getManager().clearLocalServices(getChannel(), new WifiP2pManager.ActionListener() {

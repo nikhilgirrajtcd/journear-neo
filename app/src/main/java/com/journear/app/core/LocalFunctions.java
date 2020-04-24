@@ -15,15 +15,19 @@ import androidx.core.content.ContextCompat;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.StringWrapper;
 import com.journear.app.core.entities.User;
+import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.core.utils.AppConstants;
 import com.journear.app.map.MapActivity;
+
+import org.apache.commons.lang3.StringUtils;
 
 
 public class LocalFunctions {
 
+    private static User _user;
+
     @Deprecated
     public static User getCurrentRegisteredUser(Context context) {
-
         return (User) PersistentStore.getInstance(context).getItem("registeredUser", User.class);
     }
 
@@ -32,12 +36,20 @@ public class LocalFunctions {
         return (StringWrapper) PersistentStore.getInstance(context).getItem("currentUser", StringWrapper.class);
     }
 
-    public static User getCurrentUser(Context context) {
-        return (User) PersistentStore.getInstance(context).getItem("currentUser", User.class);
+    public static User getCurrentUser() {
+        if (_user == null)
+            _user = (User) PersistentStore.getInstance(ServiceLocator.getApplicationContext())
+                    .getItem("currentUser", User.class);
+        return _user;
     }
 
-    public static void setCurrentUser(Context context, User user) {
-        PersistentStore.getInstance(context).setItem("currentUser", user, true);
+    /**
+     * Persists the user in local store. Shortcut to PersistentStore.getInstance(context).setItem...
+     * @param user
+     */
+    public static void setCurrentUser(User user) {
+        _user = user;
+        PersistentStore.getInstance(ServiceLocator.getApplicationContext()).setItem("currentUser", user, true);
     }
 
     public static void setCurrentJourney(NearbyDevice nd, Context context) {
@@ -57,49 +69,13 @@ public class LocalFunctions {
         Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();
     }
 
-//    public static boolean checkInternetPermission(Activity thisActivity) {
-//        if (ContextCompat.checkSelfPermission(thisActivity, Manifest.permission.INTERNET)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            shortToast("Please turn on your internet", thisActivity);
-//
-//
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
-//                    Manifest.permission.INTERNET)) {
-//                // Show an explanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//            } else {
-//                // No explanation needed; request the permission
-//                ActivityCompat.requestPermissions(thisActivity,
-//                        new String[]{Manifest.permission.INTERNET},
-//                        AppConstants.MY_PERMISSIONS_REQUEST_INTERNET);
-//
-//                // MY_PERMISSIONS_REQUEST_INTERNET is an
-//                // app-defined int constant. The callback method gets the
-//                // result of the request.
-//            }
-//            return false;
-//        } else
-//            return true;
-//    }
-
     public static boolean requestPermissions(Activity thisActivity) {
         if (!(isLocationPermissionGiven(thisActivity) || isStoragePermissionGiven(thisActivity))) {
             shortToast("Please turn on your location", thisActivity);
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            // Show an explanation to the user *asynchronously* -- don't block
-            // this thread waiting for the user's response! After the user
-            // sees the explanation, try again to request the permission.
-//            } else {
-            // No explanation needed; request the permission
+
             ActivityCompat.requestPermissions(thisActivity,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     AppConstants.MY_PERMISSIONS_ALL);
-
-            // MY_PERMISSIONS_REQUEST_INTERNET is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
         }
         return true;
 //        } else
@@ -124,28 +100,35 @@ public class LocalFunctions {
 
     }
 
+    /**
+     * Returns 1 for Female, 2 for Male and 3 otherwise
+     *
+     * @param genderString A string {male, female, M, F, Any, Other, Male}
+     * @return
+     */
+    public static int getGenderIndex(String genderString) {
+        if (StringUtils.containsIgnoreCase(genderString, "f"))
+            return 1;
+        else if (StringUtils.containsIgnoreCase(genderString, "m"))
+            return 2;
+        else
+            return 3;
+    }
 
-//    public static boolean checkStoragePermission(Activity thisActivity) {
-//        if (ContextCompat.checkSelfPermission(thisActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            shortToast("Please turn on your Storage", thisActivity);
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
-//                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-//                // Show an explanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//            } else {
-//                // No explanation needed; request the permission
-//                ActivityCompat.requestPermissions(thisActivity,
-//                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-//                        AppConstants.MY_PERMISSIONS_REQUEST_STORAGE);
-//
-//                // MY_PERMISSIONS_REQUEST_INTERNET is an
-//                // app-defined int constant. The callback method gets the
-//                // result of the request.
-//            }
-//            return false;
-//        } else
-//            return true;
-//    }
+    /**
+     * Returns the string Female for 1, Male for 2 and Other for 3
+     *
+     * @param index
+     * @return
+     */
+    public static String getGenderString(int index) {
+        switch (index) {
+            default:
+                return "Other";
+            case 1:
+                return "Female";
+            case 2:
+                return "Male";
+        }
+    }
 }

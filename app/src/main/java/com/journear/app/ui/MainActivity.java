@@ -34,6 +34,7 @@ import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.User;
+import com.journear.app.core.services.CommunicationHub;
 import com.journear.app.core.services.JourNearCommunicationsService;
 import com.journear.app.ui.adapters.RecyclerViewAdapter;
 
@@ -124,8 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
     JourNearCommunicationsService.ServiceActivityBinder binder = null;
     JourNearCommunicationsService communicationsService = null;
-
-
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -219,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
      * Sets username, avatar and email on the left drawer.
      */
     private void decorateUiForUser() {
-        User currentUser = LocalFunctions.getCurrentUser(MainActivity.this);
+        User currentUser = LocalFunctions.getCurrentUser();
         // Todo: Fetch the user details from server over here and user that to set the environment
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
@@ -263,8 +262,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         unbindService(serviceConnection);
+        super.onDestroy();
     }
 
     public static final String intentDeviceFound = "DeviceFound";

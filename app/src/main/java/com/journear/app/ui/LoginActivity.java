@@ -45,10 +45,10 @@ public class LoginActivity extends AppCompatActivity {
                         User user = new User();
                         user.setDobValue(userJsonObj.get("dob").toString());
                         user.setGender(userJsonObj.get("gender").toString());
-                        user.setUserID(userJsonObj.get("id").toString());
+                        user.setUserId(userJsonObj.get("id").toString());
                         user.setEmail(userJsonObj.get("username").toString());
                         user.name = userJsonObj.get("name").toString();
-                        LocalFunctions.setCurrentUser(LoginActivity.this, user);
+                        LocalFunctions.setCurrentUser(user);
                     }
                 }
             } catch (JSONException e) {
