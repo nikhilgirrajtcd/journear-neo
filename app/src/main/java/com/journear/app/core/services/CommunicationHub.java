@@ -36,10 +36,12 @@ public class CommunicationHub {
             RequestTriesResponse rtr = pendingMessages.get(i);
             if(rtr.message.getMessageId().equals(message.getMessageId()))
             {
-                rtr.responseListener.onResponse(message);
+                ConversationLog logObj = null;
                 if(conversationLogMap.containsKey(message.getSubject())) {
-                    conversationLogMap.get(message.getSubject()).messages.add(message);
+                    logObj = conversationLogMap.get(message.getSubject());
+                    logObj.messages.add(message);
                 }
+                rtr.responseListener.onResponse(message, logObj.nearbyDevice);
                 pendingMessages.remove(i);
             }
         }
