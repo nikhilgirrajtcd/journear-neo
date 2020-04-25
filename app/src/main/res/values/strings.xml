@@ -12,8 +12,9 @@
     <string name = "register_password_hint">Enter Password</string>
     <string name="action_settings">Settings</string>
     <string name="openMapBtn">Open Map</string>
-    <string name="askPermissionBtn">Ask Permissions</string>
-    <string name="landingPageTextBtn">Storage and Location Permission->For Maps;;</string>
+    <string name="askPermissionBtn">Go</string>
+    <string name="landingPageText1">JourNear is an app to find travel companions around you in real-time. This does not use internet and relies on Wi-Fi waves technology.</string>
+    <string name="landingPageText2">The app requires permissions to store data for offline usage and your location to scan for nearby travellers.</string>
     <string name="menu_home">Nearby Travellers</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>

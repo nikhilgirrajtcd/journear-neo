@@ -57,7 +57,7 @@ public class JourNearCommunicationsService extends Service {
      **************************************************************/
     // Binder given to clients
     private final IBinder binder = new ServiceActivityBinder();
-    private boolean bound = false;
+    public boolean bound = false;
 
     /**
      * Class used for the client Binder.  Because we know this service always
