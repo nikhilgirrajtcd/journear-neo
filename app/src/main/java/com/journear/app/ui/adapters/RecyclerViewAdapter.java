@@ -91,6 +91,14 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         }
 
 
+        if(devices.getOwner().getUserId().equalsIgnoreCase(LocalFunctions.getCurrentUser().getUserId())){
+            holder.editJourney.setVisibility(View.VISIBLE);
+            holder.joinRideButton.setVisibility(View.GONE);
+            relativeLayout.setBackground(ContextCompat.getDrawable(context, card_edge));
+
+        }
+
+
         if (devices.getPreferSameGender()) {
             holder.genderPreferenceTextView.setText(devices.getOwner().getGender());
         } else {
