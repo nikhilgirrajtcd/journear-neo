@@ -41,7 +41,7 @@ public class CommunicationHub {
         /* 1. remove the message from @pendingMessages list
          * 2. add it to the appropriate entry in the @conversationLogMap
          * 3. raise the listener */
-        if (message.getMessageId().equals(ndOwnJourneyPlan.getTravelPlanId())) {
+        if (message.getSubject().equals(ndOwnJourneyPlan.getTravelPlanId())) {
             if (commonListener != null) {
                 commonListener.onResponse(message, ndOwnJourneyPlan);
             }
