@@ -1,7 +1,6 @@
 package com.journear.app.ui.share;
 
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.journear.app.R;
@@ -21,8 +18,8 @@ import com.journear.app.core.services.CommunicationListener;
 import com.journear.app.core.services.JnMessage;
 import com.journear.app.core.services.JnMessageSet;
 import com.journear.app.core.services.ServiceLocator;
+import com.journear.app.ui.MainActivity;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.lang3.StringUtils;
 
 public class ShareFragment extends Fragment implements CommunicationListener {
@@ -49,6 +46,20 @@ public class ShareFragment extends Fragment implements CommunicationListener {
         return root;
     }
 
+    MainActivity mainActivity;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mainActivity = (MainActivity) getActivity();
+        for (MainActivity.CachedComms cachedComms : mainActivity.getCachedCommsList()) {
+            if (cachedComms.isExpired()) {
+                onExpire(cachedComms.getMessage(), cachedComms.getAssociatedRide());
+            } else {
+                onResponse(cachedComms.getMessage(), cachedComms.getAssociatedRide());
+            }
+        }
+    }
 
     private void Reject(JnMessage message, NearbyDevice associatedRide) {
         ServiceLocator.getCommunicationHub().sendMessage(associatedRide, JnMessageSet.Reject, this);

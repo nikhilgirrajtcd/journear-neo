@@ -30,8 +30,9 @@ import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.User;
+import com.journear.app.core.services.CommunicationListener;
+import com.journear.app.core.services.JnMessage;
 import com.journear.app.core.services.JourNearCommunicationsService;
-import com.journear.app.ui.adapters.RecyclerViewAdapter;
 import com.journear.app.ui.home.HomeFragment;
 import com.journear.app.ui.share.ShareFragment;
 
@@ -266,5 +267,77 @@ public class MainActivity extends AppCompatActivity {
             devicesList.add(obj);
             homeFragment.onPeerDiscovered(null);
         }
+    }
+
+    /**
+     * Class to collect and cache all communication
+     */
+    public class CachedComms {
+
+        public boolean isDelivered() {
+            return delivered;
+        }
+
+        public void setDelivered(boolean delivered) {
+            this.delivered = delivered;
+        }
+
+        public JnMessage getMessage() {
+            return message;
+        }
+
+        public NearbyDevice getAssociatedRide() {
+            return associatedRide;
+        }
+
+        public boolean isExpired() {
+            return expired;
+        }
+
+        boolean delivered;
+        JnMessage message;
+        NearbyDevice associatedRide;
+        boolean expired = false;
+
+
+        public CachedComms(JnMessage message, NearbyDevice associatedRide, boolean expired) {
+            this.message = message;
+            this.associatedRide = associatedRide;
+            this.expired = expired;
+            this.delivered = false;
+        }
+    }
+
+    List<CachedComms> cachedCommsList = new ArrayList<>();
+
+    public List<CachedComms> getCachedCommsList() {
+        return cachedCommsList;
+    }
+
+    public CommunicationListener getCollectorListener() {
+        return collectorListener;
+    }
+
+    private CommunicationListener collectorListener = new CommunicationListener() {
+        @Override
+        public void onResponse(JnMessage message, NearbyDevice associatedRide) {
+            cachedCommsList.add(new CachedComms(message, associatedRide, false));
+            pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
+        }
+
+        @Override
+        public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
+            cachedCommsList.add(new CachedComms(expiredMessage, nearbyDevice, true));
+            pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
+        }
+    };
+
+    public static int getUnreadCachedCommsCount(List<CachedComms> l) {
+        int _count = 0;
+        for(int iIndex = 0; iIndex < l.size(); iIndex++) {
+            if(!l.get(0).delivered)
+                _count++;
+        }
+        return _count;
     }
 }

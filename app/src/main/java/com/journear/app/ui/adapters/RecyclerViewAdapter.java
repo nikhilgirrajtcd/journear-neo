@@ -48,11 +48,13 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     private LayoutInflater inflater;
     private MyLocationListener myLocationListner;
     LocationManager locationManager;
+    CommunicationListener communicationListener;
     private String LOGTAG = "RecyclerViewActivityLog";
 
-    public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList) {
+    public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList, CommunicationListener communicationListener) {
         this.devicesList = devicesList;
         this.context = context;
+        this.communicationListener = communicationListener;
     }
 
     @NonNull
@@ -163,24 +165,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     break;
                 case R.id.Join:
                     ServiceLocator.getCommunicationHub().sendMessage(devicesList.get(position),
-                            JnMessageSet.RequestToJoinAndShareContact,  new ToolsFragment()
-
-//                            new CommunicationListener() {
-//                                @Override
-//                                public void onResponse(JnMessage message) {
-//                                    if(message.getMessageFlag() == JnMessageSet.RequestedToJoin)
-//                                    {
-////                                        devicesList.get(position)
-//                                    }
-//                                    Log.i(LOGTAG, "Response received: " + message.toReconstructableString());
-//                                }
-//
-//                                @Override
-//                                public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
-//                                    Log.i(LOGTAG, "Expired message: " + expiredMessage.toReconstructableString());
-//                                }
-//                            }
-                            );
+                            JnMessageSet.RequestToJoin, communicationListener);
                     break;
             }
         }

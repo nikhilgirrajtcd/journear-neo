@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment implements JnPeerDiscoveryListener {
     private void showJourneys() {
         recyclerView = getView().findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewAdapter = new RecyclerViewAdapter(getContext(), parentActivity.devicesList);
+        recyclerViewAdapter = new RecyclerViewAdapter(getContext(), parentActivity.devicesList, parentActivity.getCollectorListener());
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.notifyDataSetChanged();
     }
