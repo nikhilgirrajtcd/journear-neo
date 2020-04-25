@@ -7,11 +7,16 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
         <RelativeLayout
+            android:id="@+id/discoveryRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:background="@android:drawable/dialog_holo_light_frame"
+            >
+
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -29,31 +34,92 @@
                     android:hapticFeedbackEnabled="true"></Button>
 
             </TableRow>
+        <LinearLayout
+            android:id="@+id/userLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/user_name_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User: "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                />
 
+        </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sourceLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/userLinearLayout">
+
+                <TextView
+                    android:id="@+id/sourceTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="From: "
+                    android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/user_name"
                 android:textSize="18sp"
                 android:textStyle="italic" />
-            <TextView
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/destinationLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/sourceLinearLayout">
+
+                <TextView
+                    android:id="@+id/destinationTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="To: "
+                    android:textStyle="bold"/>
+
+                <TextView
                 android:id="@+id/destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/source"
                 android:paddingTop="4dp"
-
                 android:textSize="18sp"
                 android:textStyle="italic" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/timeLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/destinationLinearLayout">
+
+                <TextView
+                    android:id="@+id/travelTimeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="At: "
+                    android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/travelTime"
@@ -63,65 +129,107 @@
 
                 android:textSize="18sp"
                 android:textStyle="italic" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/preferencesTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/travelTime"
+                android:layout_below="@id/timeLinearLayout"
                 android:layout_marginTop="5dp"
                 android:text="Journey Preferences"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_marginVertical="5dp"
+                />
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/modeLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/preferencesTextView">
+
+                <TextView
+                    android:id="@+id/modeprefTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="Mode: "
+                    android:textStyle="bold"/>
+
+                <TextView
                 android:id="@+id/preferenceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/preferencesTextView"
                 android:textSize="15sp"
                 />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/genderPreferenceLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/modeLinearLayout">
+
+            <TextView
+                android:id="@+id/genderPreferenceTimeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="Gender Preference :"
+                android:textStyle="bold"/>
+
             <TextView
                 android:id="@+id/genderPreferenceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/preferenceTextView"
+
                 android:textSize="15sp"
                 />
-
+            </LinearLayout>
             <TableRow
-                android:layout_width="wrap_content"
+                android:id="@+id/btnTableRow"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/preferenceTextView"
+                android:layout_below="@id/genderPreferenceLinearLayout"
                 android:layout_alignParentEnd="true"
+                android:layout_marginLeft="50dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+
+                >
 
                 <Button
                     android:id="@+id/currentTOSource"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginEnd="15dp"
-                    android:background="@android:drawable/ic_menu_compass" />
+                    android:layout_marginEnd="50dp"
+                    android:background="@android:drawable/ic_menu_compass"
+                    />
 
                 <Button
                     android:id="@+id/Maps"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="50dp"
                     android:background="@android:drawable/ic_menu_directions"
-                    android:hapticFeedbackEnabled="true"/>
+                    android:hapticFeedbackEnabled="true"
+
+                    />
                 <Button
                     android:id="@+id/Join"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="50dp"
                     android:background="@drawable/plus_one"
                     android:hapticFeedbackEnabled="true"/>
                 <Button
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="50dp"
                     android:background="@android:drawable/ic_media_play"
                     android:hapticFeedbackEnabled="true"/>
 

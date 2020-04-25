@@ -80,7 +80,7 @@ public class UserRegisterActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.i("JSON","ONRESPONSE ERROR START");
                 Snackbar.make( findViewById(android.R.id.content).getRootView()
-                        ,"Username and Password do not match",Snackbar.LENGTH_SHORT).show();
+                        ,"Please make sure internet is connected",Snackbar.LENGTH_SHORT).show();
             }
         };
 

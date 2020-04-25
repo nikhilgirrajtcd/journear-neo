@@ -13,10 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.journear.app.core.entities.UserSkimmed;
 import com.journear.app.core.services.CommunicationHub;
 import com.journear.app.core.services.CommunicationListener;
 import com.journear.app.core.services.JnMessage;
@@ -26,6 +29,7 @@ import com.journear.app.map.MyLocationListener;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
@@ -39,17 +43,18 @@ import com.journear.app.ui.tools.ToolsFragment;
 
 import java.util.List;
 
+import static com.journear.app.R.drawable.card_edge;
+
 public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder> {
 
     public Context context;
     private List<NearbyDevice> devicesList;
-    private AlertDialog.Builder builder;
-    private AlertDialog dialog;
-    private LayoutInflater inflater;
     private MyLocationListener myLocationListner;
     LocationManager locationManager;
     CommunicationListener communicationListener;
     private String LOGTAG = "RecyclerViewActivityLog";
+    private View view;
+
 
     public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList, CommunicationListener communicationListener) {
         this.devicesList = devicesList;
@@ -60,7 +65,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     @NonNull
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+         view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.nearby_devices, parent, false);
 
         return new ViewHolder(view, context);
@@ -68,12 +73,23 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.discoveryRelativeLayout);
+        TableRow tableRow = (TableRow) view.findViewById(R.id.btnTableRow);
+
         NearbyDevice devices = devicesList.get(position);
         holder.userName.setText(devices.getOwner().getName());
         holder.source.setText(devices.getSource2().placeString);
         holder.destination.setText(devices.getDestination2().placeString);
         holder.travelTime.setText(devices.getTravelTime().toString());
         holder.modeJourney.setText(devices.getModeOfJourney());
+
+
+        if(devices.getOwner().getUserId().equalsIgnoreCase(LocalFunctions.getCurrentUser().getUserId())){
+            holder.editJourney.setVisibility(View.VISIBLE);
+            holder.joinRideButton.setVisibility(View.GONE);
+            relativeLayout.setBackground(ContextCompat.getDrawable(context, card_edge));
+
+        }
 
 
         if (devices.getPreferSameGender()) {
@@ -124,6 +140,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             editJourney = devicesList.findViewById(R.id.editJourney);
             joinRideButton = devicesList.findViewById(R.id.Join);
 
+
             editJourney.setOnClickListener(this);
             findSource.setOnClickListener(this);
             findCurrentToSource.setOnClickListener(this);
@@ -144,7 +161,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
             switch (v.getId()) {
                 case R.id.currentTOSource:
-                    //Taran add functionality
+
                     findLocation(dev, v);
                     break;
 
@@ -160,8 +177,6 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     LocalFunctions.launchMapActivityWithRoute(v.getContext(), source.latitude, source.longitude,
                             destination.latitude, destination.longitude);
 
-//                    intent = new Intent(context, MainActivity.class);
-//                    context.startActivity(intent);
                     break;
                 case R.id.Join:
                     ServiceLocator.getCommunicationHub().sendMessage(devicesList.get(position),
@@ -172,6 +187,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     }
 
     private void editCreatedJourney(final NearbyDevice device, View view) {
+
 
         final Intent intent = new Intent(context, CreateJourneyActivity.class);
         intent.putExtra("EditIntent", device);
@@ -205,24 +221,5 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                 source.latitude, source.longitude);
 
     }
-//
-//    @Override
-//    public void onClick(View v) {
-//
-//        int position;
-//        position = getAdapterPosition();
-//        Item item = itemList.get(position);
-//
-//        switch (v.getTravelPlanId()) {
-//            case R.id.editButton:
-//                //edit item
-//                editItem(item);
-//                break;
-//            case R.id.deleteButton:
-//                //delete item
-//                deleteItem(item.getTravelPlanId());
-//                break;
-//        }
-//
-//    }
+
 }

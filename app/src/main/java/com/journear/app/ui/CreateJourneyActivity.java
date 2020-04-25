@@ -3,6 +3,7 @@ package com.journear.app.ui;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -104,7 +105,7 @@ public class CreateJourneyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
+                MediaPlayer.create(v.getContext(),R.raw.click);
                 createJourney(v);
 
 
