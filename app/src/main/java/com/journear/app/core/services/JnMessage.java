@@ -6,6 +6,14 @@ public class JnMessage {
     private JnMessageSet messageFlag;
     private String messageId;
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
     /**
      * Phone number if available
      */

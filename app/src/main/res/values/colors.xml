@@ -10,4 +10,5 @@
 
     <color name="btnLogIn">#1fbad6</color>
     <color name="btnRegister">#83838c</color>
+    <color name="disabled">#808080</color>
 </resources>

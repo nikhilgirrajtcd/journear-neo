@@ -28,6 +28,11 @@ import org.apache.commons.lang3.StringUtils;
 public class ShareFragment extends Fragment implements CommunicationListener {
 
     private ShareViewModel shareViewModel;
+    private Button acceptButton;
+    private Button rejectButton;
+    private View layoutToAdd;
+    private LinearLayout container;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -55,38 +60,67 @@ public class ShareFragment extends Fragment implements CommunicationListener {
 
     @Override
     public void onResponse(final JnMessage message, final NearbyDevice associatedRide) {
-        LinearLayout container = getView().findViewById(R.id.messages_container);
+        container = getView().findViewById(R.id.messages_container);
 
         if (StringUtils.containsIgnoreCase(message.getMessageFlag().name(), "request")) {
 
-            View layoutToAdd = getLayoutInflater().inflate(R.layout.accept_reject_button_layout, container, false);
-            Button acceptButton = layoutToAdd.findViewById(R.id.message_accept);
+            layoutToAdd = getLayoutInflater().inflate(R.layout.accept_reject_button_layout, container, false);
+            acceptButton = layoutToAdd.findViewById(R.id.message_accept);
             acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Accept(message, associatedRide);
+
                 }
             });
 
-            Button rejectButton = layoutToAdd.findViewById(R.id.message_reject);
+            rejectButton = layoutToAdd.findViewById(R.id.message_reject);
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Reject(message, associatedRide);
+
                 }
             });
             container.addView(layoutToAdd);
         } else {
             // fill the tv
             TextView tv = new TextView(getContext());
+
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, // Width of TextView
+                    LinearLayout.LayoutParams.WRAP_CONTENT); // Height of TextView
+
+            tv.setLayoutParams(lp);
+            tv.setText(messageResponseJourney(associatedRide, message));
             container.addView(tv);
         }
+    }
+
+    private String messageResponseJourney(NearbyDevice associatedRide, JnMessage message) {
+
+        String past = message.getMessageFlag().name().toUpperCase() + "ED";
+        String contactInfo = message.getMessageFlag() == JnMessageSet.Accept ? "Contact Info:" + message.getPhoneNumber() : " ";
+        String messageResponse = past + " :Your Journey from " + associatedRide.getSource2().placeString +
+                " to " + associatedRide.getDestination2().placeString + " at " + associatedRide.getTravelTime() +
+                " has been " + past + " by " + associatedRide.getOwner().getName();
+
+        return messageResponse;
+
     }
 
 
     @Override
     public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
         // Add an entry to the linear layout with "Expired: " before the text
+        container = getView().findViewById(R.id.messages_container);
+        layoutToAdd = getLayoutInflater().inflate(R.layout.accept_reject_button_layout, container, false);
+        acceptButton = layoutToAdd.findViewById(R.id.message_accept);
+        rejectButton = layoutToAdd.findViewById(R.id.message_reject);
+        layoutToAdd.setBackgroundColor(getResources().getColor(R.color.disabled));
+        acceptButton.setEnabled(false);
+        rejectButton.setEnabled(false);
+
     }
 }

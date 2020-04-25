@@ -124,7 +124,7 @@
                 android:layout_marginTop="15dp"
                 android:text="Add Trip"
                 android:layout_width="match_parent"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@color/colorAccent"
                 android:layout_height="wrap_content"/>
 <!--                android:background="@color/colorAccent"-->
         </RelativeLayout>
