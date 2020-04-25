@@ -73,7 +73,7 @@ public class ShareFragment extends Fragment implements CommunicationListener {
     public void onResponse(final JnMessage message, final NearbyDevice associatedRide) {
         container = getView().findViewById(R.id.messages_container);
 
-        if (StringUtils.containsIgnoreCase(message.getMessageFlag().name(), "request")) {
+        if (message.getMessageFlag() == JnMessageSet.RequestToJoin) {
 
             layoutToAdd = getLayoutInflater().inflate(R.layout.accept_reject_button_layout, container, false);
             acceptButton = layoutToAdd.findViewById(R.id.message_accept);

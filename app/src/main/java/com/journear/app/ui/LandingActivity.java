@@ -22,29 +22,6 @@ public class LandingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-
-        if (!hasNecessaryPermissions()) {
-            StringWrapper firstTimeUse = (StringWrapper) ServiceLocator.getPersistentStore().getItem("FirstTimeUse", StringWrapper.class);
-
-            if (firstTimeUse == null || StringUtils.isEmpty(firstTimeUse.toString())) {
-                findViewById(R.id.askPermissionButton).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        StringWrapper sw = new StringWrapper("" + System.currentTimeMillis());
-                        LocalFunctions.requestPermissions(LandingActivity.this);
-                        if(hasNecessaryPermissions())
-                        {
-                            proceedToMainActivity();
-                        }
-                    }
-                });
-            } else {
-                StringWrapper sw = new StringWrapper("" + System.currentTimeMillis());
-                proceedToMainActivity();
-            }
-        } else {
-            proceedToMainActivity();
-        }
     }
 
     private boolean hasNecessaryPermissions() {
@@ -104,7 +81,39 @@ public class LandingActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (!hasNecessaryPermissions()) {
+            StringWrapper firstTimeUse = (StringWrapper) ServiceLocator.getPersistentStore().getItem("FirstTimeUse", StringWrapper.class);
+
+            if (firstTimeUse == null || StringUtils.isEmpty(firstTimeUse.toString())) {
+                findViewById(R.id.askPermissionButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StringWrapper sw = new StringWrapper("" + System.currentTimeMillis());
+                        LocalFunctions.requestPermissions(LandingActivity.this);
+                        if(hasNecessaryPermissions())
+                        {
+                            proceedToMainActivity();
+                        }
+                    }
+                });
+            } else {
+                StringWrapper sw = new StringWrapper("" + System.currentTimeMillis());
+                proceedToMainActivity();
+            }
+        } else {
+            proceedToMainActivity();
+        }
+    }
+
     private void proceedToMainActivity() {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         startActivity(new Intent(LandingActivity.this, MainActivity.class));
         finish();
     }
