@@ -68,4 +68,11 @@ public class JnMessage {
     public String getMessageId() {
         return messageId;
     }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getSender() {
+        return senderId;
+    }
 }
