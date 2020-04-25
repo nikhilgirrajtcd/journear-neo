@@ -1,4 +1,4 @@
-package com.journear.app.ui;
+    package com.journear.app.ui;
 
 import android.content.ClipData;
 import android.content.ComponentName;
