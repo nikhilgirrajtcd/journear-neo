@@ -39,6 +39,11 @@ android {
 dependencies {
     implementation 'com.jjoe64:graphview:4.2.2'
 
+    implementation(group: 'com.graphhopper', name: 'graphhopper-core', version: '0.13.0') {
+        exclude group: 'com.google.protobuf', module: 'protobuf-java'
+        exclude group: 'org.openstreetmap.osmosis', module: 'osmosis-osm-binary'
+        exclude group: 'org.apache.xmlgraphics', module: 'xmlgraphics-commons'
+    }
 
     implementation 'org.mapsforge:vtm:0.12.0'
     implementation 'org.mapsforge:vtm-android:0.12.0'
@@ -78,8 +83,5 @@ dependencies {
 
     androidTestImplementation 'androidx.test:rules:1.1.1'
     implementation 'org.conscrypt:conscrypt-android:2.2.1'
-    implementation files('C:\\Users\\Aman\\.gradle\\caches\\modules-2\\files-2.1\\com.graphhopper\\graphhopper-core\\0.13.0\\1f7be2f56f5d1749364dac6f4995ae5777858ad7\\graphhopper-core-0.13.0.jar')
-    implementation files('C:\\Users\\Aman\\.gradle\\caches\\modules-2\\files-2.1\\com.graphhopper\\graphhopper-api\\0.13.0\\f1f56cad71870820c7dd302f0bfe65a70e5fe221\\graphhopper-api-0.13.0.jar')
-    implementation files('C:\\Users\\Aman\\.gradle\\caches\\modules-2\\files-2.1\\com.carrotsearch\\hppc\\0.8.1\\ffc7ba8f289428b9508ab484b8001dea944ae603\\hppc-0.8.1.jar')
 
 }
