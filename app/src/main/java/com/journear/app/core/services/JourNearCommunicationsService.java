@@ -423,7 +423,7 @@ public class JourNearCommunicationsService extends Service {
 
             @Override
             public void onFailure(int reason) {
-                shortToast("F1");
+                shortToast("Please turn on Wifi");
             }
         });
     }
