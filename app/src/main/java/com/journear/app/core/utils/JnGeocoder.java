@@ -1,6 +1,7 @@
 package com.journear.app.core.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.journear.app.R;
@@ -79,7 +80,7 @@ public class JnGeocoder {
 //        }
         final ArrayList<JnGeocodeItem> returnSet = new ArrayList<>();
         String row = "";
-        int max = 500;
+        int max = 100000;
         try {
             InputStream csvStream = context.getResources().openRawResource(R.raw.geocodes_ie);
             final BufferedReader reader = new BufferedReader(
