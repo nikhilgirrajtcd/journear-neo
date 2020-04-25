@@ -1,4 +1,4 @@
-    package com.journear.app.ui;
+package com.journear.app.ui;
 
 import android.content.ClipData;
 import android.content.ComponentName;
@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -27,14 +26,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.android.volley.Cache;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.core.entities.User;
-import com.journear.app.core.services.CommunicationHub;
 import com.journear.app.core.services.CommunicationListener;
 import com.journear.app.core.services.JnMessage;
 import com.journear.app.core.services.JourNearCommunicationsService;
@@ -43,26 +40,21 @@ import com.journear.app.ui.home.HomeFragment;
 import com.journear.app.ui.share.ShareFragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 
-    public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String LOGTAG = "MainActivityLogs";
     private AppBarConfiguration mAppBarConfiguration;
     private MenuItem menuItem;
     private TextView badgeCounter;
-    int pendingNotifications = 0;
+    int pendingNotifications = 13;
     private MenuItem navNotificationItem;
-    private Map<String, Long> discoveryTimes = new HashMap<>();
+
 
     public static final String TAG = "MainActivityTag";
-    public NearbyDevice ndOwnJourneyPlan;
-    private View notificationsImageView;
-    long REDISCOVERY_WINDOW = CommunicationHub.MAX_RETRY_COUNT * JourNearCommunicationsService.DISCOVERY_INTERVAL * 1000;
+    private NearbyDevice ndOwnJourneyPlan;
 
 
     @Override
@@ -113,7 +105,7 @@ import java.util.Objects;
     protected void bindService() {
         Intent intent1 = new Intent(MainActivity.this, JourNearCommunicationsService.class);
         bindService(intent1, serviceConnection, Context.BIND_ADJUST_WITH_ACTIVITY);
-        if (communicationsService != null) {
+        if(communicationsService != null) {
             communicationsService.bound = true;
             processBufferedUpdates();
         }
@@ -185,39 +177,32 @@ import java.util.Objects;
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+//        return true;getMenuInflater().inflate(R.menu.main, menu);
 
         menuItem = menu.findItem(R.id.nav_notification);
-        menuItem.setActionView(R.layout.notification_badge);
-        View view = menuItem.getActionView();
-        badgeCounter = view.findViewById(R.id.badge_counter);
-        notificationsImageView = view.findViewById(R.id.bell_icon_types);
-        badgeCounter.setText(String.valueOf(pendingNotifications));
+        if (pendingNotifications == 0) {
+            menuItem.setActionView(null);
+        } else {
+            menuItem.setActionView(R.layout.notification_badge);
+            View view = menuItem.getActionView();
+            badgeCounter = view.findViewById(R.id.badge_counter);
+            badgeCounter.setText(String.valueOf(pendingNotifications));
+        }
 
         badgeCounter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openNotificationsFragment();
+                FragmentTransaction ft = MainActivity.this.getSupportFragmentManager().getFragments().get(0).getChildFragmentManager().beginTransaction();
+                Fragment sf = new ShareFragment();
+                ft.replace(R.id.nav_host_fragment, sf);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
-
-        notificationsImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openNotificationsFragment();
-            }
-        });
-
 
         return true;
     }
 
-    public void openNotificationsFragment() {
-        FragmentTransaction ft = MainActivity.this.getSupportFragmentManager().getFragments().get(0).getChildFragmentManager().beginTransaction();
-        Fragment sf = new ShareFragment();
-        ft.replace(R.id.nav_host_fragment, sf);
-        ft.addToBackStack(null);
-        ft.commit();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -250,7 +235,7 @@ import java.util.Objects;
     }
 
     private void unbindService() {
-        if (communicationsService != null)
+        if(communicationsService != null)
             communicationsService.bound = false;
         unbindService(serviceConnection);
     }
@@ -326,33 +311,13 @@ import java.util.Objects;
         if (obj == null)
             return;
 
-        long discoveryTime = System.currentTimeMillis();
-
         if (obj.getOwner().isSameAs(LocalFunctions.getCurrentUser())) {// this whole if block is probably not needed since it should be handled in the MainActivity
             ndOwnJourneyPlan = obj;
         }
-
         // add NearbyDevice obj to the devicesList if the filtering is disabled or the preference matches
         if (!devicesList.contains(obj) && (!homeFragment.filterEnabled || ndOwnJourneyPlan.isCompatible(obj))) {
             devicesList.add(obj);
-            updateDiscoveryTimeAndRemoveOld(obj.getOwner().getUserId(), discoveryTime);
             homeFragment.onPeerDiscovered(null);
-        }
-    }
-
-    private void updateDiscoveryTimeAndRemoveOld(String newOwnerId, long discoveryTime) {
-        discoveryTimes.put(newOwnerId, discoveryTime);
-//        for(int loopVar = 0; loopVar < discoveryTimes.size(); loopVar++) {
-        // milliseconds
-        for (String key : discoveryTimes.keySet()) {
-            if ((discoveryTime - discoveryTimes.get(key)) > REDISCOVERY_WINDOW) {
-                discoveryTimes.remove(key);
-                for (int loopVar = devicesList.size() - 1; loopVar >= 0; loopVar--) {
-                    if (devicesList.get(loopVar).getOwner().getUserId().equals(newOwnerId)) {
-                        devicesList.remove(loopVar);
-                    }
-                }
-            }
         }
     }
 
@@ -386,22 +351,6 @@ import java.util.Objects;
         NearbyDevice associatedRide;
         boolean expired = false;
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(message, associatedRide);
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            if(obj == null)
-                return false;
-            if(obj instanceof CachedComms) {
-                CachedComms com = (CachedComms) obj;
-                return Objects.equals(this.message.toReconstructableString(), com.message.toReconstructableString())
-                        && Objects.equals(this.associatedRide, com.associatedRide);
-            }
-            return false;
-        }
 
         public CachedComms(JnMessage message, NearbyDevice associatedRide, boolean expired) {
             this.message = message;
@@ -424,33 +373,14 @@ import java.util.Objects;
     private CommunicationListener collectorListener = new CommunicationListener() {
         @Override
         public void onResponse(JnMessage message, NearbyDevice associatedRide) {
-            try {
-                CachedComms cachedComms = new CachedComms(message, associatedRide, false);
-                if(!cachedCommsList.contains(cachedComms)) {
-                    cachedCommsList.add(cachedComms);
-                    pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
-                    if (badgeCounter != null)
-                        badgeCounter.setText(String.valueOf(pendingNotifications));
-                }
-            } catch (Exception ex) {
-                Log.e(LOGTAG, "Exception in onResponse.", ex);
-            }
+            cachedCommsList.add(new CachedComms(message, associatedRide, false));
+            pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
         }
 
         @Override
         public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
-            try {
-                CachedComms cachedComms = new CachedComms(expiredMessage, nearbyDevice, false);
-                if(!cachedCommsList.contains(cachedComms)) {
-                    cachedCommsList.add(cachedComms);
-
-                    pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
-                    if (badgeCounter != null)
-                        badgeCounter.setText(String.valueOf(pendingNotifications));
-                }
-            } catch (Exception ex) {
-                Log.e(LOGTAG, "Exception in onExpire.", ex);
-            }
+            cachedCommsList.add(new CachedComms(expiredMessage, nearbyDevice, true));
+            pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
         }
     };
 

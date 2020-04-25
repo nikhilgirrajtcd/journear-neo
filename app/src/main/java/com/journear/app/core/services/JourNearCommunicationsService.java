@@ -80,7 +80,7 @@ public class JourNearCommunicationsService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         boolean superResult = super.onUnbind(intent);
-        bound = false;
+//        bound = false;
         Log.i(TAG_FOREGROUND_SERVICE, "Service unbound");
         return true;
     }
@@ -306,6 +306,7 @@ public class JourNearCommunicationsService extends Service {
         }
         int i = 1;
         CommunicationHub hub = ServiceLocator.getCommunicationHub();
+        hub.setOwnJourneyPlan(ndOwnJourneyPlan);
         for (CommunicationHub.RequestTriesResponse rtr : hub.getPendingMessages()) {
             if (rtr.triesLeft > 0) {
                 record.put("C" + i, rtr.message.toReconstructableString());
