@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem navNotificationItem;
 
 
-
     public static final String TAG = "MainActivityTag";
     private NearbyDevice ndOwnJourneyPlan;
 
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         navNotificationItem = findViewById(R.id.nav_notification);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -100,19 +100,6 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-
-
-        navNotificationItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ShareFragment sf = new ShareFragment();
-                ft.replace(R.id.nav_host_fragment,sf);
-                ft.commit();
-                return true;
-            }
-        });
 
         bindService();
     }
@@ -178,7 +165,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+//        return true;getMenuInflater().inflate(R.menu.main, menu);
 
         menuItem = menu.findItem(R.id.nav_notification);
         if (pendingNotifications == 0) {
@@ -189,7 +180,36 @@ public class MainActivity extends AppCompatActivity {
             badgeCounter = view.findViewById(R.id.badge_counter);
             badgeCounter.setText(String.valueOf(pendingNotifications));
         }
+
+        badgeCounter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = MainActivity.this.getSupportFragmentManager().getFragments().get(0).getChildFragmentManager().beginTransaction();
+                Fragment sf = new ShareFragment();
+                ft.replace(R.id.nav_host_fragment, sf);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
         return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_notification:
+                FragmentTransaction ft = this.getSupportFragmentManager().getFragments().get(0).getChildFragmentManager().beginTransaction();
+                Fragment sf = new ShareFragment();
+                ft.replace(R.id.nav_host_fragment, sf);
+                ft.addToBackStack(null);
+                ft.commit();
+
+//                homeFragment.goToFragment(new ShareFragment());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -256,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void addDiscoveredNearbyDevice(NearbyDevice obj) {
-        if(obj == null)
+        if (obj == null)
             return;
 
         if (obj.getOwner().isSameAs(LocalFunctions.getCurrentUser())) {// this whole if block is probably not needed since it should be handled in the MainActivity
@@ -334,8 +354,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static int getUnreadCachedCommsCount(List<CachedComms> l) {
         int _count = 0;
-        for(int iIndex = 0; iIndex < l.size(); iIndex++) {
-            if(!l.get(0).delivered)
+        for (int iIndex = 0; iIndex < l.size(); iIndex++) {
+            if (!l.get(0).delivered)
                 _count++;
         }
         return _count;
