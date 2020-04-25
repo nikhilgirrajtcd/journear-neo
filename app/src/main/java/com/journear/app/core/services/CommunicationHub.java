@@ -28,21 +28,36 @@ public class CommunicationHub {
 
     public void receiveResponse(JnMessage message) {
         /* 1. remove the message from @pendingMessages list
-        * 2. add it to the appropriate entry in the @conversationLogMap
-        * 3. raise the listener */
+         * 2. add it to the appropriate entry in the @conversationLogMap
+         * 3. raise the listener */
 
-        for(int i = 0; i < pendingMessages.size(); i++)
-        {
+        for (int i = 0; i < pendingMessages.size(); i++) {
             RequestTriesResponse rtr = pendingMessages.get(i);
-            if(rtr.message.getMessageId().equals(message.getMessageId()))
-            {
+            // match subject
+            if (rtr.message.getMessageId().equals(message.getMessageId())) {
+
                 ConversationLog logObj = null;
-                if(conversationLogMap.containsKey(message.getSubject())) {
+                if (conversationLogMap.containsKey(message.getSubject())) {
+
                     logObj = conversationLogMap.get(message.getSubject());
                     logObj.messages.add(message);
+
+                    if (rtr != null) {
+                        rtr.responseListener.onResponse(message, logObj.nearbyDevice);
+                    }
+
+                    if (message.getMessageFlag() == JnMessageSet.Accept ||
+                            message.getMessageFlag() == JnMessageSet.Reject) {
+
+                        String newMessageId = createMessageId(logObj.nearbyDevice, message);
+                        JnMessage message1 = new JnMessage(newMessageId, JnMessageSet.Okay, "",
+                                logObj.nearbyDevice.getTravelPlanId(), LocalFunctions.getCurrentUser());
+                        pendingMessages.add(new RequestTriesResponse(message1, MAX_RETRY_COUNT, null));
+                    }
                 }
-                rtr.responseListener.onResponse(message, logObj.nearbyDevice);
+
                 pendingMessages.remove(i);
+                break;
             }
         }
     }
@@ -58,15 +73,14 @@ public class CommunicationHub {
         if (conversationLogMap.containsKey(nearbyDevice.getTravelPlanId())) {
             lastMessageInTheConversation =
                     conversationLogMap.get(nearbyDevice.getTravelPlanId()).getLastMessageInTheConversation();
-        }
-        else{
+        } else {
             conversationLogMap.put(nearbyDevice.getTravelPlanId(), new ConversationLog(nearbyDevice));
             lastMessageInTheConversation = null;
         }
 
         newMessageId = createMessageId(nearbyDevice, lastMessageInTheConversation);
         newMessage = new JnMessage(newMessageId, message,
-                phoneNumber, nearbyDevice.getTravelPlanId(), LocalFunctions.getCurrentUser().getUserId());
+                phoneNumber, nearbyDevice.getTravelPlanId(), LocalFunctions.getCurrentUser());
 
         pendingMessages.add(new RequestTriesResponse(newMessage, MAX_RETRY_COUNT, responseListener));
         return newMessageId;
@@ -94,7 +108,7 @@ public class CommunicationHub {
             this.triesLeft = triesLeft;
             this.responseListener = responseListener;
         }
-  }
+    }
 }
 
 class ConversationLog {

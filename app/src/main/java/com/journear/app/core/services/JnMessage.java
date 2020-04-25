@@ -1,19 +1,17 @@
 package com.journear.app.core.services;
+
+import com.journear.app.core.entities.User;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class JnMessage {
 
+    private String senderName;
+    private String senderGender;
+    private String senderRating;
     private JnMessageSet messageFlag;
     private String messageId;
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
+    private long timeStamp;
     /**
      * Phone number if available
      */
@@ -29,15 +27,15 @@ public class JnMessage {
     private String subject;
 
     /**
-     *  MAC Address of the sender.
+     * MAC Address of the senderId.
      */
-    private String sender;
+    private String senderId;
 
     public static JnMessage createFromReconstructableString(String reconstructableString) {
-        if(StringUtils.countMatches(reconstructableString, "|") == 4)
-        {
+        if (StringUtils.countMatches(reconstructableString, "|") == 5) {
             String[] parts = StringUtils.split(reconstructableString, '|');
-            return new JnMessage(parts[0], JnMessageSet.valueOf(parts[1]), parts[2], parts[3], parts[4]);
+            // Original order messageId, messageFlag.name(), phoneNumber, subject, senderId, senderName, senderGender, senderRating, timeStamp);
+            return new JnMessage(parts[0], JnMessageSet.valueOf(parts[1]), parts[2], parts[3], parts[4], parts[5], parts[6], parts [7], Long.parseLong(parts[8]));
         }
         throw new IllegalArgumentException("Cannot create JnMessage from String: " + reconstructableString);
     }
@@ -46,17 +44,25 @@ public class JnMessage {
         return messageFlag;
     }
 
-    public JnMessage(String messageId, JnMessageSet messageFlag, String phoneNumber, String subject, String sender)
-    {
-        this.messageId = messageId;
+    public JnMessage(String messageId, JnMessageSet messageFlag, String phoneNumber, String subject, String senderId, String senderName, String senderGender, String rating, long timeStamp) {
         this.messageFlag = messageFlag;
+        this.messageId = messageId;
+        this.timeStamp = timeStamp;
         this.phoneNumber = phoneNumber;
         this.subject = subject;
-        this.sender = sender;
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.senderGender = senderGender;
+        this.senderRating = rating;
     }
+
+    public JnMessage(String messageId, JnMessageSet messageFlag, String phoneNumber, String subject, User sender) {
+        this(messageId, messageFlag, phoneNumber, subject, sender.getUserId(), sender.getName(), sender.getGender(), sender.getRating(), System.currentTimeMillis());
+    }
+
     // {C1=null:37:1|RequestedToJoinWithContact|||37}
     public String toReconstructableString() {
-        return StringUtils.joinWith("|", messageId, messageFlag.name(), phoneNumber, subject, sender);
+        return StringUtils.joinWith("|", messageId, messageFlag.name(), phoneNumber, subject, senderId, senderName, senderGender, senderRating, timeStamp);
     }
 
     public String getMessageId() {
