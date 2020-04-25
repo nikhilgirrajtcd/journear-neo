@@ -20,8 +20,6 @@ import com.journear.app.core.services.JnMessageSet;
 import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.ui.MainActivity;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class ShareFragment extends Fragment implements CommunicationListener {
 
     private ShareViewModel shareViewModel;
@@ -78,9 +76,11 @@ public class ShareFragment extends Fragment implements CommunicationListener {
 
             layoutToAdd = getLayoutInflater().inflate(R.layout.accept_reject_button_layout, container, false);
             acceptButton = layoutToAdd.findViewById(R.id.message_accept);
+
             requestTextView = layoutToAdd.findViewById(R.id.request_text);
             String request_message_text = "User : " + message.getSender() + " is requesting to join your ride from " + associatedRide.getSource2().placeString + " to " + associatedRide.getDestination2().toString() + ".";
             requestTextView.setText(request_message_text);
+
             acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
