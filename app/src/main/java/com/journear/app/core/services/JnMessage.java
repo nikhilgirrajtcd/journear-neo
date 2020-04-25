@@ -44,6 +44,18 @@ public class JnMessage {
         return messageFlag;
     }
 
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public String getSenderGender() {
+        return senderGender;
+    }
+
+    public String getSenderRating() {
+        return senderRating;
+    }
+
     public JnMessage(String messageId, JnMessageSet messageFlag, String phoneNumber, String subject, String senderId, String senderName, String senderGender, String rating, long timeStamp) {
         this.messageFlag = messageFlag;
         this.messageId = messageId;

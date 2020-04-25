@@ -1,5 +1,7 @@
 package com.journear.app.core.services;
 
+import android.util.Log;
+
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.NearbyDevice;
 
@@ -12,6 +14,7 @@ import java.util.Map;
 public class CommunicationHub {
 
     public static final Integer MAX_RETRY_COUNT = 3;
+    private static final String LOGTAG = "CommunicationHubLogs";
     // Subject is the ID of NearbyDevice (all messages will be contained in an array as a Thread
     // <Subject, Log>
     private Map<String, ConversationLog> conversationLogMap = new HashMap<>();
@@ -33,49 +36,59 @@ public class CommunicationHub {
     }
 
     public void expire(RequestTriesResponse rtr) {
-        pendingMessages.remove(rtr);
-        rtr.responseListener.onExpire(rtr.message, conversationLogMap.get(rtr.message.getSubject()).nearbyDevice);
+        try {
+            pendingMessages.remove(rtr);
+            rtr.responseListener.onExpire(rtr.message, conversationLogMap.get(rtr.message.getSubject()).nearbyDevice);
+        } catch (Exception ex) {
+            Log.e(LOGTAG, "Error in receiveResponse", ex);
+        }
     }
 
     public void receiveResponse(JnMessage message) {
         /* 1. remove the message from @pendingMessages list
          * 2. add it to the appropriate entry in the @conversationLogMap
          * 3. raise the listener */
-        if (message.getSubject().equals(ndOwnJourneyPlan.getTravelPlanId())) {
-            if (commonListener != null) {
-                commonListener.onResponse(message, ndOwnJourneyPlan);
-            }
-        }
-
-
-        for (int i = 0; i < pendingMessages.size(); i++) {
-            RequestTriesResponse rtr = pendingMessages.get(i);
-            // match subject
-            if (rtr.message.getMessageId().equals(message.getMessageId())) {
-
-                ConversationLog logObj = null;
-                if (conversationLogMap.containsKey(message.getSubject())) {
-
-                    logObj = conversationLogMap.get(message.getSubject());
-                    logObj.messages.add(message);
-
-                    if (rtr != null) {
-                        rtr.responseListener.onResponse(message, logObj.nearbyDevice);
-                    }
-
-                    if (message.getMessageFlag() == JnMessageSet.Accept ||
-                            message.getMessageFlag() == JnMessageSet.Reject) {
-
-                        String newMessageId = createMessageId(logObj.nearbyDevice, message);
-                        JnMessage message1 = new JnMessage(newMessageId, JnMessageSet.Okay, "",
-                                logObj.nearbyDevice.getTravelPlanId(), LocalFunctions.getCurrentUser());
-                        pendingMessages.add(new RequestTriesResponse(message1, MAX_RETRY_COUNT, null));
+        try {
+            if (ndOwnJourneyPlan != null) {
+                if (message.getSubject().equals(ndOwnJourneyPlan.getTravelPlanId())) {
+                    if (commonListener != null) {
+                        commonListener.onResponse(message, ndOwnJourneyPlan);
                     }
                 }
-
-                pendingMessages.remove(i);
-                break;
             }
+
+
+            for (int i = 0; i < pendingMessages.size(); i++) {
+                RequestTriesResponse rtr = pendingMessages.get(i);
+                // match subject
+                if (rtr.message.getSubject().equals(message.getSubject())) {
+
+                    ConversationLog logObj = null;
+                    if (conversationLogMap.containsKey(message.getSubject())) {
+
+                        logObj = conversationLogMap.get(message.getSubject());
+                        logObj.messages.add(message);
+
+                        if (rtr != null) {
+                            rtr.responseListener.onResponse(message, logObj.nearbyDevice);
+                        }
+
+                        if (message.getMessageFlag() == JnMessageSet.Accept ||
+                                message.getMessageFlag() == JnMessageSet.Reject) {
+
+                            String newMessageId = createMessageId(logObj.nearbyDevice, message);
+                            JnMessage message1 = new JnMessage(newMessageId, JnMessageSet.Okay, "",
+                                    logObj.nearbyDevice.getTravelPlanId(), LocalFunctions.getCurrentUser());
+                            pendingMessages.add(new RequestTriesResponse(message1, MAX_RETRY_COUNT, null));
+                        }
+                    }
+
+                    pendingMessages.remove(i);
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            Log.e(LOGTAG, "Error in receiveResponse", ex);
         }
     }
 

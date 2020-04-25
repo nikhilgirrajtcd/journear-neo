@@ -53,7 +53,8 @@ public class LocalFunctions {
         PersistentStore.getInstance(ServiceLocator.getApplicationContext()).setItem("currentUser", user, true);
     }
 
-    public static void setCurrentJourney(NearbyDevice nd, Context context) {
+    public static void setCurrentJourney(NearbyDevice nd) {
+        Context context = ServiceLocator.getApplicationContext();
         PersistentStore.getInstance(context).setItem("CurrentJourneyRequest", nd, true);
     }
 

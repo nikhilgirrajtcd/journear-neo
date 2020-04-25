@@ -87,6 +87,15 @@ public class NearbyDevice implements Parcelable, Persistable {
     private Time travelTime;
     private String user_rating;
     private UserSkimmed owner = new UserSkimmed();
+
+    public List<UserSkimmed> getTravellers() {
+        return travellers;
+    }
+
+    public void setTravellers(List<UserSkimmed> travellers) {
+        this.travellers = travellers;
+    }
+
     private List<UserSkimmed> travellers = new ArrayList<>();
 
     public UserSkimmed getOwner() {
@@ -105,7 +114,7 @@ public class NearbyDevice implements Parcelable, Persistable {
         owner = new UserSkimmed(in);
 
         Gson gson = new Gson();
-        travellers = Arrays.asList(gson.fromJson(in.readString(), UserSkimmed[].class));
+        travellers = new ArrayList<>(Arrays.asList(gson.fromJson(in.readString(), UserSkimmed[].class)));
 
         source2 = JnGeocoder.getJnGeocodeItemById(in.readString());
         destination2 = JnGeocoder.getJnGeocodeItemById(in.readString());
