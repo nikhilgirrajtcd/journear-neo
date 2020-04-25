@@ -5,49 +5,85 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:id="@+id/rootLayout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.LandingActivity"
 >
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerHorizontal="true"
-    android:layout_margin="30dp"
-    android:layout_marginTop="32dp"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-
-    <Button
-        android:id="@+id/openMapButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/openMapBtn"
-        />
 
     <TextView
-        android:id="@+id/readText"
-        android:layout_below="@+id/openMapButton"
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="J o u r N e a r"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Journey Sharing"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/landing_text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/landingPageTextBtn"
-        />
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/landingPageText1"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/landing_Text2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/landing_Text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/landingPageText2"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/askPermissionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/askPermissionButton"
-        android:layout_below="@+id/readText"
-        android:layout_marginEnd="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorAccent"
+        android:text="@string/askPermissionBtn"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:layout_marginTop="15dp"
-        android:text="@string/askPermissionBtn"
-        android:layout_width="match_parent"
-        android:background="@color/colorAccent"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+
 
 
 

@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.material.snackbar.Snackbar;
 import com.journear.app.R;
+import com.journear.app.core.IsValid;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.ServerFunctions;
 import com.journear.app.core.entities.User;
@@ -28,14 +29,16 @@ public class LoginActivity extends AppCompatActivity {
     final String logTag = "LoginActivity";
     View v;
 
-
+    void showSnackBar(String message) {
+        Snackbar.make(findViewById(android.R.id.content).getRootView(),
+                message, Snackbar.LENGTH_SHORT).show();
+    }
 
     Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e(logTag, "Server communication error while trying to log in.", error);
-            Snackbar.make( findViewById(android.R.id.content).getRootView()
-                    ,"Please make sure internet is connected",Snackbar.LENGTH_SHORT).show();
+            showSnackBar("Please make sure internet is connected.");
         }
     };
 
@@ -46,9 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(logTag, "Received server response.");
                 //Process os success response
                 if (response.get("Message").toString().equals("Success")) {
-                    onLoginSuccess();
-                    if(response.has("user"))
-                    {
+                    if (response.has("user")) {
                         JSONObject userJsonObj = response.getJSONObject("user");
                         User user = new User();
                         user.setDobValue(userJsonObj.get("dob").toString());
@@ -57,7 +58,13 @@ public class LoginActivity extends AppCompatActivity {
                         user.setEmail(userJsonObj.get("username").toString());
                         user.name = userJsonObj.get("name").toString();
                         LocalFunctions.setCurrentUser(user);
+                        showSnackBar("Logged in!");
+                        onLoginSuccess();
+                    } else {
+                        showSnackBar("Unknown response from server.");
                     }
+                } else {
+                    showSnackBar("Login failed.");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -89,19 +96,21 @@ public class LoginActivity extends AppCompatActivity {
         String emailString = email.getText().toString();
         String passwordString = password.getText().toString();
 
-        if(validateInputs(emailString, passwordString)) {
+        if (!IsValid.email(emailString)) {
+            Snackbar.make(findViewById(android.R.id.content).getRootView()
+                    , getString(R.string.errorInvalidEmail), Snackbar.LENGTH_SHORT).show();
+        } else if (!IsValid.password(passwordString)) {
+            Snackbar.make(findViewById(android.R.id.content).getRootView()
+                    , getString(R.string.error_invalid_password_login1), Snackbar.LENGTH_SHORT).show();
+        } else {
             ServerFunctions.getInstance(LoginActivity.this).authenticate(emailString, passwordString,
                     responseListener, responseErrorListener);
         }
-        else{
-            Snackbar.make( findViewById(android.R.id.content).getRootView()
-                    ,"Username and Password do not match",Snackbar.LENGTH_SHORT).show();
-        }
     }
 
+
     private boolean validateInputs(String email, String password) {
-        return true;
-//        return IsValid.email(email) & IsValid.password(password);
+        return IsValid.email(email) & IsValid.password(password);
     }
 
     /**
@@ -109,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void onLoginSuccess() {
         Intent loginSuccessIntent;
-        if(LocalFunctions.requestPermissions(LoginActivity.this))
+        if (LocalFunctions.requestPermissions(LoginActivity.this))
             loginSuccessIntent = new Intent(LoginActivity.this, MainActivity.class);
         else
             loginSuccessIntent = new Intent(LoginActivity.this, LandingActivity.class);

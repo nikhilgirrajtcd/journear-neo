@@ -32,8 +32,8 @@ public class JnMessage {
     private String senderId;
 
     public static JnMessage createFromReconstructableString(String reconstructableString) {
-        if (StringUtils.countMatches(reconstructableString, "|") == 5) {
-            String[] parts = StringUtils.split(reconstructableString, '|');
+        if (StringUtils.countMatches(reconstructableString, "|") == 8) {
+            String[] parts = reconstructableString.split("\\|", -1);
             // Original order messageId, messageFlag.name(), phoneNumber, subject, senderId, senderName, senderGender, senderRating, timeStamp);
             return new JnMessage(parts[0], JnMessageSet.valueOf(parts[1]), parts[2], parts[3], parts[4], parts[5], parts[6], parts [7], Long.parseLong(parts[8]));
         }

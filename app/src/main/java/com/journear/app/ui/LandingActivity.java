@@ -9,8 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.journear.app.R;
 import com.journear.app.core.LocalFunctions;
+import com.journear.app.core.entities.StringWrapper;
+import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.core.utils.AppConstants;
 import com.journear.app.map.MapActivity;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class LandingActivity extends AppCompatActivity {
 
@@ -19,22 +23,32 @@ public class LandingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
 
-        findViewById(R.id.askPermissionButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LocalFunctions.requestPermissions(LandingActivity.this);
-            }
-        });
+        if (!hasNecessaryPermissions()) {
+            StringWrapper firstTimeUse = (StringWrapper) ServiceLocator.getPersistentStore().getItem("FirstTimeUse", StringWrapper.class);
 
-        findViewById(R.id.openMapButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LandingActivity.this, MapActivity.class);
-                double[] dddddd = {0, 0, 0, 0, 0, 0};
-                intent.putExtra(MapActivity.incomingIntentName, dddddd);
-                startActivity(intent);
+            if (firstTimeUse == null || StringUtils.isEmpty(firstTimeUse.toString())) {
+                findViewById(R.id.askPermissionButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StringWrapper sw = new StringWrapper("" + System.currentTimeMillis());
+                        LocalFunctions.requestPermissions(LandingActivity.this);
+                        if(hasNecessaryPermissions())
+                        {
+                            proceedToMainActivity();
+                        }
+                    }
+                });
+            } else {
+                StringWrapper sw = new StringWrapper("" + System.currentTimeMillis());
+                proceedToMainActivity();
             }
-        });
+        } else {
+            proceedToMainActivity();
+        }
+    }
+
+    private boolean hasNecessaryPermissions() {
+        return LocalFunctions.isStoragePermissionGiven(this) && LocalFunctions.isLocationPermissionGiven(this);
     }
 
     @Override
@@ -62,7 +76,7 @@ public class LandingActivity extends AppCompatActivity {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                     LocalFunctions.shortToast("All permission granted", LandingActivity.this);
-                    startActivity(new Intent(LandingActivity.this, MainActivity.class));
+                    proceedToMainActivity();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -88,6 +102,11 @@ public class LandingActivity extends AppCompatActivity {
             // other 'case' lines to check for other
             // permissions this app might request.
         }
+    }
+
+    private void proceedToMainActivity() {
+        startActivity(new Intent(LandingActivity.this, MainActivity.class));
+        finish();
     }
 
 }
