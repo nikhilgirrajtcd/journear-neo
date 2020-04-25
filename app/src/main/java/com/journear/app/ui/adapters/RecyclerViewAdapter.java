@@ -142,6 +142,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             Context context = v.getContext();
 
             Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
+            v.animate().scaleX(1.2f).scaleY(1.2f).setDuration(100).start();
             switch (v.getId()) {
                 case R.id.currentTOSource:
                     //Taran add functionality

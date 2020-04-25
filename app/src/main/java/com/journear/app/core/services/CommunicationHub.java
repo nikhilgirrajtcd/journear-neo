@@ -16,6 +16,17 @@ public class CommunicationHub {
     // <Subject, Log>
     private Map<String, ConversationLog> conversationLogMap = new HashMap<>();
     private ArrayList<RequestTriesResponse> pendingMessages = new ArrayList<>();
+    private NearbyDevice ndOwnJourneyPlan = null;
+    private CommunicationListener commonListener = null;
+
+    public void setCommonListener(CommunicationListener commonListener) {
+        this.commonListener = commonListener;
+    }
+
+    public void setOwnJourneyPlan(NearbyDevice ndOwnJourneyPlan) {
+        this.ndOwnJourneyPlan = ndOwnJourneyPlan;
+    }
+
 
     public ArrayList<RequestTriesResponse> getPendingMessages() {
         return pendingMessages;
@@ -30,6 +41,12 @@ public class CommunicationHub {
         /* 1. remove the message from @pendingMessages list
          * 2. add it to the appropriate entry in the @conversationLogMap
          * 3. raise the listener */
+        if (message.getMessageId().equals(ndOwnJourneyPlan.getTravelPlanId())) {
+            if (commonListener != null) {
+                commonListener.onResponse(message, ndOwnJourneyPlan);
+            }
+        }
+
 
         for (int i = 0; i < pendingMessages.size(); i++) {
             RequestTriesResponse rtr = pendingMessages.get(i);
@@ -121,7 +138,11 @@ class ConversationLog {
     }
 
     public JnMessage getLastMessageInTheConversation() {
-        return messages.get(messages.size() - 1);
+        try {
+            return messages.get(messages.size() - 1);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }
 

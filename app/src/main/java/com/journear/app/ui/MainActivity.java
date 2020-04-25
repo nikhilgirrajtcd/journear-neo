@@ -35,6 +35,7 @@ import com.journear.app.core.entities.User;
 import com.journear.app.core.services.CommunicationListener;
 import com.journear.app.core.services.JnMessage;
 import com.journear.app.core.services.JourNearCommunicationsService;
+import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.ui.home.HomeFragment;
 import com.journear.app.ui.share.ShareFragment;
 
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem navNotificationItem;
 
 
-
     public static final String TAG = "MainActivityTag";
     private NearbyDevice ndOwnJourneyPlan;
 
@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         ndOwnJourneyPlan = intent.getParcelableExtra("EXTRA");
-
 
         // Ask for permissions if user has revoked the permission manually after giving the permission for the first time
         LocalFunctions.requestPermissions(MainActivity.this);
@@ -75,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-        // if needs be check the value of loggedIn and stop further execution from here
-
-//        LocalFunctions.checkLocationPermission(MainActivity.this);
-//        LocalFunctions.checkStoragePermission(MainActivity.this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -86,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent myIntent = new Intent(MainActivity.this, CreateJourneyActivity.class);
                 MainActivity.this.startActivity(myIntent);
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
             }
         });
 
@@ -106,24 +99,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-
-        navNotificationItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ShareFragment sf = new ShareFragment();
-                ft.replace(R.id.nav_host_fragment, sf);
-                ft.commit();
-                return true;
-            }
-        });
-
         bindService();
     }
 
     protected void bindService() {
         Intent intent1 = new Intent(MainActivity.this, JourNearCommunicationsService.class);
-        bindService(intent1, serviceConnection, Context.BIND_AUTO_CREATE);
+        bindService(intent1, serviceConnection, Context.BIND_ADJUST_WITH_ACTIVITY);
+        if(communicationsService != null) {
+            communicationsService.bound = true;
+            processBufferedUpdates();
+        }
     }
 
     JourNearCommunicationsService.ServiceActivityBinder binder = null;
@@ -135,11 +120,7 @@ public class MainActivity extends AppCompatActivity {
             binder = (JourNearCommunicationsService.ServiceActivityBinder) service;
             communicationsService = binder.getService();
 
-            HomeFragment hf = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_home);
-            communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
-            for (NearbyDevice obj : communicationsService.getBufferedResponses()) {
-                hf.onPeerDiscovered(obj);
-            }
+            processBufferedUpdates();
         }
 
         @Override
@@ -147,6 +128,16 @@ public class MainActivity extends AppCompatActivity {
             // TODO: Do something here.
         }
     };
+
+    private void processBufferedUpdates() {
+        HomeFragment hf = getHomeFragment();
+        if (hf != null && communicationsService != null) {
+            communicationsService.setOwnJourneyInfo(ndOwnJourneyPlan);
+            for (NearbyDevice obj : communicationsService.getBufferedResponses()) {
+                hf.onPeerDiscovered(obj);
+            }
+        }
+    }
 
 
     /**
@@ -239,12 +230,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(LOGTAG, "Main Activity Paused");
+        unbindService();
+    }
+
+    private void unbindService() {
+        if(communicationsService != null)
+            communicationsService.bound = false;
         unbindService(serviceConnection);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(LOGTAG, "Main Activity Resumed");
         bindService();
     }
 
@@ -252,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         if (serviceConnection != null) {
             try {
-                unbindService(serviceConnection);
+                unbindService();
             } catch (Exception ex) {
                 Log.e(LOGTAG, "Error while unbinding service connection.");
             }
@@ -268,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         if (intent.hasExtra(intentDeviceFound)) {
             NearbyDevice nd = intent.getParcelableExtra(intentDeviceFound);
-
+            addDiscoveredNearbyDevice(nd);
             if (homeFragment != null)
                 homeFragment.onPeerDiscovered(nd);
             // add device
@@ -298,6 +297,9 @@ public class MainActivity extends AppCompatActivity {
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+        // Setting the common comms listener for incoming messages
+        ServiceLocator.getCommunicationHub().setCommonListener(collectorListener);
+
         HomeFragment homeFragment = getHomeFragment();
         if (homeFragment != null) {
             addDiscoveredNearbyDevice(ndOwnJourneyPlan);
@@ -306,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void addDiscoveredNearbyDevice(NearbyDevice obj) {
-        if(obj == null)
+        if (obj == null)
             return;
 
         if (obj.getOwner().isSameAs(LocalFunctions.getCurrentUser())) {// this whole if block is probably not needed since it should be handled in the MainActivity
