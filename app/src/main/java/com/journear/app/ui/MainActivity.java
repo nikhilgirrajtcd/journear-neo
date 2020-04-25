@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -26,6 +27,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.android.volley.Cache;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.journear.app.R;
@@ -44,9 +46,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
-public class MainActivity extends AppCompatActivity {
+    public class MainActivity extends AppCompatActivity {
 
     private static final String LOGTAG = "MainActivityLogs";
     private AppBarConfiguration mAppBarConfiguration;
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Long> discoveryTimes = new HashMap<>();
 
     public static final String TAG = "MainActivityTag";
-    private NearbyDevice ndOwnJourneyPlan;
+    public NearbyDevice ndOwnJourneyPlan;
     private View notificationsImageView;
     long REDISCOVERY_WINDOW = CommunicationHub.MAX_RETRY_COUNT * JourNearCommunicationsService.DISCOVERY_INTERVAL * 1000;
 
@@ -383,6 +386,22 @@ public class MainActivity extends AppCompatActivity {
         NearbyDevice associatedRide;
         boolean expired = false;
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(message, associatedRide);
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if(obj == null)
+                return false;
+            if(obj instanceof CachedComms) {
+                CachedComms com = (CachedComms) obj;
+                return Objects.equals(this.message.toReconstructableString(), com.message.toReconstructableString())
+                        && Objects.equals(this.associatedRide, com.associatedRide);
+            }
+            return false;
+        }
 
         public CachedComms(JnMessage message, NearbyDevice associatedRide, boolean expired) {
             this.message = message;
@@ -406,10 +425,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResponse(JnMessage message, NearbyDevice associatedRide) {
             try {
-                cachedCommsList.add(new CachedComms(message, associatedRide, false));
-                pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
-                if (badgeCounter != null)
-                    badgeCounter.setText(String.valueOf(pendingNotifications));
+                CachedComms cachedComms = new CachedComms(message, associatedRide, false);
+                if(!cachedCommsList.contains(cachedComms)) {
+                    cachedCommsList.add(cachedComms);
+                    pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
+                    if (badgeCounter != null)
+                        badgeCounter.setText(String.valueOf(pendingNotifications));
+                }
             } catch (Exception ex) {
                 Log.e(LOGTAG, "Exception in onResponse.", ex);
             }
@@ -418,10 +440,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
             try {
-                cachedCommsList.add(new CachedComms(expiredMessage, nearbyDevice, true));
-                pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
-                if (badgeCounter != null)
-                    badgeCounter.setText(String.valueOf(pendingNotifications));
+                CachedComms cachedComms = new CachedComms(expiredMessage, nearbyDevice, false);
+                if(!cachedCommsList.contains(cachedComms)) {
+                    cachedCommsList.add(cachedComms);
+
+                    pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
+                    if (badgeCounter != null)
+                        badgeCounter.setText(String.valueOf(pendingNotifications));
+                }
             } catch (Exception ex) {
                 Log.e(LOGTAG, "Exception in onExpire.", ex);
             }

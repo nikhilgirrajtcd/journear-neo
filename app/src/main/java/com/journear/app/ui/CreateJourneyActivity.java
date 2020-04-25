@@ -115,7 +115,7 @@ public class CreateJourneyActivity extends AppCompatActivity {
                 NearbyDevice nd = getCurrentInput();
                 Snackbar.make(v, "Journey Created", Snackbar.LENGTH_SHORT).show();
 
-                LocalFunctions.setCurrentJourney(nd, CreateJourneyActivity.this);
+                LocalFunctions.setCurrentJourney(nd);
 
                 final Intent intent = new Intent(CreateJourneyActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

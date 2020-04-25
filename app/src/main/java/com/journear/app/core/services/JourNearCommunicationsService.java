@@ -300,28 +300,33 @@ public class JourNearCommunicationsService extends Service {
     }
 
     private WifiP2pDnsSdServiceInfo getWifiP2pDnsSdServiceInfo() {
-        Map<String, String> record = new HashMap<String, String>();
-        if (ndOwnJourneyPlan != null) {
-            String all = PeerFunctions.getBroadcastString(ndOwnJourneyPlan);
-            record.put("I", all);
-        }
-        int i = 1;
-        CommunicationHub hub = ServiceLocator.getCommunicationHub();
-        hub.setOwnJourneyPlan(ndOwnJourneyPlan);
-        for (CommunicationHub.RequestTriesResponse rtr : hub.getPendingMessages()) {
-            if (rtr.triesLeft > 0) {
-                record.put("C" + i, rtr.message.toReconstructableString());
-                rtr.triesLeft--;
-            } else {
-                hub.expire(rtr);
+        try {
+            Map<String, String> record = new HashMap<String, String>();
+            if (ndOwnJourneyPlan != null) {
+                String all = PeerFunctions.getBroadcastString(ndOwnJourneyPlan);
+                record.put("I", all);
             }
-            if (i++ > 3) {
-                break;
+            int i = 1;
+            CommunicationHub hub = ServiceLocator.getCommunicationHub();
+            hub.setOwnJourneyPlan(ndOwnJourneyPlan);
+            for (CommunicationHub.RequestTriesResponse rtr : hub.getPendingMessages()) {
+                if (rtr.triesLeft > 0) {
+                    record.put("C" + i, rtr.message.toReconstructableString());
+                    rtr.triesLeft--;
+                } else {
+                    hub.expire(rtr);
+                }
+                if (i++ > 3) {
+                    break;
+                }
             }
-        }
 
-        Log.i(TAG_FOREGROUND_SERVICE, "Broadcasting service - " + record.toString());
-        return WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
+            Log.i(TAG_FOREGROUND_SERVICE, "Broadcasting service - " + record.toString());
+            return WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
+        } catch (Exception ex) {
+            Log.e(TAG_FOREGROUND_SERVICE, "Error while creating broadcast request", ex);
+        }
+        return WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, SERVICE_REG_TYPE, new HashMap<String, String>());
     }
 
     final HashMap<String, NearbyDevice> discoveredDnsRecords = new HashMap<>();
@@ -366,72 +371,76 @@ public class JourNearCommunicationsService extends Service {
     };
 
     private void discoverDevices() {
-        getManager().clearLocalServices(getChannel(), new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                getManager().addLocalService(getChannel(), getWifiP2pDnsSdServiceInfo(), new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        getManager().setDnsSdResponseListeners(getChannel(), dnsSdResponseServiceListener, dnsSdResponseRecordListener);
-                        getManager().clearServiceRequests(getChannel(), new WifiP2pManager.ActionListener() {
-                            @Override
-                            public void onSuccess() {
-                                getManager().addServiceRequest(getChannel(), WifiP2pDnsSdServiceRequest.newInstance(), new WifiP2pManager.ActionListener() {
-                                    @Override
-                                    public void onSuccess() {
-                                        getManager().discoverPeers(getChannel(), new WifiP2pManager.ActionListener() {
-                                            @Override
-                                            public void onSuccess() {
-                                                getManager().discoverServices(getChannel(), new WifiP2pManager.ActionListener() {
-                                                    @Override
-                                                    public void onSuccess() {
-                                                        shortToast("Success - discoverServices");
-                                                    }
+        try {
+            getManager().clearLocalServices(getChannel(), new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    getManager().addLocalService(getChannel(), getWifiP2pDnsSdServiceInfo(), new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            getManager().setDnsSdResponseListeners(getChannel(), dnsSdResponseServiceListener, dnsSdResponseRecordListener);
+                            getManager().clearServiceRequests(getChannel(), new WifiP2pManager.ActionListener() {
+                                @Override
+                                public void onSuccess() {
+                                    getManager().addServiceRequest(getChannel(), WifiP2pDnsSdServiceRequest.newInstance(), new WifiP2pManager.ActionListener() {
+                                        @Override
+                                        public void onSuccess() {
+                                            getManager().discoverPeers(getChannel(), new WifiP2pManager.ActionListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    getManager().discoverServices(getChannel(), new WifiP2pManager.ActionListener() {
+                                                        @Override
+                                                        public void onSuccess() {
+                                                            shortToast("Success - discoverServices");
+                                                        }
 
-                                                    @Override
-                                                    public void onFailure(int reason) {
-                                                        shortToast("F6");
-                                                    }
-                                                });
-                                            }
+                                                        @Override
+                                                        public void onFailure(int reason) {
+                                                            shortToast("F6");
+                                                        }
+                                                    });
+                                                }
 
-                                            @Override
-                                            public void onFailure(int reason) {
-                                                shortToast("F5");
-                                            }
-                                        });
-                                    }
+                                                @Override
+                                                public void onFailure(int reason) {
+                                                    shortToast("F5");
+                                                }
+                                            });
+                                        }
 
-                                    @Override
-                                    public void onFailure(int reason) {
-                                        shortToast("F4");
-                                    }
-                                });
-                            }
+                                        @Override
+                                        public void onFailure(int reason) {
+                                            shortToast("F4");
+                                        }
+                                    });
+                                }
 
-                            @Override
-                            public void onFailure(int reason) {
-                                shortToast("F3");
-                            }
-                        });
-                    }
+                                @Override
+                                public void onFailure(int reason) {
+                                    shortToast("F3");
+                                }
+                            });
+                        }
 
-                    @Override
-                    public void onFailure(int reason) {
-                        shortToast("F2");
-                    }
-                });
-            }
+                        @Override
+                        public void onFailure(int reason) {
+                            shortToast("F2");
+                        }
+                    });
+                }
 
-            @Override
-            public void onFailure(int reason) {
-                shortToast("Please turn on Wifi");
-            }
-        });
+                @Override
+                public void onFailure(int reason) {
+                    shortToast("Please turn on Wifi");
+                }
+            });
+        } catch (Exception ex) {
+            Log.e(TAG_FOREGROUND_SERVICE, "Error in the device discovery routine", ex);
+        }
     }
 
     private void shortToast(String s) {
         Log.i("ShortToast", s);
-        Toast.makeText(JourNearCommunicationsService.this, s, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(JourNearCommunicationsService.this, s, Toast.LENGTH_SHORT).show();
     }
 }
