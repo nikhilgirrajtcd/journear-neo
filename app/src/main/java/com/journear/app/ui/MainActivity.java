@@ -1,11 +1,13 @@
 package com.journear.app.ui;
 
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -30,6 +33,7 @@ import com.journear.app.core.entities.User;
 import com.journear.app.core.services.JourNearCommunicationsService;
 import com.journear.app.ui.adapters.RecyclerViewAdapter;
 import com.journear.app.ui.home.HomeFragment;
+import com.journear.app.ui.share.ShareFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +42,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    MenuItem menuItem;
-    TextView badgeCounter;
+    private MenuItem menuItem;
+    private TextView badgeCounter;
     int pendingNotifications = 13;
+    private MenuItem navNotificationItem;
+
 
 
     public static final String TAG = "MainActivityTag";
@@ -78,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
             }
         });
+
+        navNotificationItem = findViewById(R.id.nav_notification);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -91,6 +99,19 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+
+
+        navNotificationItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ShareFragment sf = new ShareFragment();
+                ft.replace(R.id.nav_host_fragment,sf);
+                ft.commit();
+                return true;
+            }
+        });
 
         bindService();
     }
