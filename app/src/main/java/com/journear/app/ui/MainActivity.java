@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private MenuItem menuItem;
     private TextView badgeCounter;
-    int pendingNotifications = 13;
+    int pendingNotifications = 0;
     private MenuItem navNotificationItem;
     private Map<String, Long> discoveryTimes = new HashMap<>();
 
@@ -182,18 +182,13 @@ public class MainActivity extends AppCompatActivity {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-//        return true;getMenuInflater().inflate(R.menu.main, menu);
 
         menuItem = menu.findItem(R.id.nav_notification);
-        if (pendingNotifications == 0) {
-            menuItem.setActionView(null);
-        } else {
-            menuItem.setActionView(R.layout.notification_badge);
-            View view = menuItem.getActionView();
-            badgeCounter = view.findViewById(R.id.badge_counter);
-            notificationsImageView = view.findViewById(R.id.bell_icon_types);
-            badgeCounter.setText(String.valueOf(pendingNotifications));
-        }
+        menuItem.setActionView(R.layout.notification_badge);
+        View view = menuItem.getActionView();
+        badgeCounter = view.findViewById(R.id.badge_counter);
+        notificationsImageView = view.findViewById(R.id.bell_icon_types);
+        badgeCounter.setText(String.valueOf(pendingNotifications));
 
         badgeCounter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 openNotificationsFragment();
             }
         });
+
 
         return true;
     }
@@ -332,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
         if (obj.getOwner().isSameAs(LocalFunctions.getCurrentUser())) {// this whole if block is probably not needed since it should be handled in the MainActivity
             ndOwnJourneyPlan = obj;
         }
-        
+
         // add NearbyDevice obj to the devicesList if the filtering is disabled or the preference matches
         if (!devicesList.contains(obj) && (!homeFragment.filterEnabled || ndOwnJourneyPlan.isCompatible(obj))) {
             devicesList.add(obj);
@@ -345,15 +341,11 @@ public class MainActivity extends AppCompatActivity {
         discoveryTimes.put(newOwnerId, discoveryTime);
 //        for(int loopVar = 0; loopVar < discoveryTimes.size(); loopVar++) {
         // milliseconds
-        for(String key : discoveryTimes.keySet())
-        {
-            if((discoveryTime - discoveryTimes.get(key)) > REDISCOVERY_WINDOW)
-            {
+        for (String key : discoveryTimes.keySet()) {
+            if ((discoveryTime - discoveryTimes.get(key)) > REDISCOVERY_WINDOW) {
                 discoveryTimes.remove(key);
-                for(int loopVar = devicesList.size()-1; loopVar >= 0;  loopVar--)
-                {
-                    if(devicesList.get(loopVar).getOwner().getUserId().equals(newOwnerId))
-                    {
+                for (int loopVar = devicesList.size() - 1; loopVar >= 0; loopVar--) {
+                    if (devicesList.get(loopVar).getOwner().getUserId().equals(newOwnerId)) {
                         devicesList.remove(loopVar);
                     }
                 }
@@ -429,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
                 cachedCommsList.add(new CachedComms(expiredMessage, nearbyDevice, true));
                 pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
                 if (badgeCounter != null)
-                    badgeCounter.setText(pendingNotifications);
+                    badgeCounter.setText(String.valueOf(pendingNotifications));
             } catch (Exception ex) {
                 Log.e(LOGTAG, "Exception in onExpire.", ex);
             }
