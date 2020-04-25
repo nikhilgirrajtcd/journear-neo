@@ -23,7 +23,7 @@ import java.net.URLConnection;
 
 public class StartActivity extends AppCompatActivity {
 
-    Button login, register, downloadMap;
+    Button login, register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,6 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.user_register_activity);
         login = findViewById(R.id.btnLogIn);
         register = findViewById(R.id.btnRegister);
-        downloadMap = findViewById(R.id.btnDownloadMap);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,47 +51,6 @@ public class StartActivity extends AppCompatActivity {
 
             }
         });
-
-        downloadMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try
-                {
-
-                    LocalFunctions.shortToast(String.valueOf("Download button clicked"), StartActivity.this);
-                    downloadFile("https://journear.blob.core.windows.net/data/graphhopper-ie.zip", getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS));
-                }
-                catch (Exception e){
-
-                }
-
-            }
-        });
     }
 
-    private void downloadFile(String url, File outputFile) throws IOException {
-        try {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-            StrictMode.setThreadPolicy(policy);
-            URL u = new URL(url);
-            URLConnection conn = u.openConnection();
-            int contentLength = conn.getContentLength();
-            LocalFunctions.shortToast(String.valueOf(contentLength), StartActivity.this);
-            DataInputStream stream = new DataInputStream(u.openStream());
-
-            byte[] buffer = new byte[contentLength];
-            stream.readFully(buffer);
-            stream.close();
-
-            DataOutputStream fos = new DataOutputStream(new FileOutputStream(outputFile));
-            fos.write(buffer);
-            fos.flush();
-            fos.close();
-        } catch(FileNotFoundException e) {
-            return; // swallow a 404
-        } catch (IOException e) {
-            return; // swallow a 404
-        }
-    }
 }
