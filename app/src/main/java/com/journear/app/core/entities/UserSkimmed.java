@@ -13,6 +13,7 @@ public class UserSkimmed implements Persistable, Parcelable {
     }
 
     private String userId;
+    private String rating;
 
     public String name;
 
@@ -20,10 +21,18 @@ public class UserSkimmed implements Persistable, Parcelable {
 
     public UserSkimmed(){}
 
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
     protected UserSkimmed(Parcel in) {
         userId = in.readString();
         name = in.readString();
         gender = in.readString();
+        rating = in.readString();
     }
 
     public void setUserId(String userId) {
@@ -75,5 +84,6 @@ public class UserSkimmed implements Persistable, Parcelable {
         dest.writeString(userId);
         dest.writeString(name);
         dest.writeString(gender);
+        dest.writeString(rating);
     }
 }
