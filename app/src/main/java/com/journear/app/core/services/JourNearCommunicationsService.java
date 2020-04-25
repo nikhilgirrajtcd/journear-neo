@@ -50,6 +50,7 @@ public class JourNearCommunicationsService extends Service {
     public static final String ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE";
     public static final String ACTION_PAUSE = "ACTION_PAUSE";
     public static final String ACTION_PLAY = "ACTION_PLAY";
+    public static final long DISCOVERY_INTERVAL = 30000L;
     private CommunicationHub _comHub;
 
     /**
@@ -235,7 +236,7 @@ public class JourNearCommunicationsService extends Service {
                     discoverDevices();
                 }
             };
-            timer.schedule(timerTask, 0L, 30000L);
+            timer.schedule(timerTask, 0L, DISCOVERY_INTERVAL);
         }
 
         public void stop() {

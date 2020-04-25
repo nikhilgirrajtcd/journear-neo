@@ -104,4 +104,5 @@
     <string name="notification">Notification</string>
     <string name="errorInvalidEmail">Invalid email address.</string>
     <string name="error_invalid_password_login1">Not an acceptable password. Did you make a typo?</string>
+    <string name="fetching_notifications_string">Please wait, fetching notifications...</string>
 </resources>
