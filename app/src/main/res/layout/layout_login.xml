@@ -28,7 +28,6 @@
             ></EditText>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/loginPassword"
             android:layout_below ="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

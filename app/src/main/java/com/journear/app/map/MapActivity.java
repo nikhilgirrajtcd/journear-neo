@@ -42,7 +42,7 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.PathWrapper;
 import com.graphhopper.Trip;
 import com.journear.app.R;
-import com.graphhopper.config.ProfileConfig;
+//import com.graphhopper.config.ProfileConfig;
 import com.graphhopper.util.Constants;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.Parameters.Algorithms;
@@ -50,6 +50,7 @@ import com.graphhopper.util.Parameters.Routing;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.ProgressListener;
 import com.graphhopper.util.StopWatch;
+import com.journear.app.map.activities.MapNewActivity;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidGraphics;
@@ -102,6 +103,8 @@ public class MapActivity extends Activity {
     private LocationManager locationManager = null;
     private MyLocationListener locationListener = null;
     private GeoPoint onLoadMarker;
+    private Location mLastLocation;
+    private static Location mCurrentLocation;
 
     private class MyLocationListener implements LocationListener {
         private static final long min_distance_forupdate = 10;
@@ -196,8 +199,8 @@ public class MapActivity extends Activity {
             itemizedLayer.addItem(createMarkerItem(p2, R.drawable.marker_icon_red));
             mapView.map().updateMap(true);
 
-            calcPath(start.getLatitude(), start.getLongitude(), end.getLatitude(),
-                    end.getLongitude());
+//            calcPath(start.getLatitude(), start.getLongitude(), end.getLatitude(),
+//                    end.getLongitude());
         }
         return true;
     }
@@ -217,8 +220,8 @@ public class MapActivity extends Activity {
             itemizedLayer.addItem(createMarkerItem(p, R.drawable.marker_icon_red));
             mapView.map().updateMap(true);
 
-            calcPath(start.getLatitude(), start.getLongitude(), end.getLatitude(),
-                    end.getLongitude());
+//            calcPath(start.getLatitude(), start.getLongitude(), end.getLatitude(),
+//                    end.getLongitude());
         } else {
             start = p;
             end = null;
@@ -305,7 +308,7 @@ public class MapActivity extends Activity {
         return false;
     }
 
-    private void initFiles(String area) {
+    public void initFiles(String area) {
         prepareInProgress = true;
         currentArea = area;
         downloadingFiles();
@@ -395,7 +398,7 @@ public class MapActivity extends Activity {
     void downloadingFiles() {
         final File areaFolder = new File(mapsFolder, currentArea + "-gh");
         if (downloadURL == null || areaFolder.exists()) {
-            loadMap(areaFolder);
+            //loadMap(areaFolder);
             return;
         }
 
@@ -436,14 +439,14 @@ public class MapActivity extends Activity {
                     log(str, getError());
                     logUser(str);
                 } else {
-                    loadMap(areaFolder);
+                    //loadMap(areaFolder);
                 }
             }
         }.execute();
     }
 
     void loadMap(File areaFolder) {
-        logUser("loading map");
+        log("loading map");
 
         // Map events receiver
         mapView.map().layers().add(new MapEventsReceiver(mapView.map()));
@@ -467,7 +470,7 @@ public class MapActivity extends Activity {
 
 
         setContentView(mapView);
-        loadGraphStorage();
+        //loadGraphStorage();
         locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         locationListener = new MyLocationListener();
@@ -493,38 +496,38 @@ public class MapActivity extends Activity {
         }
     }
 
-    void loadGraphStorage() {
-        logUser("loading graph (" + Constants.VERSION + ") ... ");
-        new GHAsyncTask<Void, Void, Path>() {
-            protected Path saveDoInBackground(Void... v) throws Exception {
-                GraphHopper tmpHopp = new GraphHopper().forMobile();
-
-                ProfileConfig carProfileConfig = new ProfileConfig("car");
-                carProfileConfig.setWeighting("fastest");
-                carProfileConfig.setVehicle("car");
-                ProfileConfig footProfileConfig = new ProfileConfig("foot");
-                footProfileConfig.setWeighting("fastest");
-                tmpHopp.setProfiles(carProfileConfig, footProfileConfig);
-
-                tmpHopp.load(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh");
-                log("found graph " + tmpHopp.getGraphHopperStorage().toString() + ", nodes:" + tmpHopp.getGraphHopperStorage().getNodes());
-                hopper = tmpHopp;
-                return null;
-            }
-
-            protected void onPostExecute(Path o) {
-                if (hasError()) {
-                    logUser("An error happened while creating graph:"
-                            + getErrorMessage());
-                } else {
-                    logUser("Finished loading graph. Long press to define where to start and end the route.");
-                }
-
-                finishPrepare();
-                showRoute();
-            }
-        }.execute();
-    }
+//    public void loadGraphStorage(final MapNewActivity activity) {
+//        logUser(activity,"loading graph (" + Constants.VERSION + ") ... ");
+//        new GHAsyncTask<Void, Void, Path>() {
+//            protected Path saveDoInBackground(Void... v) throws Exception {
+//                GraphHopper tmpHopp = new GraphHopper().forMobile();
+//
+//                ProfileConfig carProfileConfig = new ProfileConfig("car");
+//                carProfileConfig.setWeighting("fastest");
+//                carProfileConfig.setVehicle("car");
+//                ProfileConfig footProfileConfig = new ProfileConfig("foot");
+//                footProfileConfig.setWeighting("fastest");
+//                tmpHopp.setProfiles(carProfileConfig, footProfileConfig);
+//
+//                tmpHopp.load(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh");
+//                log("found graph " + tmpHopp.getGraphHopperStorage().toString() + ", nodes:" + tmpHopp.getGraphHopperStorage().getNodes());
+//                hopper = tmpHopp;
+//                return null;
+//            }
+//
+//            protected void onPostExecute(Path o) {
+//                if (hasError()) {
+//                    logUser(activity,"An error happened while creating graph:"
+//                            + getErrorMessage());
+//                } else {
+//                    logUser(activity,"Finished loading graph. Long press to define where to start and end the route.");
+//                }
+//
+//                //finishPrepare();
+//                //showRoute();
+//            }
+//        }.execute();
+//    }
 
     private void showRoute() {
         Log.i(LOGTAG, "Showing route from intent");
@@ -567,49 +570,49 @@ public class MapActivity extends Activity {
         return markerItem;
     }
 
-    public void calcPath(final double fromLat, final double fromLon,
-                         final double toLat, final double toLon) {
-
-        log("calculating path ...");
-        new AsyncTask<Void, Void, PathWrapper>() {
-            float time;
-
-            protected PathWrapper doInBackground(Void... v) {
-                StopWatch sw = new StopWatch().start();
-                String profile = "foot";
-                GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).setProfile(profile).
-                        setAlgorithm(Algorithms.DIJKSTRA_BI);
-                req.getHints().
-                        put(Routing.INSTRUCTIONS, "false");
-                GHResponse resp = hopper.route(req);
-                System.out.println(resp);
-                time = sw.stop().getSeconds();
-                return resp.getBest();
-            }
-
-            protected void onPostExecute(PathWrapper resp) {
-                if (!resp.hasErrors()) {
-                    log("from:" + fromLat + "," + fromLon + " to:" + toLat + ","
-                            + toLon + " found path with distance:" + resp.getDistance()
-                            / 1000f + ", nodes:" + resp.getPoints().getSize() + ", time:"
-                            + time + " " + resp.getDebugInfo());
-                    logUser("the route is " + (int) (resp.getDistance() / 100) / 10f
-                            + "km long, time:" + resp.getTime() / 60000f + "min, debug:" + time);
-
-//                    double  zoomFactor = 1 <<  (int)(resp.getDistance() * 0.15);
-                    mapView.map().setMapPosition((toLat + fromLat) / 2, (toLon + fromLon) / 2, 1 << 10);
-
-
-                    pathLayer = createPathLayer(resp);
-                    mapView.map().layers().add(pathLayer);
-                    mapView.map().updateMap(true);
-                } else {
-                    logUser("Error:" + resp.getErrors());
-                }
-                shortestPathRunning = false;
-            }
-        }.execute();
-    }
+//    public void calcPath(final double fromLat, final double fromLon,
+//                         final double toLat, final double toLon) {
+//
+//        log("calculating path ...");
+//        new AsyncTask<Void, Void, PathWrapper>() {
+//            float time;
+//
+//            protected PathWrapper doInBackground(Void... v) {
+//                StopWatch sw = new StopWatch().start();
+//                String profile = "foot";
+//                GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).setProfile(profile).
+//                        setAlgorithm(Algorithms.DIJKSTRA_BI);
+//                req.getHints().
+//                        put(Routing.INSTRUCTIONS, "false");
+//                GHResponse resp = hopper.route(req);
+//                System.out.println(resp);
+//                time = sw.stop().getSeconds();
+//                return resp.getBest();
+//            }
+//
+//            protected void onPostExecute(PathWrapper resp) {
+//                if (!resp.hasErrors()) {
+//                    log("from:" + fromLat + "," + fromLon + " to:" + toLat + ","
+//                            + toLon + " found path with distance:" + resp.getDistance()
+//                            / 1000f + ", nodes:" + resp.getPoints().getSize() + ", time:"
+//                            + time + " " + resp.getDebugInfo());
+//                    logUser("the route is " + (int) (resp.getDistance() / 100) / 10f
+//                            + "km long, time:" + resp.getTime() / 60000f + "min, debug:" + time);
+//
+////                    double  zoomFactor = 1 <<  (int)(resp.getDistance() * 0.15);
+//                    mapView.map().setMapPosition((toLat + fromLat) / 2, (toLon + fromLon) / 2, 1 << 10);
+//
+//
+//                    pathLayer = createPathLayer(resp);
+//                    mapView.map().layers().add(pathLayer);
+//                    mapView.map().updateMap(true);
+//                } else {
+//                    logUser("Error:" + resp.getErrors());
+//                }
+//                shortestPathRunning = false;
+//            }
+//        }.execute();
+//    }
 
     private void log(String str) {
         Log.i("GH", str);
@@ -622,6 +625,15 @@ public class MapActivity extends Activity {
     private void logUser(String str) {
         log(str);
         Toast.makeText(this, str, Toast.LENGTH_LONG).show();
+    }
+    private void logUser(Activity activity, String str)
+    {
+        log(str);
+        try
+        {
+            Toast.makeText(activity, str, Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e) { e.printStackTrace(); }
     }
 
     @Override
@@ -672,4 +684,5 @@ public class MapActivity extends Activity {
             return false;
         }
     }
+
 }

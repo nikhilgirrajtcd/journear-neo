@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:id="@+id/layout_id"
     android:orientation="vertical"
     android:layout_height="match_parent">
     <androidx.cardview.widget.CardView
@@ -104,19 +103,16 @@
                 >
 
                 <RadioButton
-                    android:id="@+id/modeWalk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Walk" />
 
                 <RadioButton
-                    android:id="@+id/modeTaxi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Taxi" />
 
                 <RadioButton
-                    android:id="@+id/modeAny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Any" />

@@ -33,6 +33,7 @@ import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.ui.CreateJourneyActivity;
+import com.journear.app.map.activities.MapNewActivity;
 
 import java.util.List;
 
@@ -132,7 +133,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             NearbyDevice dev = devicesList.get(position);
             Context context = v.getContext();
 
-            Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "butoon clicked" + position, Toast.LENGTH_SHORT).show();
             switch (v.getId()) {
                 case R.id.currentTOSource:
                     //Taran add functionality
@@ -140,12 +141,15 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     break;
 
                 case R.id.editJourney:
+                    Toast.makeText(context, "edit butoon clicked" + position, Toast.LENGTH_SHORT).show();
+                    //MapNewActivity mpactivity = new MapNewActivity();
                     editCreatedJourney(dev, v);
+
                     break;
 
                 case R.id.Maps:
                     Toast.makeText(context, "B" + position, Toast.LENGTH_SHORT).show();
-
+                    //MapNewActivity mpactivity = new MapNewActivity();
                     JnGeocodeItem source = devicesList.get(position).getSource2();
                     JnGeocodeItem destination = devicesList.get(position).getDestination2();
                     LocalFunctions.launchMapActivityWithRoute(v.getContext(), source.latitude, source.longitude,

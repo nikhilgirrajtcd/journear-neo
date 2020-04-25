@@ -1,0 +1,455 @@
+@startuml
+
+title __APP's Class Diagram__\n
+
+  namespace com.graphhopper.android {
+    class com.graphhopper.android.BuildConfig {
+    }
+  }
+  
+
+  namespace com.graphhopper.android {
+    class com.graphhopper.android.R {
+    }
+  }
+  
+
+  namespace com.journear.app {
+    class com.journear.app.BuildConfig {
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      class com.journear.app.core.IsValid {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      class com.journear.app.core.LocalFunctions {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      class com.journear.app.core.PeerFunctions {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      class com.journear.app.core.PersistentStore {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      class com.journear.app.core.ServerFunctions {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace db {
+        class com.journear.app.core.db.SqliteDbHelper {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace entities {
+        class com.journear.app.core.entities.DuplicateItemException {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace entities {
+        class com.journear.app.core.entities.JnGeocodeItem {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace entities {
+        class com.journear.app.core.entities.NearbyDevice {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace entities {
+        class com.journear.app.core.entities.StringWrapper {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace entities {
+        class com.journear.app.core.entities.User {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace entities {
+        class com.journear.app.core.entities.UserSkimmed {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace interfaces {
+        interface com.journear.app.core.interfaces.Persistable {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace utils {
+        class com.journear.app.core.utils.AppConstants {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace utils {
+        class com.journear.app.core.utils.Encryptor {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace utils {
+        class com.journear.app.core.utils.JnGeocoder {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace utils {
+        class com.journear.app.core.utils.SerializerHelper {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace core {
+      namespace utils {
+        class com.journear.app.core.utils.Validations {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace map {
+      class com.journear.app.map.AndroidDownloader {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace map {
+      class com.journear.app.map.AndroidHelper {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace map {
+      abstract class com.journear.app.map.GHAsyncTask {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace map {
+      class com.journear.app.map.LandingActivity {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace map {
+      class com.journear.app.map.MapActivity {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      class com.journear.app.ui.CreateJourneyActivity {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      class com.journear.app.ui.LoginActivity {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      class com.journear.app.ui.MainActivity {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      class com.journear.app.ui.StartActivity {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      class com.journear.app.ui.UserRegisterActivity {
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace adapters {
+        class com.journear.app.ui.adapters.RecyclerViewAdapter {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace gallery {
+        class com.journear.app.ui.gallery.GalleryFragment {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace gallery {
+        class com.journear.app.ui.gallery.GalleryViewModel {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace home {
+        class com.journear.app.ui.home.HomeFragment {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace home {
+        class com.journear.app.ui.home.HomeViewModel {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace send {
+        class com.journear.app.ui.send.SendFragment {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace send {
+        class com.journear.app.ui.send.SendViewModel {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace share {
+        class com.journear.app.ui.share.ShareFragment {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace share {
+        class com.journear.app.ui.share.ShareViewModel {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace slideshow {
+        class com.journear.app.ui.slideshow.CreateJourneyFragment {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace slideshow {
+        class com.journear.app.ui.slideshow.CreateJourneyViewModel {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace tools {
+        class com.journear.app.ui.tools.ToolsFragment {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.journear.app {
+    namespace ui {
+      namespace tools {
+        class com.journear.app.ui.tools.ToolsViewModel {
+        }
+      }
+    }
+  }
+  
+
+  com.journear.app.core.PersistentStore o-- com.journear.app.core.db.SqliteDbHelper : sqliteDbHelper
+  com.journear.app.core.db.SqliteDbHelper -up-|> android.database.sqlite.SQLiteOpenHelper
+  com.journear.app.core.entities.JnGeocodeItem .up.|> java.io.Serializable
+  com.journear.app.core.entities.JnGeocodeItem .up.|> java.lang.Cloneable
+  com.journear.app.core.entities.NearbyDevice .up.|> android.os.Parcelable
+  com.journear.app.core.entities.NearbyDevice .up.|> com.journear.app.core.interfaces.Persistable
+  com.journear.app.core.entities.NearbyDevice o-- com.journear.app.core.entities.JnGeocodeItem : destination2
+  com.journear.app.core.entities.NearbyDevice o-- com.journear.app.core.entities.JnGeocodeItem : source2
+  com.journear.app.core.entities.NearbyDevice o-- com.journear.app.core.entities.UserSkimmed : user
+  com.journear.app.core.entities.StringWrapper .up.|> com.journear.app.core.interfaces.Persistable
+  com.journear.app.core.entities.User .up.|> com.journear.app.core.interfaces.Persistable
+  com.journear.app.core.entities.User -up-|> com.journear.app.core.entities.UserSkimmed
+  com.journear.app.core.entities.UserSkimmed .up.|> com.journear.app.core.interfaces.Persistable
+  com.journear.app.map.AndroidDownloader -up-|> com.graphhopper.util.Downloader
+  com.journear.app.map.GHAsyncTask -up-|> android.os.AsyncTask
+  com.journear.app.map.LandingActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.journear.app.map.MapActivity -up-|> android.app.Activity
+  com.journear.app.ui.CreateJourneyActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.journear.app.ui.LoginActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.journear.app.ui.MainActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.journear.app.ui.MainActivity o-- com.journear.app.core.entities.NearbyDevice : ndOwnJourneyPlan
+  com.journear.app.ui.MainActivity o-- com.journear.app.ui.adapters.RecyclerViewAdapter : recyclerViewAdapter
+  com.journear.app.ui.StartActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.journear.app.ui.UserRegisterActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.journear.app.ui.adapters.RecyclerViewAdapter -up-|> androidx.recyclerview.widget.RecyclerView.Adapter
+  com.journear.app.ui.gallery.GalleryFragment -up-|> androidx.fragment.app.Fragment
+  com.journear.app.ui.gallery.GalleryFragment o-- com.journear.app.ui.gallery.GalleryViewModel : galleryViewModel
+  com.journear.app.ui.gallery.GalleryViewModel -up-|> androidx.lifecycle.ViewModel
+  com.journear.app.ui.home.HomeFragment -up-|> androidx.fragment.app.Fragment
+  com.journear.app.ui.home.HomeFragment o-- com.journear.app.ui.home.HomeViewModel : homeViewModel
+  com.journear.app.ui.home.HomeViewModel -up-|> androidx.lifecycle.ViewModel
+  com.journear.app.ui.send.SendFragment -up-|> androidx.fragment.app.Fragment
+  com.journear.app.ui.send.SendFragment o-- com.journear.app.ui.send.SendViewModel : sendViewModel
+  com.journear.app.ui.send.SendViewModel -up-|> androidx.lifecycle.ViewModel
+  com.journear.app.ui.share.ShareFragment -up-|> androidx.fragment.app.Fragment
+  com.journear.app.ui.share.ShareFragment o-- com.journear.app.ui.share.ShareViewModel : shareViewModel
+  com.journear.app.ui.share.ShareViewModel -up-|> androidx.lifecycle.ViewModel
+  com.journear.app.ui.slideshow.CreateJourneyFragment -up-|> androidx.fragment.app.Fragment
+  com.journear.app.ui.slideshow.CreateJourneyFragment o-- com.journear.app.ui.slideshow.CreateJourneyViewModel : createJourneyViewModel
+  com.journear.app.ui.slideshow.CreateJourneyViewModel -up-|> androidx.lifecycle.ViewModel
+  com.journear.app.ui.tools.ToolsFragment -up-|> androidx.fragment.app.Fragment
+  com.journear.app.ui.tools.ToolsFragment o-- com.journear.app.ui.tools.ToolsViewModel : toolsViewModel
+  com.journear.app.ui.tools.ToolsViewModel -up-|> androidx.lifecycle.ViewModel
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

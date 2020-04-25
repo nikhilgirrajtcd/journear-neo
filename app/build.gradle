@@ -37,24 +37,21 @@ android {
  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'}**/
 
 dependencies {
-    implementation(group: 'com.graphhopper', name: 'graphhopper-core', version: '1.0-SNAPSHOT') {
-        exclude group: 'com.google.protobuf', module: 'protobuf-java'
-        exclude group: 'org.openstreetmap.osmosis', module: 'osmosis-osm-binary'
-        exclude group: 'org.apache.xmlgraphics', module: 'xmlgraphics-commons'
-    }
+    implementation 'com.jjoe64:graphview:4.2.2'
 
-    implementation 'org.mapsforge:vtm:0.13.0'
-    implementation 'org.mapsforge:vtm-android:0.13.0'
-    implementation 'org.mapsforge:vtm-android:0.13.0:natives-armeabi-v7a'
-    implementation 'org.mapsforge:vtm-android:0.13.0:natives-arm64-v8a'
-    implementation 'org.mapsforge:vtm-android:0.13.0:natives-x86'
-    implementation 'org.mapsforge:vtm-android:0.13.0:natives-x86_64'
-    implementation 'org.mapsforge:vtm-jts:0.13.0'
-    implementation 'org.mapsforge:vtm-themes:0.13.0'
-    implementation 'com.caverock:androidsvg:1.4'
 
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.slf4j:slf4j-android:1.7.30'
+    implementation 'org.mapsforge:vtm:0.12.0'
+    implementation 'org.mapsforge:vtm-android:0.12.0'
+    implementation 'org.mapsforge:vtm-android:0.12.0:natives-armeabi'
+    implementation 'org.mapsforge:vtm-android:0.12.0:natives-armeabi-v7a'
+    implementation 'org.mapsforge:vtm-android:0.12.0:natives-arm64-v8a'
+    implementation 'org.mapsforge:vtm-android:0.12.0:natives-x86'
+    implementation 'org.mapsforge:vtm-android:0.12.0:natives-x86_64'
+    implementation 'org.mapsforge:vtm-jts:0.12.0'
+    implementation 'org.mapsforge:vtm-themes:0.12.0'
+
+    implementation 'org.slf4j:slf4j-api:1.7.28'
+    implementation 'org.slf4j:slf4j-android:1.7.28'
 
 
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -67,7 +64,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'org.apache.commons:commons-text:1.6'
@@ -76,6 +73,13 @@ dependencies {
     implementation "commons-validator:commons-validator:1.6"
     implementation 'com.google.android.material:material:1.0.0'
     //noinspection GradleCompatible
-    implementation 'com.android.support:design:28.0.0'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+
+    androidTestImplementation 'androidx.test:rules:1.1.1'
+    implementation 'org.conscrypt:conscrypt-android:2.2.1'
+    implementation files('C:\\Users\\Aman\\.gradle\\caches\\modules-2\\files-2.1\\com.graphhopper\\graphhopper-core\\0.13.0\\1f7be2f56f5d1749364dac6f4995ae5777858ad7\\graphhopper-core-0.13.0.jar')
+    implementation files('C:\\Users\\Aman\\.gradle\\caches\\modules-2\\files-2.1\\com.graphhopper\\graphhopper-api\\0.13.0\\f1f56cad71870820c7dd302f0bfe65a70e5fe221\\graphhopper-api-0.13.0.jar')
+    implementation files('C:\\Users\\Aman\\.gradle\\caches\\modules-2\\files-2.1\\com.carrotsearch\\hppc\\0.8.1\\ffc7ba8f289428b9508ab484b8001dea944ae603\\hppc-0.8.1.jar')
+
 }

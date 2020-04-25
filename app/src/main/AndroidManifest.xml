@@ -5,6 +5,9 @@
     android:versionName="0.1">
 
     <!-- saving maps -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- necessary to easily download maps via wifi -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -17,6 +20,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
+        android:requestLegacyExternalStorage="true"
         android:name=".App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher_jn"
@@ -50,6 +54,43 @@
         <activity android:name=".ui.UserRegisterActivity" />
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.StartActivity" />
+        <activity
+            android:name=".map.activities.MapNewActivity"
+            android:launchMode="singleTask"
+            android:label="@string/title_activity_map"
+            android:screenOrientation="portrait"
+            android:theme="@style/MYAppTheme" >
+        </activity>
+        <activity
+            android:name=".map.activities.LatLonActivity"
+            android:label="@string/enter_lat_lon"
+            android:screenOrientation="portrait"
+            android:theme="@style/MYAppTheme" >
+        </activity>
+        <activity
+            android:name=".map.activities.Analytics"
+            android:label="@string/title_activity_download"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyAppThemeActionBar" >
+        </activity>
+        <activity
+            android:name=".map.activities.Permission"
+            android:label="@string/title_activity_analytics"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyAppThemeActionBar" >
+        </activity>
+        <activity
+            android:name=".map.activities.GeocodeActivity"
+            android:label="@string/settings"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyAppThemeActionBar">
+        </activity>
+        <activity
+            android:name=".map.activities.AboutActivity"
+            android:label="@string/search_location"
+            android:theme="@style/MYAppTheme" >
+        </activity>
+
     </application>
 
 </manifest>

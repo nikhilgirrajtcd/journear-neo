@@ -18,6 +18,7 @@ import com.journear.app.core.entities.User;
 import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.core.utils.AppConstants;
 import com.journear.app.map.MapActivity;
+import com.journear.app.map.activities.MapNewActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -57,9 +58,9 @@ public class LocalFunctions {
     }
 
     public static void launchMapActivityWithRoute(Context context, double lat1, double long1, double lat2, double long2) {
-        Intent intent = new Intent(context, MapActivity.class);
-        double[] dddddd = {lat1, long1, lat2, long2, 0, 0};
-        intent.putExtra(MapActivity.incomingIntentName, dddddd);
+        Intent intent = new Intent(context, MapNewActivity.class);
+        //double[] dddddd = {lat1, long1, lat2, long2, 0, 0};
+        //intent.putExtra(MapActivity.incomingIntentName, dddddd);
         context.startActivity(intent);
     }
 
