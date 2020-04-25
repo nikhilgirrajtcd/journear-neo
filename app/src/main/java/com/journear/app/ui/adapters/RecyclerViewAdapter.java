@@ -83,7 +83,6 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         holder.travelTime.setText(devices.getTravelTime().toString());
         holder.modeJourney.setText(devices.getModeOfJourney());
 
-
         if(devices.getOwner().getUserId().equalsIgnoreCase(LocalFunctions.getCurrentUser().getUserId())){
             holder.editJourney.setVisibility(View.VISIBLE);
             holder.joinRideButton.setVisibility(View.GONE);
