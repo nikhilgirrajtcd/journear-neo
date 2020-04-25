@@ -39,14 +39,22 @@ public class App extends Application {
     }
 
     private void startCommunicationService() {
-        Intent intent = new Intent(App.this, JourNearCommunicationsService.class);
-        intent.setAction(JourNearCommunicationsService.ACTION_START_FOREGROUND_SERVICE);
-        startService(intent);
+        try {
+            Intent intent = new Intent(App.this, JourNearCommunicationsService.class);
+            intent.setAction(JourNearCommunicationsService.ACTION_START_FOREGROUND_SERVICE);
+            startService(intent);
+        } catch (Exception ex) {
+            Log.e(LOGTAG, "Can't initialize peer discovery.");
+        }
     }
 
     private void stopCommunicationService() {
-        Intent intent = new Intent(App.this, JourNearCommunicationsService.class);
-        intent.setAction(JourNearCommunicationsService.ACTION_STOP_FOREGROUND_SERVICE);
-        startService(intent);
+        try {
+            Intent intent = new Intent(App.this, JourNearCommunicationsService.class);
+            intent.setAction(JourNearCommunicationsService.ACTION_STOP_FOREGROUND_SERVICE);
+            startService(intent);
+        } catch (Exception ex) {
+            Log.e(LOGTAG, "Can't stop peer discovery service.");
+        }
     }
 }

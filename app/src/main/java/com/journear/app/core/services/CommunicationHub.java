@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class CommunicationHub {
 
-    private static final Integer MAX_RETRY_COUNT = 3;
+    public static final Integer MAX_RETRY_COUNT = 3;
     // Subject is the ID of NearbyDevice (all messages will be contained in an array as a Thread
     // <Subject, Log>
     private Map<String, ConversationLog> conversationLogMap = new HashMap<>();
