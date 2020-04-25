@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,12 +43,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String LOGTAG = "MainActivityLogs";
     private AppBarConfiguration mAppBarConfiguration;
     private MenuItem menuItem;
     private TextView badgeCounter;
     int pendingNotifications = 13;
     private MenuItem navNotificationItem;
-
 
 
     public static final String TAG = "MainActivityTag";
@@ -68,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         boolean loggedIn = checkUserLogon();
-        if (!loggedIn)
+        if (!loggedIn) {
             finish();
+            return;
+        }
         // if needs be check the value of loggedIn and stop further execution from here
 
 //        LocalFunctions.checkLocationPermission(MainActivity.this);
@@ -102,13 +105,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
 
-
         navNotificationItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 ShareFragment sf = new ShareFragment();
-                ft.replace(R.id.nav_host_fragment,sf);
+                ft.replace(R.id.nav_host_fragment, sf);
                 ft.commit();
                 return true;
             }
@@ -213,7 +215,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        unbindService(serviceConnection);
+        if (serviceConnection != null) {
+            try {
+                unbindService(serviceConnection);
+            } catch (Exception ex) {
+                Log.e(LOGTAG, "Error while unbinding service connection.");
+            }
+        }
         super.onDestroy();
     }
 
@@ -232,8 +240,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     public void setHomeFragment(HomeFragment hf) {
         this.homeFragment = hf;
+    }
+
+    public HomeFragment getHomeFragment() {
+        if (homeFragment == null) {
+            NavHostFragment nhf = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            for (Fragment frag : nhf.getChildFragmentManager().getFragments()) {
+                if (frag.getClass().equals(HomeFragment.class)) {
+                    homeFragment = (HomeFragment) frag;
+                }
+            }
+        }
+        return homeFragment;
     }
 
     HomeFragment homeFragment = null;
@@ -242,12 +263,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        NavHostFragment nhf = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        for (Fragment frag : nhf.getChildFragmentManager().getFragments()) {
-            if (frag.getClass().equals(HomeFragment.class)) {
-                homeFragment = (HomeFragment) frag;
-            }
-        }
+
 
         if (homeFragment != null) {
             addDiscoveredNearbyDevice(ndOwnJourneyPlan);
@@ -256,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void addDiscoveredNearbyDevice(NearbyDevice obj) {
-        if(obj == null)
+        if (obj == null)
             return;
 
         if (obj.getOwner().isSameAs(LocalFunctions.getCurrentUser())) {// this whole if block is probably not needed since it should be handled in the MainActivity
@@ -334,8 +350,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static int getUnreadCachedCommsCount(List<CachedComms> l) {
         int _count = 0;
-        for(int iIndex = 0; iIndex < l.size(); iIndex++) {
-            if(!l.get(0).delivered)
+        for (int iIndex = 0; iIndex < l.size(); iIndex++) {
+            if (!l.get(0).delivered)
                 _count++;
         }
         return _count;

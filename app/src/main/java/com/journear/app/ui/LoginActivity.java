@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.material.snackbar.Snackbar;
 import com.journear.app.R;
+import com.journear.app.core.IsValid;
 import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.ServerFunctions;
 import com.journear.app.core.entities.User;
@@ -34,8 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e(logTag, "Server communication error while trying to log in.", error);
-            Snackbar.make( findViewById(android.R.id.content).getRootView()
-                    ,"Please make sure internet is connected",Snackbar.LENGTH_SHORT).show();
+            Snackbar.make( findViewById(android.R.id.content).getRootView(),
+                    "Please make sure internet is connected",Snackbar.LENGTH_SHORT).show();
         }
     };
 
@@ -100,8 +101,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean validateInputs(String email, String password) {
-        return true;
-//        return IsValid.email(email) & IsValid.password(password);
+//        return true;
+        return IsValid.email(email) & IsValid.password(password);
     }
 
     /**

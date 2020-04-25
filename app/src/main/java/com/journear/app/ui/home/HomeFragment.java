@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -79,7 +78,6 @@ public class HomeFragment extends Fragment implements JnPeerDiscoveryListener {
         addListenerForPreference();
     }
 
-
     /**
      * Initialize the list on UI. Add the ndOwnJourneyPlan if not null
      */
@@ -107,7 +105,6 @@ public class HomeFragment extends Fragment implements JnPeerDiscoveryListener {
             }
         });
     }
-
 
     @Override
     public void onPeerDiscovered(NearbyDevice obj) {

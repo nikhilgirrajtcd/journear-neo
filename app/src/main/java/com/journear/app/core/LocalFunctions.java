@@ -78,8 +78,6 @@ public class LocalFunctions {
                     AppConstants.MY_PERMISSIONS_ALL);
         }
         return true;
-//        } else
-//            return true;
     }
 
     public static boolean isLocationPermissionGiven(Activity activity) {
