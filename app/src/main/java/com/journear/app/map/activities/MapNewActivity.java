@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import com.journear.app.R;
+import com.journear.app.map.MapActivity;
 import com.journear.app.map.fragments.Dialog;
 import com.journear.app.map.map.Destination;
 import com.journear.app.map.map.MapHandler;
@@ -38,6 +39,8 @@ import org.oscim.core.GeoPoint;
 
 import java.io.File;
 import java.lang.reflect.Array;
+
+import static com.journear.app.map.MapActivity.incomingIntentName;
 
 /**
  * This file is part of PocketMaps
@@ -74,10 +77,16 @@ public class MapNewActivity extends Activity implements LocationListener {
      * Lets say we want ~25 updates (estimates) per second = update each 40 millis (to make the movement fluent).
      */
     private static final long FILTER_TIME = 40;
-
+    GeoPoint journeySource, journeyDestination, Center;
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NaviText.initTextList(this);
+        Intent intent1 = getIntent();
+        double[] dddddd = intent1.getDoubleArrayExtra(incomingIntentName);
+
+        journeySource = new GeoPoint(dddddd[0], dddddd[1]);
+        journeyDestination = new GeoPoint(dddddd[2], dddddd[3]);
+        Center = new GeoPoint(dddddd[4], dddddd[5]);
         lastProvider = null;
         setContentView(R.layout.activity_map);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -110,7 +119,6 @@ public class MapNewActivity extends Activity implements LocationListener {
 
           MapHandler.getMapHandler().loadMap(new File(mapFolder.getAbsolutePath(),
                 currentArea + "-gh"), this);
-          log("came herer");
           getIntent().putExtra("com.journear.app.map.activities.MapNewActivity.SELECTNEWMAP", false);
         }
         catch (Exception e)
@@ -130,6 +138,8 @@ public class MapNewActivity extends Activity implements LocationListener {
         ensureLastLocationInit();
         updateCurrentLocation(null);
         mapAlive = true;
+//        MapActions mapactivity  = new MapActions();
+
     }
 
 
@@ -225,7 +235,7 @@ public class MapNewActivity extends Activity implements LocationListener {
         inclusionViewGroup.getParent().bringChildToFront(inclusionViewGroup);
         new SetStatusBarColor().setSystemBarColor(findViewById(R.id.statusBarBackgroundMap),
                 getResources().getColor(R.color.my_primary_dark_transparent), this);
-        mapActions = new MapActions(this, mapView);
+        mapActions = new MapActions(this, mapView,journeySource,journeyDestination);
     }
 
     /**

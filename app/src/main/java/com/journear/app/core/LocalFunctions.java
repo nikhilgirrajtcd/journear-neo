@@ -59,8 +59,8 @@ public class LocalFunctions {
 
     public static void launchMapActivityWithRoute(Context context, double lat1, double long1, double lat2, double long2) {
         Intent intent = new Intent(context, MapNewActivity.class);
-        //double[] dddddd = {lat1, long1, lat2, long2, 0, 0};
-        //intent.putExtra(MapActivity.incomingIntentName, dddddd);
+        double[] dddddd = {lat1, long1, lat2, long2, 0, 0};
+        intent.putExtra(MapActivity.incomingIntentName, dddddd);
         context.startActivity(intent);
     }
 

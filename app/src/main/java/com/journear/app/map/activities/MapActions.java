@@ -60,7 +60,9 @@ public class MapActions implements NavigatorListener, MapHandlerListener {
     public final static String EMPTY_LOC_STR = "..........";
     private final static int ZOOM_MAX = 22;
     private final static int ZOOM_MIN = 1;
-    
+    private final GeoPoint journeySource;
+    private final GeoPoint journeyDestination;
+
     enum TabAction{ StartPoint, EndPoint, AddFavourit, None };
     private TabAction tabAction = TabAction.None;
     private Activity activity;
@@ -72,8 +74,10 @@ public class MapActions implements NavigatorListener, MapHandlerListener {
     private boolean menuVisible;
     private TextView fromLocalET, toLocalET;
 
-    public MapActions(Activity activity, MapView mapView) {
+    public MapActions(Activity activity, MapView mapView,GeoPoint journeySource,GeoPoint journeyDestination) {
         this.activity = activity;
+        this.journeySource = journeySource;
+        this.journeyDestination = journeyDestination;
         this.showPositionBtn = (FloatingActionButton) activity.findViewById(R.id.map_show_my_position_fab);
         this.navigationBtn = (FloatingActionButton) activity.findViewById(R.id.map_nav_fab);
         this.settingsBtn = (FloatingActionButton) activity.findViewById(R.id.map_southbar_settings_fab);
@@ -112,6 +116,11 @@ public class MapActions implements NavigatorListener, MapHandlerListener {
         initSettingsBtnHandler();
         initFavourBtnHandler();
         mapView.map().getEventLayer().enableRotation(false);
+        String text_source = "" + journeySource.getLatitude() + ", " + journeySource.getLongitude();
+        String text_dest = "" + journeyDestination.getLatitude() + ", " + journeyDestination.getLongitude();
+        doSelectCurrentPos(journeySource,text_source,true);
+        doSelectCurrentPos(journeyDestination,text_dest,false);
+
     }
     
     private UpdateListener createUpdateListener()
