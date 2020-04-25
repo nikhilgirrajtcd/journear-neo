@@ -44,9 +44,4 @@ public class User extends UserSkimmed implements Persistable {
     public void setDobValue(String dobValue) {
         this.dobValue = dobValue;
     }
-
-
-
-
-
 }

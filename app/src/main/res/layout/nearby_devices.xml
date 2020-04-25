@@ -25,7 +25,8 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@android:drawable/ic_menu_edit"></Button>
+                    android:background="@android:drawable/ic_menu_edit"
+                    android:hapticFeedbackEnabled="true"></Button>
 
             </TableRow>
             <TextView
@@ -84,7 +85,7 @@
                 android:id="@+id/genderPreferenceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/preferencesTextView"
+                android:layout_below="@id/preferenceTextView"
                 android:textSize="15sp"
                 />
 
@@ -108,18 +109,21 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@android:drawable/ic_menu_directions" />
+                    android:background="@android:drawable/ic_menu_directions"
+                    android:hapticFeedbackEnabled="true"/>
                 <Button
                     android:id="@+id/Join"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@drawable/plus_one" />
+                    android:background="@drawable/plus_one"
+                    android:hapticFeedbackEnabled="true"/>
                 <Button
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@android:drawable/ic_media_play" />
+                    android:background="@android:drawable/ic_media_play"
+                    android:hapticFeedbackEnabled="true"/>
 
 
 

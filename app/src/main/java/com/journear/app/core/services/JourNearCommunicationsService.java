@@ -305,11 +305,13 @@ public class JourNearCommunicationsService extends Service {
             record.put("I", all);
         }
         int i = 1;
-        for (CommunicationHub.RequestTriesResponse rtr : ServiceLocator.getCommunicationHub().getPendingMessages()) {
+        CommunicationHub hub = ServiceLocator.getCommunicationHub();
+        for (CommunicationHub.RequestTriesResponse rtr : hub.getPendingMessages()) {
             if (rtr.triesLeft > 0) {
                 record.put("C" + i, rtr.message.toReconstructableString());
                 rtr.triesLeft--;
             } else {
+                hub.expire(rtr);
             }
             if (i++ > 3) {
                 break;
@@ -333,9 +335,15 @@ public class JourNearCommunicationsService extends Service {
         public void onDnsSdTxtRecordAvailable(
                 String fullDomain, Map<String, String> record, WifiP2pDevice device) {
             Log.i(TAG_FOREGROUND_SERVICE, "DnsSdTxtRecord available - " + record.toString());
-            if (record.containsKey("I")) {
-                NearbyDevice nd = PeerFunctions.parseBroadcastString(record.get("I"));
-                discoveredDnsRecords.put(device.deviceAddress, nd);
+            for (String key : record.keySet()) {
+                if (key.equals("I")) {
+                    NearbyDevice nd = PeerFunctions.parseBroadcastString(record.get("I"));
+                    discoveredDnsRecords.put(device.deviceAddress, nd);
+                }
+
+                if (StringUtils.startsWithIgnoreCase(key, "C")) {
+                    ServiceLocator.getCommunicationHub().receiveResponse(JnMessage.createFromReconstructableString(record.get(key)));
+                }
             }
         }
     };
@@ -415,7 +423,7 @@ public class JourNearCommunicationsService extends Service {
 
             @Override
             public void onFailure(int reason) {
-                shortToast("F1");
+                shortToast("Please turn on Wifi");
             }
         });
     }

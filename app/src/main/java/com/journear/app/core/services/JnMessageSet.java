@@ -2,15 +2,9 @@ package com.journear.app.core.services;
 
 
 public enum JnMessageSet {
-    Accept,
-    AcceptAndShareContact,
-    Decline,
+    Accept, // after this, send okay response
+    Reject,
     RequestToJoin,
-    RequestToJoinAndShareContact,
-    Accepted,
-    AcceptedWithContact,
-    Declined,
-    RequestedToJoin,
-    RequestedToJoinWithContact
+    Okay,
 }
 

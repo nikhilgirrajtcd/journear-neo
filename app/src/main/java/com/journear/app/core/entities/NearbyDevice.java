@@ -93,6 +93,7 @@ public class NearbyDevice implements Parcelable, Persistable {
         return owner;
     }
 
+
     public void setOwner(UserSkimmed owner) {
         this.owner = owner;
         getTravelPlanId(); // this will generate the id if there isn't already one

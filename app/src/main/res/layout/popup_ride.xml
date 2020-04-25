@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/layout_id"
     android:orientation="vertical"
     android:layout_height="match_parent">
     <androidx.cardview.widget.CardView
@@ -9,10 +11,12 @@
         <RelativeLayout
             android:padding="24dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+
+            >
             <TextView
                 android:id="@+id/title"
-                android:text="Enter details"
+                android:text="Create your journey request"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
@@ -59,63 +63,56 @@
                 android:textAppearance="?android:attr/textAppearanceMediumInverse"
                 />
 
-            <TextView
-                android:id="@+id/preference"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Choose Journey Preferences"
-                android:hint="My hint"
-                android:textColor="?attr/editTextColor"
-                android:layout_below="@+id/btn_setTime"
-                android:background="?attr/editTextBackground"
-                android:gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                />
-
 
             <Switch
                 android:id="@+id/genderPreference"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/preference"
-                android:text="Same Gender"
+                android:layout_below="@+id/btn_setTime"
+                android:text="Do not allow opposite gender"
                 android:textOff="No"
                 android:textOn="Yes"/>
 
             <TextView
-                android:id="@+id/modeTextView"
-                android:layout_width="match_parent"
+                android:id="@+id/preference"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mode of Journey"
-                android:hint="My hint"
-                android:textColor="?attr/editTextColor"
                 android:layout_below="@+id/genderPreference"
-                android:gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                />
+                android:text="Mode of Journey"
+                android:hint="Walk or by Taxi"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+
 
             <RadioGroup
                 android:id="@+id/editModeJourney"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/modeTextView"
+                android:layout_below="@id/preference"
                 android:orientation="horizontal"
+                android:checkedButton="@id/modeAny"
                 >
 
+
                 <RadioButton
+                    android:id="@+id/modeAny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Any" />
+
+                <RadioButton
+                    android:id="@+id/modeWalk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Walk" />
 
                 <RadioButton
+                    android:id="@+id/modeTaxi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Taxi" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Any" />
             </RadioGroup>
 
             <Button
@@ -129,6 +126,7 @@
                 android:layout_width="match_parent"
                 android:background="@color/colorAccent"
                 android:layout_height="wrap_content"/>
+<!--                android:background="@color/colorAccent"-->
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

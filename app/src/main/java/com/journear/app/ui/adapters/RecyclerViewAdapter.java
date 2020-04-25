@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.journear.app.map.MyLocationListener;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 
@@ -33,7 +35,7 @@ import com.journear.app.core.LocalFunctions;
 import com.journear.app.core.entities.JnGeocodeItem;
 import com.journear.app.core.entities.NearbyDevice;
 import com.journear.app.ui.CreateJourneyActivity;
-import com.journear.app.map.activities.MapNewActivity;
+import com.journear.app.ui.tools.ToolsFragment;
 
 import java.util.List;
 
@@ -46,11 +48,13 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
     private LayoutInflater inflater;
     private MyLocationListener myLocationListner;
     LocationManager locationManager;
+    CommunicationListener communicationListener;
     private String LOGTAG = "RecyclerViewActivityLog";
 
-    public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList) {
+    public RecyclerViewAdapter(Context context, List<NearbyDevice> devicesList, CommunicationListener communicationListener) {
         this.devicesList = devicesList;
         this.context = context;
+        this.communicationListener = communicationListener;
     }
 
     @NonNull
@@ -70,6 +74,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         holder.destination.setText(devices.getDestination2().placeString);
         holder.travelTime.setText(devices.getTravelTime().toString());
         holder.modeJourney.setText(devices.getModeOfJourney());
+
 
         if (devices.getPreferSameGender()) {
             holder.genderPreferenceTextView.setText(devices.getOwner().getGender());
@@ -101,6 +106,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         public Button editJourney;
         public Button delete;
         public int id;
+        final MediaPlayer mp = new MediaPlayer();
 
         public ViewHolder(@NonNull View devicesList, Context ctx) {
             super(devicesList);
@@ -128,12 +134,14 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 
         @Override
         public void onClick(View v) {
+            MediaPlayer.create(v.getContext(),R.raw.click).start();
+
             final int position;
             position = getAdapterPosition();
             NearbyDevice dev = devicesList.get(position);
             Context context = v.getContext();
 
-            Toast.makeText(context, "butoon clicked" + position, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
             switch (v.getId()) {
                 case R.id.currentTOSource:
                     //Taran add functionality
@@ -141,15 +149,12 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     break;
 
                 case R.id.editJourney:
-                    Toast.makeText(context, "edit butoon clicked" + position, Toast.LENGTH_SHORT).show();
-                    //MapNewActivity mpactivity = new MapNewActivity();
                     editCreatedJourney(dev, v);
-
                     break;
 
                 case R.id.Maps:
                     Toast.makeText(context, "B" + position, Toast.LENGTH_SHORT).show();
-                    //MapNewActivity mpactivity = new MapNewActivity();
+
                     JnGeocodeItem source = devicesList.get(position).getSource2();
                     JnGeocodeItem destination = devicesList.get(position).getDestination2();
                     LocalFunctions.launchMapActivityWithRoute(v.getContext(), source.latitude, source.longitude,
@@ -160,21 +165,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     break;
                 case R.id.Join:
                     ServiceLocator.getCommunicationHub().sendMessage(devicesList.get(position),
-                            JnMessageSet.RequestToJoinAndShareContact, new CommunicationListener() {
-                                @Override
-                                public void onResponse(JnMessage message) {
-                                    if(message.getMessageFlag() == JnMessageSet.Accept)
-                                    {
-//                                        devicesList.get(position)
-                                    }
-                                    Log.i(LOGTAG, "Response received: " + message.toReconstructableString());
-                                }
-
-                                @Override
-                                public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
-                                    Log.i(LOGTAG, "Expired message: " + expiredMessage.toReconstructableString());
-                                }
-                            });
+                            JnMessageSet.RequestToJoin, communicationListener);
                     break;
             }
         }

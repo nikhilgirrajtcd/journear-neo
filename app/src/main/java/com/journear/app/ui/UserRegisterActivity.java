@@ -2,6 +2,7 @@ package com.journear.app.ui;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.InputType;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.material.snackbar.Snackbar;
 import com.journear.app.R;
 import com.journear.app.core.ServerFunctions;
 import com.journear.app.core.entities.User;
@@ -41,6 +43,7 @@ public class UserRegisterActivity extends AppCompatActivity {
         username = findViewById(R.id.editName);
         password = findViewById(R.id.editPassword);
         email = findViewById(R.id.editEmail);
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.click);
 
         gender = findViewById(R.id.editGender);
         phone = findViewById(R.id.editPhone);
@@ -76,6 +79,8 @@ public class UserRegisterActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.i("JSON","ONRESPONSE ERROR START");
+                Snackbar.make( findViewById(android.R.id.content).getRootView()
+                        ,"Username and Password do not match",Snackbar.LENGTH_SHORT).show();
             }
         };
 
@@ -85,6 +90,7 @@ public class UserRegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                mp.start();
                 final User registeringUser = new User();
 
                 registeringUser.setName( username.getText().toString());
@@ -118,7 +124,9 @@ public class UserRegisterActivity extends AppCompatActivity {
                             responseListener, responseErrorListener);
                 }
                 else {
-                    Toast.makeText(UserRegisterActivity.this, "Enter the values!", Toast.LENGTH_SHORT).show();
+                    Snackbar.make( findViewById(android.R.id.content).getRootView()
+                            ,"Please fill all the values.",Snackbar.LENGTH_SHORT).show();
+
                 }
             }
         });

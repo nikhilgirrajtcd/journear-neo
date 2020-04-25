@@ -11,7 +11,7 @@
     <string name="openMapBtn">Open Map</string>
     <string name="askPermissionBtn">Ask Permissions</string>
     <string name="landingPageTextBtn">Storage and Location Permission->For Maps;;</string>
-    <string name="menu_home">Home</string>
+    <string name="menu_home">Nearby Travellers</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_tools">Tools</string>
@@ -95,4 +95,7 @@
     <string name="navivoice_continue">continue</string>
     <string name="navivoice_leaveround">leave roundabout</string>
     <string name="navivoice_navend">Navigation end</string>
+    <string name="menu_messages">Messages</string>
+    <string name="menu_preferences">Preferences</string>
+    <string name="notification">Notification</string>
 </resources>

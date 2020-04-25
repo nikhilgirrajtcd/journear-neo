@@ -24,4 +24,5 @@
 
     <color name="my_dark_transparent_bg">#2D000000</color>
 
+    <color name="disabled">#808080</color>
 </resources>

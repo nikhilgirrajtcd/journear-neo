@@ -2,12 +2,24 @@ package com.journear.app.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.journear.app.R;
+import com.journear.app.core.LocalFunctions;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -40,4 +52,5 @@ public class StartActivity extends AppCompatActivity {
             }
         });
     }
+
 }
