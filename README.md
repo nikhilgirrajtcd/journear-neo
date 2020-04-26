@@ -20,6 +20,7 @@ The features are described in more detail on the [Project Diary: Features and Ch
 1. Maps. Maps require additional files to operate offline on the device. Please read more about it in [data/ReadMe.md](data/ReadMe.md)
 2. Imporant parts of the Application are described on the [Project Diary (Components) Wiki](https://github.com/nikhilgirrajtcd/journear-neo/wiki/Project-Diary-(Components)).
 
-## Developed by Group 9 - [Details on Project Wiki](https://github.com/nikhilgirrajtcd/journear-neo/wiki)
+## Developed by Group 9
+1. Details of the 6 group members is available on [Project Wiki home](https://github.com/nikhilgirrajtcd/journear-neo/wiki)
 1. The amount of work put into the project (time estimate) is described on the Wiki, [Project Diary: Time estimates and impact of inaccurate estimation](https://github.com/nikhilgirrajtcd/journear-neo/wiki/Project-Diary:-Time-estimates-and-impact-of-inaccurate-estimation)
 2. Pair programming details are available in [docs/Pair Programming Schedule.md](docs/Pair Programming Schedule.md).
