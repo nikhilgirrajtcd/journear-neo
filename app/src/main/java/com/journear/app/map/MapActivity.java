@@ -497,7 +497,7 @@ public class MapActivity extends Activity {
         GeoPoint mapCenter = tileSource.getMapInfo().boundingBox.getCenterPoint();
 
         mapView.map().setMapPosition(mapCenter.getLatitude(), mapCenter.getLongitude(), 1 << 15);
-
+    }
 
     /**
      * Loads the graph of the map specified
@@ -512,24 +512,25 @@ public class MapActivity extends Activity {
             protected Path saveDoInBackground(Void... v) throws Exception {
                 GraphHopper tmpHopp = new GraphHopper().forMobile();
 //                GraphHopperConfig ghconfig = new GraphHopperConfig();
-                ProfileConfig carProfileConfig = new ProfileConfig("car");
-                carProfileConfig.setWeighting("fastest");
-                carProfileConfig.setVehicle("car");
-                ProfileConfig footProfileConfig = new ProfileConfig("foot");
- //               footProfileConfig.setVehicle("foot");
-                footProfileConfig.setWeighting("fastest");
+//                ProfileConfig carProfileConfig = new ProfileConfig("car");
+//                carProfileConfig.setWeighting("fastest");
+//                carProfileConfig.setVehicle("car");
+//                ProfileConfig footProfileConfig = new ProfileConfig("foot");
+//                //               footProfileConfig.setVehicle("foot");
+//                footProfileConfig.setWeighting("fastest");
 
                 //                carProfileConfig.setTurnCosts(true);
 //                ArrayList<ProfileConfig> pconfigs = new ArrayList<ProfileConfig>();
 //                pconfigs.add(carProfileConfig);
 //                ghconfig.setProfiles(pconfigs);
 //                tmpHopp.init(ghconfig);
-                tmpHopp.setProfiles(carProfileConfig, footProfileConfig);
+//                tmpHopp.setProfiles(carProfileConfig, footProfileConfig);
                 tmpHopp.load(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh");
                 log("found graph " + tmpHopp.getGraphHopperStorage().toString() + ", nodes:" + tmpHopp.getGraphHopperStorage().getNodes());
                 hopper = tmpHopp;
                 return null;
             }
+        };
 
         setContentView(mapView);
         //loadGraphStorage();
