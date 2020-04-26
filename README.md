@@ -23,4 +23,4 @@ The features are described in more detail on the [Project Diary: Features and Ch
 ## Developed by Group 9
 1. Details of the 6 group members is available on [Project Wiki home](https://github.com/nikhilgirrajtcd/journear-neo/wiki)
 1. The amount of work put into the project (time estimate) is described on the Wiki, [Project Diary: Time estimates and impact of inaccurate estimation](https://github.com/nikhilgirrajtcd/journear-neo/wiki/Project-Diary:-Time-estimates-and-impact-of-inaccurate-estimation)
-2. Pair programming details are available in [docs/Pair Programming Schedule.md](docs/Pair Programming Schedule.md).
+2. Pair programming details are available in [docs/Pair Programming Schedule.md](docs/Pair%20Programming%20Schedule.md).
