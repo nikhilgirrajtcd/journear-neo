@@ -3,7 +3,6 @@
     package="com.journear.app"
     android:versionCode="1"
     android:versionName="0.1">
-
     <!-- saving maps -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
@@ -16,37 +15,39 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:name=".App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher_jn"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.journear.app.ui.LandingActivity">
+        <activity android:name=".ui.RateUserActivity"></activity>
+        <activity android:name=".ui.LandingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
-            android:name="com.journear.app.core.services.JourNearCommunicationsService"
+            android:name=".core.services.JourNearCommunicationsService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
         <activity
             android:name=".map.MapActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_main" />
         <activity
             android:name=".ui.MainActivity"
-            android:launchMode="singleTop"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.CreateJourneyActivity"
@@ -56,41 +57,34 @@
         <activity android:name=".ui.StartActivity" />
         <activity
             android:name=".map.activities.MapNewActivity"
-            android:launchMode="singleTask"
             android:label="@string/title_activity_map"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/MYAppTheme" >
-        </activity>
+            android:theme="@style/MYAppTheme"></activity>
         <activity
             android:name=".map.activities.LatLonActivity"
             android:label="@string/enter_lat_lon"
             android:screenOrientation="portrait"
-            android:theme="@style/MYAppTheme" >
-        </activity>
+            android:theme="@style/MYAppTheme"></activity>
         <activity
             android:name=".map.activities.Analytics"
             android:label="@string/title_activity_download"
             android:screenOrientation="portrait"
-            android:theme="@style/MyAppThemeActionBar" >
-        </activity>
+            android:theme="@style/MyAppThemeActionBar"></activity>
         <activity
             android:name=".map.activities.Permission"
             android:label="@string/title_activity_analytics"
             android:screenOrientation="portrait"
-            android:theme="@style/MyAppThemeActionBar" >
-        </activity>
+            android:theme="@style/MyAppThemeActionBar"></activity>
         <activity
             android:name=".map.activities.GeocodeActivity"
             android:label="@string/settings"
             android:screenOrientation="portrait"
-            android:theme="@style/MyAppThemeActionBar">
-        </activity>
+            android:theme="@style/MyAppThemeActionBar"></activity>
         <activity
             android:name=".map.activities.AboutActivity"
             android:label="@string/search_location"
-            android:theme="@style/MYAppTheme" >
-        </activity>
-
+            android:theme="@style/MYAppTheme"></activity>
     </application>
 
 </manifest>

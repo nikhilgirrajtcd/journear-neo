@@ -1,4 +1,4 @@
-    package com.journear.app.ui;
+package com.journear.app.ui;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-    public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String LOGTAG = "MainActivityLogs";
     private AppBarConfiguration mAppBarConfiguration;
@@ -66,6 +66,10 @@ import java.util.Objects;
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         ndOwnJourneyPlan = intent.getParcelableExtra("EXTRA");
+        if(intent.getBooleanExtra("fromRatingActivity", false)){
+            ndOwnJourneyPlan = null;
+            LocalFunctions.setCurrentJourney(ndOwnJourneyPlan);
+        }
 
         // Ask for permissions if user has revoked the permission manually after giving the permission for the first time
         LocalFunctions.requestPermissions(MainActivity.this);
@@ -390,9 +394,9 @@ import java.util.Objects;
 
         @Override
         public boolean equals(@Nullable Object obj) {
-            if(obj == null)
+            if (obj == null)
                 return false;
-            if(obj instanceof CachedComms) {
+            if (obj instanceof CachedComms) {
                 CachedComms com = (CachedComms) obj;
                 return Objects.equals(this.message.toReconstructableString(), com.message.toReconstructableString())
                         && Objects.equals(this.associatedRide, com.associatedRide);
@@ -423,7 +427,7 @@ import java.util.Objects;
         public void onResponse(JnMessage message, NearbyDevice associatedRide) {
             try {
                 CachedComms cachedComms = new CachedComms(message, associatedRide, false);
-                if(!cachedCommsList.contains(cachedComms)) {
+                if (!cachedCommsList.contains(cachedComms)) {
                     cachedCommsList.add(cachedComms);
                     pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
                     if (badgeCounter != null)
@@ -438,7 +442,7 @@ import java.util.Objects;
         public void onExpire(JnMessage expiredMessage, NearbyDevice nearbyDevice) {
             try {
                 CachedComms cachedComms = new CachedComms(expiredMessage, nearbyDevice, false);
-                if(!cachedCommsList.contains(cachedComms)) {
+                if (!cachedCommsList.contains(cachedComms)) {
                     cachedCommsList.add(cachedComms);
 
                     pendingNotifications = getUnreadCachedCommsCount(cachedCommsList);
