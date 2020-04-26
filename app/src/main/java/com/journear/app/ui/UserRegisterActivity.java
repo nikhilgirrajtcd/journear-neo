@@ -24,6 +24,7 @@ import com.journear.app.R;
 import com.journear.app.core.ServerFunctions;
 import com.journear.app.core.entities.User;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +56,7 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         //Phone and DOB Validations
         phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        dob.setOnClickListener(new View.OnClickListener(){
+        dob.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -78,12 +79,11 @@ public class UserRegisterActivity extends AppCompatActivity {
         final Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("JSON","ONRESPONSE ERROR START");
-                Snackbar.make( findViewById(android.R.id.content).getRootView()
-                        ,"Please make sure internet is connected",Snackbar.LENGTH_SHORT).show();
+                Log.i("JSON", "ONRESPONSE ERROR START");
+                Snackbar.make(findViewById(android.R.id.content).getRootView()
+                        , "Please make sure internet is connected", Snackbar.LENGTH_SHORT).show();
             }
         };
-
 
 
         register.setOnClickListener(new View.OnClickListener() {
@@ -93,8 +93,8 @@ public class UserRegisterActivity extends AppCompatActivity {
                 mp.start();
                 final User registeringUser = new User();
 
-                registeringUser.setName( username.getText().toString());
-                registeringUser.setPassword( password.getText().toString());
+                registeringUser.setName(username.getText().toString());
+                registeringUser.setPassword(password.getText().toString());
                 registeringUser.setEmail(email.getText().toString());
                 registeringUser.setPhoneValue(phone.getText().toString());
                 registeringUser.setDobValue(dob.getText().toString());
@@ -106,14 +106,21 @@ public class UserRegisterActivity extends AppCompatActivity {
                     Response.Listener responseListener = new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Log.i("JSON","ONRESPONSE START");
+                            Log.i("JSON", "ONRESPONSE START");
                             try {
                                 //Process os success response
-                                if (response.get("Message").toString().equals("Success") ) {
+                                if (response.get("Message").toString().equals("Success")) {
                                     Toast.makeText(UserRegisterActivity.this, "User registered!", Toast.LENGTH_SHORT).show();
                                     Intent registerSuccessIntent = new Intent(UserRegisterActivity.this, LoginActivity.class);
                                     startActivity(registerSuccessIntent);
                                     finish();
+                                } else {
+                                    if (response.has("exception")) {
+                                        Log.e("Registration", response.get("exception").toString());
+
+                                        Snackbar.make(findViewById(android.R.id.content).getRootView()
+                                                , "Failed to register.", Snackbar.LENGTH_SHORT).show();
+                                    }
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -122,10 +129,9 @@ public class UserRegisterActivity extends AppCompatActivity {
                     };
                     ServerFunctions.getInstance(UserRegisterActivity.this).registerUser(registeringUser,
                             responseListener, responseErrorListener);
-                }
-                else {
-                    Snackbar.make( findViewById(android.R.id.content).getRootView()
-                            ,"Please fill all the values.",Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(findViewById(android.R.id.content).getRootView()
+                            , "Please fill all the values.", Snackbar.LENGTH_SHORT).show();
 
                 }
             }

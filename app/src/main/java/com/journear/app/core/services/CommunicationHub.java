@@ -77,7 +77,7 @@ public class CommunicationHub {
                                 message.getMessageFlag() == JnMessageSet.Reject) {
 
                             String newMessageId = createMessageId(logObj.nearbyDevice, message);
-                            JnMessage message1 = new JnMessage(newMessageId, JnMessageSet.Okay, "",
+                            JnMessage message1 = new JnMessage(newMessageId, JnMessageSet.Okay, LocalFunctions.getCurrentUser().phoneValue,
                                     logObj.nearbyDevice.getTravelPlanId(), LocalFunctions.getCurrentUser());
                             pendingMessages.add(new RequestTriesResponse(message1, MAX_RETRY_COUNT, null));
                         }

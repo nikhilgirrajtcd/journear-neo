@@ -23,6 +23,8 @@ import com.journear.app.core.entities.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Random;
+
 public class LoginActivity extends AppCompatActivity {
     EditText email, password;
     Button login;
@@ -56,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                         user.setGender(userJsonObj.get("gender").toString());
                         user.setUserId(userJsonObj.get("id").toString());
                         user.setEmail(userJsonObj.get("username").toString());
+                        user.setPhoneValue("+353483948" + (new Random()).nextInt(1000));
                         user.name = userJsonObj.get("name").toString();
                         LocalFunctions.setCurrentUser(user);
                         showSnackBar("Logged in!");

@@ -23,6 +23,8 @@ import com.journear.app.core.services.JnMessageSet;
 import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.ui.MainActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class MessagesFragment extends Fragment implements CommunicationListener {
 
     private static final String LOGTAG = "ShareFragmentLogs";
@@ -73,6 +75,7 @@ public class MessagesFragment extends Fragment implements CommunicationListener 
             LocalFunctions.setCurrentJourney(nd);
             try {
                 mainActivity.devicesList.remove(mainActivity.ndOwnJourneyPlan);
+                mainActivity.devicesList.add(nd);
             } catch (Exception ex) {
                 Log.e(LOGTAG, "Could not replace the nearby device in deviceslist on Accepting.", ex);
             }
@@ -157,14 +160,19 @@ public class MessagesFragment extends Fragment implements CommunicationListener 
     }
 
     private String messageResponseJourney(NearbyDevice associatedRide, JnMessage message) {
-        String past = message.getMessageFlag().name().toUpperCase() + "ED";
+        String past = "";
+        if (message.getMessageFlag() == JnMessageSet.Okay) {
+            past = "Okay";
+        } else {
+            past = message.getMessageFlag().name() + "ed";
+        }
+
         String contactInfo = message.getMessageFlag() == JnMessageSet.Accept ? "Contact Info:" + message.getPhoneNumber() : " ";
         String messageResponse = past + " :Your Journey from " + associatedRide.getSource2().placeString +
                 " to " + associatedRide.getDestination2().placeString + " at " + associatedRide.getTravelTime() +
-                " has been " + past + " by " + associatedRide.getOwner().getName();
+                " has been " + StringUtils.lowerCase(past) + " by " + associatedRide.getOwner().getName() + ". " + contactInfo;
 
         return messageResponse;
-
     }
 
 

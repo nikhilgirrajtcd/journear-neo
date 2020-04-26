@@ -60,6 +60,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
         this.devicesList = devicesList;
         this.context = context;
         this.communicationListener = communicationListener;
+        setHasStableIds(true);
     }
 
     @NonNull
@@ -157,10 +158,11 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
             NearbyDevice dev = devicesList.get(position);
             Context context = v.getContext();
 
-            Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
             v.animate().scaleX(1.2f).scaleY(1.2f).setDuration(100).start();
             switch (v.getId()) {
                 case R.id.currentTOSource:
+                    Toast.makeText(context, "Navigating to start point." + position, Toast.LENGTH_SHORT).show();
 
                     findLocation(dev, v);
                     break;
@@ -170,7 +172,7 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
                     break;
 
                 case R.id.Maps:
-                    Toast.makeText(context, "B" + position, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Opening the journey route." + position, Toast.LENGTH_SHORT).show();
 
                     JnGeocodeItem source = devicesList.get(position).getSource2();
                     JnGeocodeItem destination = devicesList.get(position).getDestination2();
@@ -179,6 +181,8 @@ public class RecyclerViewAdapter extends Adapter<RecyclerViewAdapter.ViewHolder>
 
                     break;
                 case R.id.Join:
+                    Toast.makeText(context, "Sending request..." + position, Toast.LENGTH_SHORT).show();
+
                     ServiceLocator.getCommunicationHub().sendMessage(devicesList.get(position),
                             JnMessageSet.RequestToJoin, communicationListener);
                     break;

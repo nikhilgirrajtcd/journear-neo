@@ -102,6 +102,15 @@ public class HomeFragment extends Fragment implements JnPeerDiscoveryListener {
             @Override
             public void onClick(View v) {
                 HomeFragment.this.filterEnabled = ((CheckBox) v).isChecked();
+                try {
+                    for (int loopVar = parentActivity.devicesList.size() - 1; loopVar >= 0; loopVar--) {
+                        if (parentActivity.devicesList.get(loopVar).isCompatible(parentActivity.ndOwnJourneyPlan)) {
+                            parentActivity.devicesList.remove(loopVar);
+                        }
+                    }
+                } catch (Exception ex) {
+                    Log.e(LOGTAG, "Exception while filtering", ex);
+                }
             }
         });
     }
