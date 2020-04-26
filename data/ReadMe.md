@@ -13,10 +13,10 @@ Links to map files archives -
 ### The behaviour of the maps without these files is not known right now. It could be an error or just fail silently. Will update this later.
 
 Resulting path -
-> /Download(s)/graphhopper/maps/ireland-and-northern-ireland-latest-gh
+> /Download(s)/graphhopper/maps/europe_ireland-and-northern-ireland-gh
 
 
-The `ireland-and-northern-ireland-latest-gh` directory will then contain the following files -
+The `europe_ireland-and-northern-ireland-gh` directory will then contain the following files -
 
 1. edges
 1. geometry
