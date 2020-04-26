@@ -1,3 +1,6 @@
+/**
+ * Contains the map functionality code
+ */
 package com.journear.app.map;
 
 import android.Manifest;
@@ -182,6 +185,7 @@ public class MapActivity extends Activity {
 
     public boolean showRoute(GeoPoint p1, GeoPoint p2) {
         Log.i(LOGTAG, "Showing route...");
+
         if (!isReady())
             return false;
 
@@ -205,6 +209,11 @@ public class MapActivity extends Activity {
         return true;
     }
 
+    /***
+     * Drops the location pins on long press
+     * @param p Co - Ordinates of point P
+     * @return false if the map is not ready else true
+     */
     protected boolean onLongPress(GeoPoint p) {
         if (!isReady())
             return false;
@@ -234,6 +243,10 @@ public class MapActivity extends Activity {
         return true;
     }
 
+    /***
+     * Function called on creation of the object
+     * @param savedInstanceState Bundle object
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -250,6 +263,7 @@ public class MapActivity extends Activity {
                 logUser("GraphHopper is not usable without an external storage!");
                 return;
             }
+            // Path to the maps folder
             mapsFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                     "/graphhopper/maps/");
         } else
@@ -265,8 +279,8 @@ public class MapActivity extends Activity {
 //        p2 = new GeoPoint(dddddd[2], dddddd[3]);
 //        p3 = new GeoPoint(dddddd[4], dddddd[5]);
 
+        // Map files of Ireland initialized by default
         initFiles("ireland-and-northern-ireland-latest");
-
     }
 
     @Override
@@ -308,7 +322,12 @@ public class MapActivity extends Activity {
         return false;
     }
 
-    public void initFiles(String area) {
+
+    /***
+     * Initialise the map files
+     * @param area Name of the folder containing the map and graph files
+     */
+    private void initFiles(String area) {
         prepareInProgress = true;
         currentArea = area;
         downloadingFiles();
@@ -365,6 +384,7 @@ public class MapActivity extends Activity {
 //        }.execute();
 //    }
 
+    // To Do  - Nikhil is it required?
     private void chooseArea(Button button, final Spinner spinner,
                             List<String> nameList, final MySpinnerListener myListener) {
         final Map<String, String> nameToFullName = new TreeMap<>();
@@ -395,6 +415,9 @@ public class MapActivity extends Activity {
         });
     }
 
+    /***
+     * Downloads the files if they are not present, else gives the path to the area folder
+     */
     void downloadingFiles() {
         final File areaFolder = new File(mapsFolder, currentArea + "-gh");
         if (downloadURL == null || areaFolder.exists()) {
@@ -409,6 +432,9 @@ public class MapActivity extends Activity {
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.show();
 
+        /***
+         * AsyncTask that handles the map functionality
+         */
         new GHAsyncTask<Void, Integer, Object>() {
             protected Object saveDoInBackground(Void... _ignore)
                     throws Exception {
@@ -445,6 +471,10 @@ public class MapActivity extends Activity {
         }.execute();
     }
 
+    /**
+     * Function that load the map file and call the loadGraphStorage function for the graphs to be loaded
+     * @param areaFolder The folder containing the area files
+     */
     void loadMap(File areaFolder) {
         log("loading map");
 
@@ -468,6 +498,38 @@ public class MapActivity extends Activity {
 
         mapView.map().setMapPosition(mapCenter.getLatitude(), mapCenter.getLongitude(), 1 << 15);
 
+
+    /**
+     * Loads the graph of the map specified
+     * The profile has to be specified
+     */
+    void loadGraphStorage() {
+        logUser("loading graph (" + Constants.VERSION + ") ... ");
+        /***
+         * AsyncTask handling the graph functionality
+         */
+        new GHAsyncTask<Void, Void, Path>() {
+            protected Path saveDoInBackground(Void... v) throws Exception {
+                GraphHopper tmpHopp = new GraphHopper().forMobile();
+//                GraphHopperConfig ghconfig = new GraphHopperConfig();
+                ProfileConfig carProfileConfig = new ProfileConfig("car");
+                carProfileConfig.setWeighting("fastest");
+                carProfileConfig.setVehicle("car");
+                ProfileConfig footProfileConfig = new ProfileConfig("foot");
+ //               footProfileConfig.setVehicle("foot");
+                footProfileConfig.setWeighting("fastest");
+
+                //                carProfileConfig.setTurnCosts(true);
+//                ArrayList<ProfileConfig> pconfigs = new ArrayList<ProfileConfig>();
+//                pconfigs.add(carProfileConfig);
+//                ghconfig.setProfiles(pconfigs);
+//                tmpHopp.init(ghconfig);
+                tmpHopp.setProfiles(carProfileConfig, footProfileConfig);
+                tmpHopp.load(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh");
+                log("found graph " + tmpHopp.getGraphHopperStorage().toString() + ", nodes:" + tmpHopp.getGraphHopperStorage().getNodes());
+                hopper = tmpHopp;
+                return null;
+            }
 
         setContentView(mapView);
         //loadGraphStorage();
@@ -496,39 +558,9 @@ public class MapActivity extends Activity {
         }
     }
 
-//    public void loadGraphStorage(final MapNewActivity activity) {
-//        logUser(activity,"loading graph (" + Constants.VERSION + ") ... ");
-//        new GHAsyncTask<Void, Void, Path>() {
-//            protected Path saveDoInBackground(Void... v) throws Exception {
-//                GraphHopper tmpHopp = new GraphHopper().forMobile();
-//
-//                ProfileConfig carProfileConfig = new ProfileConfig("car");
-//                carProfileConfig.setWeighting("fastest");
-//                carProfileConfig.setVehicle("car");
-//                ProfileConfig footProfileConfig = new ProfileConfig("foot");
-//                footProfileConfig.setWeighting("fastest");
-//                tmpHopp.setProfiles(carProfileConfig, footProfileConfig);
-//
-//                tmpHopp.load(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh");
-//                log("found graph " + tmpHopp.getGraphHopperStorage().toString() + ", nodes:" + tmpHopp.getGraphHopperStorage().getNodes());
-//                hopper = tmpHopp;
-//                return null;
-//            }
-//
-//            protected void onPostExecute(Path o) {
-//                if (hasError()) {
-//                    logUser(activity,"An error happened while creating graph:"
-//                            + getErrorMessage());
-//                } else {
-//                    logUser(activity,"Finished loading graph. Long press to define where to start and end the route.");
-//                }
-//
-//                //finishPrepare();
-//                //showRoute();
-//            }
-//        }.execute();
-//    }
-
+    /***
+     * Shows the route between the given Co - Ordinates on the the map
+     */
     private void showRoute() {
         Log.i(LOGTAG, "Showing route from intent");
         Intent intent = getIntent();
@@ -545,6 +577,11 @@ public class MapActivity extends Activity {
         prepareInProgress = false;
     }
 
+    /***
+     * Creates the route layer to be displayed on the map
+     * @param response the best possible route obtained
+     * @return the pathLayer created
+     */
     private PathLayer createPathLayer(PathWrapper response) {
         Style style = Style.builder()
                 .fixed(true)
@@ -561,6 +598,12 @@ public class MapActivity extends Activity {
         return pathLayer;
     }
 
+    /***
+     *
+     * @param p Co - Ordinates
+     * @param resource resource parameter
+     * @return the markerItem to be created
+     */
     @SuppressWarnings("deprecation")
     private MarkerItem createMarkerItem(GeoPoint p, int resource) {
         Drawable drawable = getResources().getDrawable(resource);
@@ -571,49 +614,6 @@ public class MapActivity extends Activity {
         return markerItem;
     }
 
-//    public void calcPath(final double fromLat, final double fromLon,
-//                         final double toLat, final double toLon) {
-//
-//        log("calculating path ...");
-//        new AsyncTask<Void, Void, PathWrapper>() {
-//            float time;
-//
-//            protected PathWrapper doInBackground(Void... v) {
-//                StopWatch sw = new StopWatch().start();
-//                String profile = "foot";
-//                GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).setProfile(profile).
-//                        setAlgorithm(Algorithms.DIJKSTRA_BI);
-//                req.getHints().
-//                        put(Routing.INSTRUCTIONS, "false");
-//                GHResponse resp = hopper.route(req);
-//                System.out.println(resp);
-//                time = sw.stop().getSeconds();
-//                return resp.getBest();
-//            }
-//
-//            protected void onPostExecute(PathWrapper resp) {
-//                if (!resp.hasErrors()) {
-//                    log("from:" + fromLat + "," + fromLon + " to:" + toLat + ","
-//                            + toLon + " found path with distance:" + resp.getDistance()
-//                            / 1000f + ", nodes:" + resp.getPoints().getSize() + ", time:"
-//                            + time + " " + resp.getDebugInfo());
-//                    logUser("the route is " + (int) (resp.getDistance() / 100) / 10f
-//                            + "km long, time:" + resp.getTime() / 60000f + "min, debug:" + time);
-//
-////                    double  zoomFactor = 1 <<  (int)(resp.getDistance() * 0.15);
-//                    mapView.map().setMapPosition((toLat + fromLat) / 2, (toLon + fromLon) / 2, 1 << 10);
-//
-//
-//                    pathLayer = createPathLayer(resp);
-//                    mapView.map().layers().add(pathLayer);
-//                    mapView.map().updateMap(true);
-//                } else {
-//                    logUser("Error:" + resp.getErrors());
-//                }
-//                shortestPathRunning = false;
-//            }
-//        }.execute();
-//    }
 
     private void log(String str) {
         Log.i("GH", str);
