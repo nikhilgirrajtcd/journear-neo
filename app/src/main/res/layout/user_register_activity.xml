@@ -5,11 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    android:id="@+id/rootLayout"
     tools:context=".ui.UserRegisterActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -76,7 +74,7 @@
             android:layout_marginRight="6dp"
             android:layout_weight="1"
             android:background="@drawable/btn_log_in_background"
-            android:text="LOG IN"
+            android:text="Log In"
             android:textColor="@android:color/white" />
 
         <Button
@@ -86,7 +84,7 @@
             android:layout_marginLeft="6dp"
             android:layout_weight="1"
             android:background="@drawable/btn_register_backgroung"
-            android:text="REGISTER"
+            android:text="Register"
             android:textColor="@color/btnRegister" />
 
     </LinearLayout>

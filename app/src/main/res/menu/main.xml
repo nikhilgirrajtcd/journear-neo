@@ -2,8 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/nav_notification"
+        android:icon="@drawable/ic_message"
+        android:title="@string/notification"
+        app:showAsAction="always"
+        android:actionLayout="@layout/notification_badge"
+        />
 </menu>

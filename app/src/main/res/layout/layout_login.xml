@@ -5,6 +5,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:cardElevation = "10dp"
+    android:id="@+id/cardview1"
     >
 
     <LinearLayout
@@ -27,19 +28,24 @@
             android:layout_height="wrap_content"
             ></EditText>
 
-        <EditText
-            android:id="@+id/edit_password"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:text=""
-            android:textColor="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"
-            android:textSize="20sp"
-            android:layout_below="@+id/editEmail"
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_below ="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
 
-    ></EditText>
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id ="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="@string/register_password_hint"
+                android:textSize="20sp"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btn_login"

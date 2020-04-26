@@ -36,21 +36,28 @@
             android:textSize="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             />
 
-        <EditText
-            android:id="@+id/editPassword"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:text=""
-            android:textColor="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"
-            android:textSize="20sp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_below ="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
 
-            />
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id ="@+id/editPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="@string/register_password_hint"
+                android:textSize="20sp"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
 
         <EditText
             android:id="@+id/editPhone"
@@ -90,13 +97,11 @@
             android:textAlignment="center">
 
             <RadioButton
-                android:id="@+id/genderMale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Male" />
 
             <RadioButton
-                android:id="@+id/genderFemale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Female" />

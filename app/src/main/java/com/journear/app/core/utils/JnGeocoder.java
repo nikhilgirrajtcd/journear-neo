@@ -1,6 +1,7 @@
 package com.journear.app.core.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.journear.app.R;
@@ -21,7 +22,7 @@ public class JnGeocoder {
     static String lastAccessedRegion = null;
     static Map<String, ArrayList<JnGeocodeItem>> _GeoCodeItemsByRegion;
 
-    public static Map<String, ArrayList<JnGeocodeItem>> getGeoCodeItemsByRegion() {
+    private static Map<String, ArrayList<JnGeocodeItem>> getGeoCodeItemsByRegion() {
         if (_GeoCodeItemsByRegion == null)
             _GeoCodeItemsByRegion = new HashMap<>();
         return _GeoCodeItemsByRegion;
@@ -58,8 +59,8 @@ public class JnGeocoder {
         // At the moment the function only returns the data for region "ie", while the region field is not checked
         ArrayList<JnGeocodeItem> returnSet = new ArrayList<>();
 
+//        InputStream deserializeStream = context.getResources().openRawResource(R.raw.geocodes_ie_fst);
         try {
-            InputStream deserializeStream = context.getResources().openRawResource(R.raw.geocodes_ie_fst);
             returnSet = readGeocodingDataCsv(context);
                     //(ArrayList<JnGeocodeItem>) SerializerHelper.deserialize(deserializeStream, JnGeocodeItem.class);
             System.out.println("Deserialized: " + returnSet.size());
@@ -79,7 +80,7 @@ public class JnGeocoder {
 //        }
         final ArrayList<JnGeocodeItem> returnSet = new ArrayList<>();
         String row = "";
-        int max = 500;
+        int max = 100000;
         try {
             InputStream csvStream = context.getResources().openRawResource(R.raw.geocodes_ie);
             final BufferedReader reader = new BufferedReader(
