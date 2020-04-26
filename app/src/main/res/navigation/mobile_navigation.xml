@@ -30,7 +30,7 @@
 
     <fragment
         android:id="@+id/nav_share"
-        android:name="com.journear.app.ui.share.ShareFragment"
+        android:name="com.journear.app.ui.share.MessagesFragment"
         android:label="@string/menu_share"
         tools:layout="@layout/fragment_share" />
 

@@ -22,12 +22,11 @@ import com.journear.app.core.services.JnMessage;
 import com.journear.app.core.services.JnMessageSet;
 import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.ui.MainActivity;
-import com.journear.app.ui.UserRegisterActivity;
 
-public class ShareFragment extends Fragment implements CommunicationListener {
+public class MessagesFragment extends Fragment implements CommunicationListener {
 
     private static final String LOGTAG = "ShareFragmentLogs";
-    private ShareViewModel shareViewModel;
+    private MessagesViewModel messagesViewModel;
     private TextView requestTextView;
     private Button acceptButton;
     private Button rejectButton;
@@ -37,16 +36,9 @@ public class ShareFragment extends Fragment implements CommunicationListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        shareViewModel =
-                ViewModelProviders.of(this).get(ShareViewModel.class);
+        messagesViewModel =
+                ViewModelProviders.of(this).get(MessagesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_share, container, false);
-//        final TextView textView = root.findViewById(R.id.text_share);
-//        shareViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
         return root;
     }
 
@@ -65,11 +57,12 @@ public class ShareFragment extends Fragment implements CommunicationListener {
         }
     }
 
-    private void Reject(JnMessage message, NearbyDevice associatedRide) {
+    private void Reject(JnMessage message, NearbyDevice associatedRide, View v) {
         ServiceLocator.getCommunicationHub().sendMessage(associatedRide, JnMessageSet.Reject, this);
+        hideButtonsOnLayout(v);
     }
 
-    public void Accept(JnMessage message, NearbyDevice nd) {
+    public void Accept(JnMessage message, NearbyDevice nd, View v) {
         try {
             UserSkimmed userSkimmed = new UserSkimmed();
             userSkimmed.name = message.getSenderName();
@@ -85,9 +78,20 @@ public class ShareFragment extends Fragment implements CommunicationListener {
             }
             mainActivity.ndOwnJourneyPlan = nd;
             ServiceLocator.getCommunicationHub().sendMessage(nd, JnMessageSet.Accept, this);
+            hideButtonsOnLayout(v);
         } catch (Exception ex) {
             Log.e(LOGTAG, "Error in sending Accept", ex);
 
+        }
+    }
+
+    private void hideButtonsOnLayout(View v) {
+        try {
+            if (v != null && v.getParent() instanceof LinearLayout) {
+                ((LinearLayout) v.getParent()).setVisibility(View.INVISIBLE);
+            }
+        } catch (Exception ex) {
+            Log.e(LOGTAG, "Error in hiding buttons", ex);
         }
     }
 
@@ -108,7 +112,7 @@ public class ShareFragment extends Fragment implements CommunicationListener {
                 acceptButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Accept(message, associatedRide);
+                        Accept(message, associatedRide, v);
                     }
                 });
 
@@ -117,7 +121,7 @@ public class ShareFragment extends Fragment implements CommunicationListener {
                 rejectButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Reject(message, associatedRide);
+                        Reject(message, associatedRide, v);
 
                     }
                 });

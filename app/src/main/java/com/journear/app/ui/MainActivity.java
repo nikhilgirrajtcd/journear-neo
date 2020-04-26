@@ -1,6 +1,5 @@
     package com.journear.app.ui;
 
-import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,7 +25,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.android.volley.Cache;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.journear.app.R;
@@ -40,7 +37,7 @@ import com.journear.app.core.services.JnMessage;
 import com.journear.app.core.services.JourNearCommunicationsService;
 import com.journear.app.core.services.ServiceLocator;
 import com.journear.app.ui.home.HomeFragment;
-import com.journear.app.ui.share.ShareFragment;
+import com.journear.app.ui.share.MessagesFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -213,7 +210,7 @@ import java.util.Objects;
 
     public void openNotificationsFragment() {
         FragmentTransaction ft = MainActivity.this.getSupportFragmentManager().getFragments().get(0).getChildFragmentManager().beginTransaction();
-        Fragment sf = new ShareFragment();
+        Fragment sf = new MessagesFragment();
         ft.replace(R.id.nav_host_fragment, sf);
         ft.addToBackStack(null);
         ft.commit();
@@ -224,12 +221,12 @@ import java.util.Objects;
         switch (item.getItemId()) {
             case R.id.nav_notification:
                 FragmentTransaction ft = this.getSupportFragmentManager().getFragments().get(0).getChildFragmentManager().beginTransaction();
-                Fragment sf = new ShareFragment();
+                Fragment sf = new MessagesFragment();
                 ft.replace(R.id.nav_host_fragment, sf);
                 ft.addToBackStack(null);
                 ft.commit();
 
-//                homeFragment.goToFragment(new ShareFragment());
+//                homeFragment.goToFragment(new MessagesFragment());
                 break;
         }
         return super.onOptionsItemSelected(item);

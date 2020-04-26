@@ -5,7 +5,7 @@ title __SHARE's Class Diagram__\n
   namespace com.journear.app {
     namespace ui {
       namespace share {
-        class com.journear.app.ui.share.ShareFragment {
+        class com.journear.app.ui.share.MessagesFragment {
             + onCreateView()
         }
       }
@@ -16,7 +16,7 @@ title __SHARE's Class Diagram__\n
   namespace com.journear.app {
     namespace ui {
       namespace share {
-        class com.journear.app.ui.share.ShareViewModel {
+        class com.journear.app.ui.share.MessagesViewModel {
             - mText : MutableLiveData<String>
             + ShareViewModel()
             + getText()
@@ -26,9 +26,9 @@ title __SHARE's Class Diagram__\n
   }
   
 
-  com.journear.app.ui.share.ShareFragment -up-|> androidx.fragment.app.Fragment
-  com.journear.app.ui.share.ShareFragment o-- com.journear.app.ui.share.ShareViewModel : shareViewModel
-  com.journear.app.ui.share.ShareViewModel -up-|> androidx.lifecycle.ViewModel
+  com.journear.app.ui.share.MessagesFragment -up-|> androidx.fragment.app.Fragment
+  com.journear.app.ui.share.MessagesFragment o-- com.journear.app.ui.share.MessagesViewModel : shareViewModel
+  com.journear.app.ui.share.MessagesViewModel -up-|> androidx.lifecycle.ViewModel
 
 
 right footer

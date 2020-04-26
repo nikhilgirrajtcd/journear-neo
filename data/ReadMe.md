@@ -5,7 +5,7 @@
 
 _Large files cannot be pushed to GitHub due to a 100MB limit on file size._
 Links to map files archives - 
-1. Ireland and Northern Ireland - https://journear.blob.core.windows.net/data/graphhopper-ie.zip 
+1. Ireland and Northern Ireland - https://journear.blob.core.windows.net/data/europe_ireland-and-northern-ireland-gh-20200425T230621Z-001.zip
 
 
 ### Extract the archive `graphhopper-ie` in the `Downloads` directory of the phone to make the maps work.
