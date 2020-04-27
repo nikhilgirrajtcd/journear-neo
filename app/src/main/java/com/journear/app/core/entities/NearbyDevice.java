@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ConcurrentNavigableMap;
-
+//NearBy Device class for discovering journeys over using Wifi Dns
 public class NearbyDevice implements Parcelable, Persistable {
     private String travelPlanId;
 
