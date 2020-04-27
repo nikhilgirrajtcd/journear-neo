@@ -19,6 +19,7 @@ The features are described in more detail on the [Project Diary: Features and Ch
 ## Additional Information
 1. Maps. Maps require additional files to operate offline on the device. Please read more about it in [data/ReadMe.md](data/ReadMe.md)
 2. Imporant parts of the Application are described on the [Project Diary (Components) Wiki](https://github.com/nikhilgirrajtcd/journear-neo/wiki/Project-Diary-(Components)).
+3. The user profiles and credentials are maintained on a PYthon server. Since the focus of the application is offline operability, the server has very minimal CRUD functionalities for User profile. The code for which is present in another Git repository  - https://github.com/singhta/journear-server.
 
 ## Developed by Group 9
 1. Details of the 6 group members is available on [Project Wiki home](https://github.com/nikhilgirrajtcd/journear-neo/wiki)
